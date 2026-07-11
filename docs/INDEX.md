@@ -94,8 +94,7 @@ flowchart TD
 
 ## Navigation Notes
 
-- Implementation order: EP00 (infrastructure) → EP01 (auth) → EP02 (tasks) → EP04 (frontend).
-  EP03 (GenAI docs) runs in parallel throughout.
+- Implementation order: EP00 (infrastructure) → EP02 (tasks CRUD, full-stack) → EP01 (register/login, full-stack) → auth middleware + ownership wiring. EP03 (GenAI docs) runs in parallel throughout.
 - Every document links back to this index via a breadcrumb header at the top.
 - Epics link down to their user stories and to related architecture documents.
 - User stories link up to their epic and out to relevant API contract and testing strategy sections.

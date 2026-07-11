@@ -42,7 +42,7 @@ flowchart LR
 
 ## Current Phase
 
-**Implementation** — EP00 (documentation/planning) done. Building EP01 (auth), EP02 (tasks), EP04 (frontend). EP03 runs in parallel. Infrastructure from EP00 materializes during functional epics.
+**Implementation** — EP00 (infra bootstrap) done. Pivoted to full-stack vertical deliveries: (1) EP02 Tasks CRUD + EP04 task UI, (2) EP01 register/login + EP04 auth UI, (3) auth middleware + ownership wiring across all endpoints. EP03 runs in parallel. Infrastructure from EP00 materializes during functional epics.
 
 ## Conventions
 
