@@ -87,13 +87,24 @@ flowchart LR
 - Follow compact rules injected by the orchestrator
 
 ### Delegation Contract (mandatory for every sub-agent launch)
-Every sub-agent MUST receive before executing:
-1. **Limits** — what is OUT of scope, what NOT to touch, where to stop
-2. **Expected Result** — what the output looks like, format, acceptance criteria
-3. **Compact Rules** — injected project standards from this file
-4. **Status Protocol** — the mandatory status block format (see below)
+Every sub-agent MUST receive a **handoff file** following the
+[Handoff Template](docs/process/handoff-template.md). The handoff has 11 sections:
 
-No sub-agent launches without all four. No exceptions.
+1. **Metadata** — task ID, batch, epic, persona, model tier
+2. **Objective** — 1-3 sentence north star
+3. **Pre-Conditions** — checkable conditions before starting
+4. **Context Bundle** — exact files with line ranges (minimize context waste)
+5. **Deliverables** — files to create/modify with expected signatures
+6. **Quality Gates** — ordered shell commands with pass criteria (copy-pasteable)
+7. **Boundaries** — explicit OUT OF SCOPE list + scope termination conditions
+8. **Anti-Patterns** — common mistakes: what / why it fails / do instead
+9. **Rollback Guidance** — recovery path with 3-failure circuit breaker
+10. **Compact Rules** — injected TASKFLOW-* blocks from this file (inline, not by path)
+11. **Status Protocol** — machine-readable status block with gate results
+
+No sub-agent launches without a completed handoff file. No ad-hoc prompts. No exceptions.
+The orchestrator runs the [pre-flight checklist](docs/process/handoff-template.md#orchestrator-pre-flight-checklist)
+before every delegation.
 
 ```mermaid
 %% Orchestrator never touches code — only validates

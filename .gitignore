@@ -14,3 +14,15 @@ ignoreThisPath/
 
 # Artifacts System — build outputs, test reports, generated specs
 artifacts/
+
+# .NET
+bin/
+obj/
+.vs/
+*.user
+*.suo
+
+# Project-specific
+.env
+node_modules/
+dist/

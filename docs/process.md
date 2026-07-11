@@ -12,6 +12,7 @@ declare it done, or hand it off without satisfying the relevant protocol below.
 - [1. Definition of Ready (DOR)](#1-definition-of-ready-dor)
 - [2. Definition of Done (DOD)](#2-definition-of-done-dod)
 - [3. Grooming / Refinement Protocol](#3-grooming--refinement-protocol)
+  - [3.4 Sprint Planning — Task Decomposition](#34-sprint-planning--task-decomposition)
 - [4. Story Completion Protocol](#4-story-completion-protocol)
 - [5. Handoff Protocol](#5-handoff-protocol)
 - [6. API Contract Validation Protocol](#6-api-contract-validation-protocol)
@@ -97,6 +98,44 @@ starts. Grooming bridges the gap between Discovery (high-level stories) and Impl
 - **Skipping the "how"**: discovery-level stories without technical approach lead to
   implementation surprises
 
+### 3.4 Sprint Planning — Task Decomposition
+
+After grooming produces an engineering addenda and the DOR is satisfied, the orchestrator
+decomposes each batch into **individual task handoff files**. Each handoff is a self-contained
+contract that a sub-agent can execute autonomously — no ad-hoc prompts, no improvisation.
+
+**Inputs**: engineering addenda (grooming output), batch plan, DOR-satisfied stories.
+
+**Output**: one handoff file per sub-task, following the
+[Handoff Template](process/handoff-template.md).
+
+**Ceremony**:
+
+1. The orchestrator (or a planning agent) breaks each batch into atomic tasks
+2. Each task gets a handoff file with 11 sections: metadata, objective, pre-conditions,
+   context bundle, deliverables, quality gates, boundaries, anti-patterns, rollback,
+   compact rules, and status protocol
+3. The orchestrator runs the [pre-flight checklist](process/handoff-template.md#orchestrator-pre-flight-checklist)
+   before delegating each task
+4. Sub-agents receive the handoff file as their prompt — nothing more, nothing less
+
+**Rule**: if a handoff exceeds 300 lines, the task is too large — split it.
+
+```mermaid
+%% Sprint Planning produces handoff files from grooming outputs
+flowchart LR
+    GROOM["Grooming\n(engineering addenda)"] --> PLAN["Sprint Planning\n(task decomposition)"]
+    PLAN --> HF1["Handoff\nEP01-B0-01"]
+    PLAN --> HF2["Handoff\nEP01-B0-02"]
+    PLAN --> HF3["Handoff\nEP01-B0-03"]
+    HF1 --> AGENT1["Sub-Agent"]
+    HF2 --> AGENT2["Sub-Agent"]
+    HF3 --> AGENT3["Sub-Agent"]
+
+    style PLAN fill:#3b82f6,color:#fff
+    style GROOM fill:#22c55e,color:#fff
+```
+
 ## 4. Story Completion Protocol
 
 When a sub-agent reports DONE on a user story, the orchestrator MUST run this checklist in
@@ -170,11 +209,12 @@ flowchart TD
 ## Overall Process Flow
 
 ```mermaid
-%% End-to-end story lifecycle gated by DOR and DOD
+%% End-to-end story lifecycle gated by DOR, sprint planning, and DOD
 flowchart TD
     GROOM["3. Grooming / Refinement"] --> DOR{"1. DOR\nsatisfied?"}
     DOR -->|No| GROOM
-    DOR -->|Yes| IMPL["Sub-agent implements story"]
+    DOR -->|Yes| PLAN["3.4 Sprint Planning\n(produce handoff files)"]
+    PLAN --> IMPL["Sub-agent executes\nhandoff file"]
     IMPL --> COMPLETE["4. Story Completion Protocol"]
     COMPLETE --> DOD{"2. DOD\nsatisfied?"}
     DOD -->|No| IMPL
@@ -185,6 +225,7 @@ flowchart TD
 
     style DOR fill:#f59e0b,color:#fff
     style DOD fill:#f59e0b,color:#fff
+    style PLAN fill:#3b82f6,color:#fff
     style HANDOFF fill:#22c55e,color:#fff
 ```
 

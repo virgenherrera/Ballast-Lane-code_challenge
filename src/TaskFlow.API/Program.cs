@@ -1,0 +1,105 @@
+using Microsoft.Extensions.Diagnostics.HealthChecks;
+using Npgsql;
+using TaskFlow.API.Configuration;
+
+// --- Fail-fast environment validation -------------------------------------
+// Must run before builder.Build() / app.Run() so a misconfigured environment
+// never reaches a listening state (see EP01-B0-03 quality gate G5).
+var envVars = EnvVarValidator.ValidateAndRead();
+
+var builder = WebApplication.CreateBuilder(args);
+
+// --- Options pattern: bind config sections from validated env vars --------
+// Handlers must never read IConfiguration directly — they consume typed
+// options instead.
+var connectionString = new NpgsqlConnectionStringBuilder
+{
+    Host = envVars["DB_HOST"],
+    Port = int.Parse(envVars["DB_PORT"]),
+    Username = envVars["DB_USER"],
+    Password = envVars["DB_PASSWORD"],
+    Database = envVars["DB_NAME"],
+}.ConnectionString;
+
+builder.Configuration["Database:ConnectionString"] = connectionString;
+builder.Configuration["Jwt:Secret"] = envVars["JWT_SECRET"];
+builder.Configuration["Jwt:Issuer"] = envVars["JWT_ISSUER"];
+builder.Configuration["Jwt:Audience"] = envVars["JWT_AUDIENCE"];
+
+builder.Services
+    .AddOptions<DatabaseOptions>()
+    .Bind(builder.Configuration.GetSection(DatabaseOptions.SectionName));
+
+builder.Services
+    .AddOptions<JwtOptions>()
+    .Bind(builder.Configuration.GetSection(JwtOptions.SectionName));
+
+// --- Kestrel: bind to API_PORT from environment, not a hardcoded port -----
+var apiPort = envVars["API_PORT"];
+builder.WebHost.UseUrls($"http://0.0.0.0:{apiPort}");
+
+// --- Services ---------------------------------------------------------
+builder.Services.AddOpenApi();
+
+// Lightweight PostgreSQL connectivity probe — a raw connection open/close,
+// NOT an EF Core DbContext (out of scope for this batch). Failures are
+// reported as "Unhealthy" by the health check framework and never throw
+// past this delegate, so /health always returns 200 OK.
+builder.Services.AddHealthChecks()
+    .AddCheck("postgresql", () =>
+    {
+        try
+        {
+            using var connection = new NpgsqlConnection(connectionString);
+            connection.Open();
+            using var cmd = new NpgsqlCommand("SELECT 1", connection);
+            cmd.ExecuteNonQuery();
+            return HealthCheckResult.Healthy();
+        }
+        catch (Exception ex)
+        {
+            return HealthCheckResult.Unhealthy(exception: ex);
+        }
+    });
+
+// Placeholder — future DI registration:
+// - Auth middleware / JWT bearer authentication (uses JwtOptions above)
+// - EF Core DbContext (TaskFlowDbContext) registration
+// - Repository and use-case service registrations
+
+var app = builder.Build();
+
+// Captured once at startup and reused — never recomputed per request.
+var liveSince = DateTimeOffset.UtcNow;
+
+// Configure the HTTP request pipeline.
+if (app.Environment.IsDevelopment())
+{
+    app.MapOpenApi();
+}
+
+app.UseHttpsRedirection();
+
+// Placeholder — future middleware:
+// - JWT authentication / authorization middleware
+
+// GET /health — public, outside the /api prefix, no authentication.
+// Always returns 200 OK, even when PostgreSQL is unreachable.
+app.MapGet("/health", async (HealthCheckService healthCheckService) =>
+{
+    var report = await healthCheckService.CheckHealthAsync();
+    var dbEntry = report.Entries.TryGetValue("postgresql", out var entry)
+        ? entry
+        : (HealthReportEntry?)null;
+
+    var dbStatus = dbEntry?.Status == HealthStatus.Healthy ? "ok" : "down";
+
+    return Results.Ok(new
+    {
+        status = "ok",
+        liveSince,
+        db = dbStatus,
+    });
+});
+
+app.Run();

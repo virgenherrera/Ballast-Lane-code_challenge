@@ -80,7 +80,17 @@ flowchart TD
 
 ## Process
 
-- [x] [Process Protocols](process.md) — DOR, DOD, grooming, completion, handoff, contract validation
+- [x] [Process Protocols](process.md) — DOR, DOD, grooming, sprint planning, completion, handoff, contract validation
+- [x] [Handoff Template](process/handoff-template.md) — task delegation format for sub-agents (11 sections, pre-flight checklist)
+
+## Sprint Planning — Handoffs
+
+### EP01 — Batch 0 (Infra Bootstrap)
+
+- [x] [Batch 0 Plan](subtasks/EP01/batch-0-plan.md) — scope, dependency graph, execution order
+  - [x] [EP01-B0-01 — Solution Scaffold](subtasks/EP01/EP01-B0-01-solution-scaffold.md)
+  - [x] [EP01-B0-02 — Docker Compose + Environment](subtasks/EP01/EP01-B0-02-docker-environment.md)
+  - [x] [EP01-B0-03 — Health Endpoint + Program.cs](subtasks/EP01/EP01-B0-03-health-endpoint.md)
 
 ## Navigation Notes
 
