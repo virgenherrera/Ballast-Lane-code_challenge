@@ -1,6 +1,8 @@
+> [📚 INDEX](../INDEX.md) / [EP02 — Task Management](../epics/EP02-task-management.md) / US-007
+
 # US-007 — Update Task
 
-**Epic**: EP02 - Task Management
+**Epic**: [EP02 - Task Management](../epics/EP02-task-management.md)
 **Priority**: Must Have
 **Status**: [ ] Not Started
 
@@ -44,3 +46,10 @@ As an **authenticated user**, I want to **update an existing task** so that **I 
 
 - Partial updates should be supported (only send fields that changed)
 - Due date validation: if provided, must be valid date (past dates allowed on update since a task might already be overdue)
+
+## Related Documents
+
+- [API Contract — Update Task](../architecture/api-contract.md#44-update-task--patch-apitasksid) — request/response shape and error codes
+- [Testing Strategy — US-007 coverage](../architecture/testing-strategy.md#us-007--update-task-patch-apitasksid)
+- [US-003 — Protected Access](US-003-protected-access.md) — cross-cutting auth requirement for this endpoint
+- [US-006 — View Task Detail](US-006-view-task-detail.md) — where updated values are reflected

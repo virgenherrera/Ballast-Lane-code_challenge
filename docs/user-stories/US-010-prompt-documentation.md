@@ -1,6 +1,8 @@
+> [📚 INDEX](../INDEX.md) / [EP03 — GenAI Process Documentation](../epics/EP03-genai-documentation.md) / US-010
+
 # US-010 — Prompt Documentation
 
-**Epic**: EP03 - GenAI Process Documentation
+**Epic**: [EP03 - GenAI Process Documentation](../epics/EP03-genai-documentation.md)
 **Priority**: Must Have
 **Status**: [ ] Not Started
 
@@ -30,3 +32,8 @@ As an **interview panel member**, I want to **see the exact prompts used with AI
 - This is documentation, not code
 - Include iterative prompts if the first attempt needed refinement
 - Show the progression of prompt refinement if applicable
+
+## Related Documents
+
+- [Project Brief — Deliverables](../project-brief.md#deliverables) — D3: GenAI Documentation deliverable
+- [US-011 — AI Output Validation Report](US-011-ai-output-validation.md) — companion deliverable for this epic

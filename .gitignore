@@ -11,3 +11,6 @@ Thumbs.db
 
 # Challenge source files
 ignoreThisPath/
+
+# Artifacts System — build outputs, test reports, generated specs
+artifacts/

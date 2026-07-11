@@ -1,6 +1,8 @@
+> [📚 INDEX](../INDEX.md) / [EP01 — User Management](../epics/EP01-user-management.md) / US-003
+
 # US-003 — Protected Access
 
-**Epic**: EP01 - User Management
+**Epic**: [EP01 - User Management](../epics/EP01-user-management.md)
 **Priority**: Must Have
 **Status**: [ ] Not Started
 
@@ -34,3 +36,14 @@ As an **authenticated user**, I want the system to **protect my resources** so t
 
 - All task endpoints are protected
 - Only registration and login are public
+
+## Related Documents
+
+- [API Contract — Tasks API (Protected)](../architecture/api-contract.md#4-tasks-api-protected) — where this story's rules are enforced
+- [Testing Strategy — US-003 coverage](../architecture/testing-strategy.md#us-003--protected-access-cross-cutting-all-apitasks)
+- [Clean Architecture — Cross-Cutting Concerns](../architecture/clean-architecture.md#6-cross-cutting-concerns)
+
+This story is cross-cutting: it applies to every protected task endpoint. Related task user
+stories: [US-004](US-004-create-task.md), [US-005](US-005-list-tasks.md),
+[US-006](US-006-view-task-detail.md), [US-007](US-007-update-task.md),
+[US-008](US-008-delete-task.md), [US-009](US-009-filter-tasks-by-status.md).

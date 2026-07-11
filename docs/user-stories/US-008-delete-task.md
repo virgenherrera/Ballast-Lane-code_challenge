@@ -1,6 +1,8 @@
+> [📚 INDEX](../INDEX.md) / [EP02 — Task Management](../epics/EP02-task-management.md) / US-008
+
 # US-008 — Delete Task
 
-**Epic**: EP02 - Task Management
+**Epic**: [EP02 - Task Management](../epics/EP02-task-management.md)
 **Priority**: Must Have
 **Status**: [ ] Not Started
 
@@ -33,3 +35,10 @@ As an **authenticated user**, I want to **delete a task** so that **I can remove
 ## Notes
 
 - Hard delete (permanent removal), no soft delete needed for this scope
+
+## Related Documents
+
+- [API Contract — Delete Task](../architecture/api-contract.md#45-delete-task--delete-apitasksid) — request/response shape and error codes
+- [Testing Strategy — US-008 coverage](../architecture/testing-strategy.md#us-008--delete-task-delete-apitasksid)
+- [US-003 — Protected Access](US-003-protected-access.md) — cross-cutting auth requirement for this endpoint
+- [US-005 — List Tasks](US-005-list-tasks.md) — where deletion is reflected

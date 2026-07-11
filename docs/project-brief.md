@@ -1,3 +1,5 @@
+> [📚 INDEX](INDEX.md) / Project Brief
+
 # Project Brief — TaskFlow
 
 ## Vision
@@ -25,17 +27,21 @@ flowchart TD
 
 ## Deliverables
 
-- [ ] **D1** — Backend API: RESTful API with CRUD operations, user auth, layered architecture
-- [ ] **D2** — Frontend: Responsive web UI with CRUD operations connected to the API
-- [ ] **D3** — GenAI Documentation: Prompt engineering process, AI output, validation, and corrections
+- [ ] **D1** — Backend API: RESTful API with CRUD operations, user auth, layered architecture — see
+      [EP01 — User Management](epics/EP01-user-management.md), [EP02 — Task Management](epics/EP02-task-management.md),
+      and [Clean Architecture](architecture/clean-architecture.md)
+- [ ] **D2** — Frontend: Responsive web UI with CRUD operations connected to the API — see
+      [Tech Stack — Decision 5](architecture/tech-stack.md#decision-5-frontend-framework)
+- [ ] **D3** — GenAI Documentation: Prompt engineering process, AI output, validation, and corrections — see
+      [EP03 — GenAI Process Documentation](epics/EP03-genai-documentation.md)
 - [ ] **D4** — Presentation: README with thought process, setup instructions, user story
 
 ## Constraints
 
 - Single public GitHub repository
 - Seeded data and credentials for demo purposes
-- Clean Architecture principles (separation of concerns, component independence)
-- Test-Driven Development methodology
+- Clean Architecture principles (separation of concerns, component independence) — see [Clean Architecture](architecture/clean-architecture.md)
+- Test-Driven Development methodology — see [Testing Strategy](architecture/testing-strategy.md)
 - Deadline: 2026-07-13 at 11:00 CDT
 - No further work allowed after submission
 
@@ -53,3 +59,9 @@ flowchart TD
 ## Post-Submission
 
 Presentation via Google Meet/Zoom with screen share. Code review by interview panel. Must explain user story, design choices, technical architecture, and demonstrate functionality.
+
+## Related Documents
+
+- [Domain Glossary](domain-glossary.md) — ubiquitous language for User and Task entities
+- [Tech Stack](architecture/tech-stack.md) — technology decisions behind the Backend API deliverable
+- [EP01 — User Management](epics/EP01-user-management.md), [EP02 — Task Management](epics/EP02-task-management.md), [EP03 — GenAI Process Documentation](epics/EP03-genai-documentation.md) — epics implementing these deliverables

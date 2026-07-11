@@ -1,3 +1,5 @@
+> [📚 INDEX](INDEX.md) / Domain Glossary
+
 # Domain Glossary — Ubiquitous Language
 
 Terms used consistently across all documentation, code, and communication.
@@ -25,21 +27,27 @@ erDiagram
     USER ||--o{ TASK : "owns"
 ```
 
-## Task Lifecycle
+## Task Status Values
 
 ```mermaid
-%% Status state machine
+%% Task status — allowed values (transitions are free-form via PATCH)
 flowchart LR
-    A([Created]) --> B[Pending]
-    B --> C[In Progress]
-    C --> D[Completed]
-    B --> D
+    P([Pending]) ~~~ IP([In Progress]) ~~~ C([Completed])
+
+    style P fill:#94a3b8,color:#fff
+    style IP fill:#3b82f6,color:#fff
+    style C fill:#22c55e,color:#fff
 ```
+
+The three status values above are the valid enum members. Tasks are created as `Pending`.
+Status changes are allowed freely via `PATCH /api/tasks/{id}` — there are no enforced
+directional transitions for this CRUD-scoped application.
 
 ## Core Domain
 
 ### Task
 A unit of work that a user wants to track. Has a lifecycle from creation to completion or removal.
+See [EP02 — Task Management](epics/EP02-task-management.md) for the full CRUD lifecycle.
 
 **Properties:**
 - **Title**: short, descriptive name for the task (required)
@@ -55,6 +63,7 @@ The current state of a task in its lifecycle:
 
 ### User
 A person who registers and authenticates to use the system. Each user owns their own tasks.
+See [EP01 — User Management](epics/EP01-user-management.md) for registration and authentication flows.
 
 **Properties:**
 - **Email**: unique identifier for authentication (required)
@@ -64,13 +73,16 @@ A person who registers and authenticates to use the system. Each user owns their
 ## Access Control
 
 ### Authenticated User
-A user who has successfully logged in and possesses a valid session/token.
+A user who has successfully logged in and possesses a valid session/token. See
+[US-003 — Protected Access](user-stories/US-003-protected-access.md).
 
 ### Public Endpoint
-An API endpoint accessible without authentication (e.g., registration, login).
+An API endpoint accessible without authentication (e.g., registration, login). See
+[API Contract — Auth API](architecture/api-contract.md#3-auth-api-public).
 
 ### Protected Endpoint
-An API endpoint that requires authentication to access.
+An API endpoint that requires authentication to access. See
+[API Contract — Tasks API](architecture/api-contract.md#4-tasks-api-protected).
 
 ## Operations
 
@@ -83,3 +95,9 @@ The four basic operations on any resource:
 
 ### Task Ownership
 A task belongs to the user who created it. Users can only perform CRUD operations on their own tasks.
+
+## Related Documents
+
+- [Project Brief](project-brief.md) — overall vision this glossary supports
+- [EP01 — User Management](epics/EP01-user-management.md) and [EP02 — Task Management](epics/EP02-task-management.md) — epics using these terms
+- [API Contract](architecture/api-contract.md) — where these entities appear as request/response shapes

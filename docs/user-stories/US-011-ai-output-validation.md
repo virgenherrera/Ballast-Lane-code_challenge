@@ -1,6 +1,8 @@
+> [📚 INDEX](../INDEX.md) / [EP03 — GenAI Process Documentation](../epics/EP03-genai-documentation.md) / US-011
+
 # US-011 — AI Output Validation Report
 
-**Epic**: EP03 - GenAI Process Documentation
+**Epic**: [EP03 - GenAI Process Documentation](../epics/EP03-genai-documentation.md)
 **Priority**: Must Have
 **Status**: [ ] Not Started
 
@@ -40,3 +42,8 @@ As an **interview panel member**, I want to **see how the candidate validated an
 - Show before/after comparisons where corrections were made
 - Highlight what the AI got right and what it got wrong
 - This demonstrates the MIM principle: the human directs, the AI executes
+
+## Related Documents
+
+- [Testing Strategy — Harness Rules](../architecture/testing-strategy.md#8-harness-rules) — validation standard AI output must meet
+- [US-010 — Prompt Documentation](US-010-prompt-documentation.md) — companion deliverable for this epic

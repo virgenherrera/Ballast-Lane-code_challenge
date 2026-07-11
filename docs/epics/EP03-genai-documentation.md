@@ -1,3 +1,5 @@
+> [📚 INDEX](../INDEX.md) / [Epics](../INDEX.md#epics) / EP03
+
 # EP03 — GenAI Process Documentation
 
 ## Summary
@@ -27,8 +29,8 @@ flowchart TD
 
 ## Deliverables
 
-- [ ] **US-010** — Prompt Documentation `Must Have`
-- [ ] **US-011** — AI Output Validation Report `Must Have`
+- [ ] [**US-010** — Prompt Documentation](../user-stories/US-010-prompt-documentation.md) `Must Have`
+- [ ] [**US-011** — AI Output Validation Report](../user-stories/US-011-ai-output-validation.md) `Must Have`
 
 ## Acceptance Boundaries
 
@@ -38,3 +40,8 @@ flowchart TD
 - Document what was corrected or improved and why
 - Explain how edge cases, authentication, and validations were handled
 - Demonstrate critical thinking, not blind acceptance
+
+## Related Architecture
+
+- [Project Brief — Deliverables](../project-brief.md#deliverables) — D3: GenAI Documentation deliverable
+- [Testing Strategy](../architecture/testing-strategy.md) — validated output referenced by US-011

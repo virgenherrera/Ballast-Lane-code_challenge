@@ -1,3 +1,5 @@
+> [📚 INDEX](../INDEX.md) / [Epics](../INDEX.md#epics) / EP01
+
 # EP01 — User Management
 
 ## Summary
@@ -42,9 +44,9 @@ sequenceDiagram
 
 ## User Stories
 
-- [ ] **US-001** — User Registration `Must Have`
-- [ ] **US-002** — User Login `Must Have`
-- [ ] **US-003** — Protected Access `Must Have`
+- [ ] [**US-001** — User Registration](../user-stories/US-001-user-registration.md) `Must Have`
+- [ ] [**US-002** — User Login](../user-stories/US-002-user-login.md) `Must Have`
+- [ ] [**US-003** — Protected Access](../user-stories/US-003-protected-access.md) `Must Have`
 
 ## Acceptance Boundaries
 
@@ -53,3 +55,10 @@ sequenceDiagram
 - Authentication tokens/sessions must expire
 - Public endpoints: registration, login
 - Protected endpoints: everything else
+
+## Related Documents
+
+- [API Contract — Auth API](../architecture/api-contract.md#3-auth-api-public) — registration and login endpoint specs
+- [API Contract — Tasks API](../architecture/api-contract.md#4-tasks-api-protected) — protected endpoint auth rules (US-003)
+- [Testing Strategy — US-001 through US-003 coverage](../architecture/testing-strategy.md#33-mapping-acceptance-criteria-to-test-cases)
+- [Tech Stack — Decision 4: Authentication Mechanism](../architecture/tech-stack.md#decision-4-authentication-mechanism)

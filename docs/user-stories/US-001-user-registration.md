@@ -1,6 +1,8 @@
+> [📚 INDEX](../INDEX.md) / [EP01 — User Management](../epics/EP01-user-management.md) / US-001
+
 # US-001 — User Registration
 
-**Epic**: EP01 - User Management
+**Epic**: [EP01 - User Management](../epics/EP01-user-management.md)
 **Priority**: Must Have
 **Status**: [ ] Not Started
 
@@ -35,3 +37,10 @@ As a **visitor**, I want to **register an account** so that **I can access the t
 - Email format must be validated
 - Password minimum requirements to be defined during design phase
 - This is a public (non-authenticated) endpoint
+
+## Related Documents
+
+- [API Contract — Register](../architecture/api-contract.md#31-register--post-apiauthregister) — request/response shape and error codes
+- [Testing Strategy — US-001 coverage](../architecture/testing-strategy.md#us-001--user-registration-post-apiauthregister)
+- [US-002 — User Login](US-002-user-login.md) — next step after registration
+- [US-003 — Protected Access](US-003-protected-access.md) — cross-cutting auth enforcement
