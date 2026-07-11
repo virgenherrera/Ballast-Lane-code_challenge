@@ -7,7 +7,7 @@
 **Epic**: [EP00 - Project Infrastructure](../epics/EP00-project-infrastructure.md)
 **Dependencies**: [US-013](US-013-docker-compose-environment.md) (requires running compose topology)
 **Priority**: Must Have
-**Status**: [ ] Not Started
+**Status**: [x] Done (documentation/planning)
 
 ## Story
 

@@ -158,8 +158,9 @@ the full GenAI process documentation, including prompts, outputs, and validation
 | GET | `/health` | Public | Liveness + DB connectivity check |
 | POST | `/api/auth/register` | Public | Register a new user |
 | POST | `/api/auth/login` | Public | Log in, receive JWT |
+| GET | `/api/auth/me` | Bearer | Current user profile |
 | POST | `/api/tasks` | Bearer | Create a task |
-| GET | `/api/tasks` | Bearer | List tasks (optional `?status=` filter) |
+| GET | `/api/tasks` | Bearer | List tasks (paginated, optional `?status=` filter) |
 | GET | `/api/tasks/{id}` | Bearer | View task detail |
 | PATCH | `/api/tasks/{id}` | Bearer | Update a task |
 | DELETE | `/api/tasks/{id}` | Bearer | Delete a task |

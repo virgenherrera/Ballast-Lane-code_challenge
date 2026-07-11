@@ -7,7 +7,7 @@
 **Epic**: [EP00 - Project Infrastructure](../epics/EP00-project-infrastructure.md)
 **Dependencies**: [US-012](US-012-docker-multi-stage-build.md) (requires built Docker images)
 **Priority**: Must Have
-**Status**: [ ] Not Started
+**Status**: [x] Done (documentation/planning)
 
 ## Story
 

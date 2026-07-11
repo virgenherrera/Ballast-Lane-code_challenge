@@ -7,7 +7,7 @@
 **Epic**: EP00 - Project Infrastructure
 **Dependencies**: [US-012](US-012-docker-multi-stage-build.md), [US-013](US-013-docker-compose-environment.md) (requires running system)
 **Priority**: Must Have
-**Status**: [ ] Not Started
+**Status**: [x] Done (documentation/planning)
 
 ## Story
 

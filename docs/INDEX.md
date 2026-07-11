@@ -45,11 +45,11 @@ flowchart TD
 
 ## Epics
 
-- [ ] [EP00 — Project Infrastructure](epics/EP00-project-infrastructure.md)
-  - [ ] [US-012 — Docker Multi-Stage Build](user-stories/US-012-docker-multi-stage-build.md)
-  - [ ] [US-013 — Docker Compose Environment](user-stories/US-013-docker-compose-environment.md)
-  - [ ] [US-014 — Test Infrastructure](user-stories/US-014-test-infrastructure.md)
-  - [ ] [US-015 — Seed Data and Demo Credentials](user-stories/US-015-seed-data-and-credentials.md)
+- [x] [EP00 — Project Infrastructure](epics/EP00-project-infrastructure.md) _(documentation/planning complete)_
+  - [x] [US-012 — Docker Multi-Stage Build](user-stories/US-012-docker-multi-stage-build.md)
+  - [x] [US-013 — Docker Compose Environment](user-stories/US-013-docker-compose-environment.md)
+  - [x] [US-014 — Test Infrastructure](user-stories/US-014-test-infrastructure.md)
+  - [x] [US-015 — Seed Data and Demo Credentials](user-stories/US-015-seed-data-and-credentials.md)
 - [ ] [EP01 — User Management](epics/EP01-user-management.md)
   - [ ] [US-001 — User Registration](user-stories/US-001-user-registration.md)
   - [ ] [US-002 — User Login](user-stories/US-002-user-login.md)

@@ -144,12 +144,17 @@ Domain:
 - [ ] `Task_CreateWithPastDueDate_ThrowsDomainException`
 - [ ] `TaskStatus_ParseInvalidValue_ThrowsArgumentException`
 - [ ] `Email_CreateWithInvalidFormat_ThrowsValidationException`
+- [ ] `Email_CreateWithUppercase_ThrowsValidationException`
 
 Application:
 
+- [ ] `RegisterUserUseCase_WithValidInput_ReturnsUserDto`
+- [ ] `RegisterUserUseCase_WithDuplicateEmail_ThrowsConflict`
+- [ ] `AuthenticateUserUseCase_WithValidCredentials_ReturnsTokenDto`
+- [ ] `AuthenticateUserUseCase_WithWrongPassword_ThrowsUnauthorized`
+- [ ] `AuthenticateUserUseCase_WithNonExistentEmail_ThrowsUnauthorized`
 - [ ] `CreateTaskUseCase_WithValidInput_ReturnsTaskDto`
 - [ ] `CreateTaskUseCase_WithDuplicateTitle_DelegatesToRepository`
-- [ ] `AuthenticateUserUseCase_WithWrongPassword_ThrowsUnauthorized`
 
 **Speed constraint**: the entire unit suite runs in **under 1 second** — no database, no HTTP,
 no Docker. This makes it the tightest feedback loop available while developing Domain and
@@ -223,6 +228,7 @@ integration test. Naming follows `MethodName_Scenario_ExpectedResult` (see
 Story: [US-001 — User Registration](../user-stories/US-001-user-registration.md)
 
 - [ ] AC-1: `Register_WithInvalidEmailFormat_Returns400`
+- [ ] AC-1: `Register_WithUppercaseEmail_Returns400`
 - [ ] AC-2: `Register_WithAlreadyRegisteredEmail_Returns409`
 - [ ] AC-3: `Register_WithWeakPassword_Returns400`
 - [ ] AC-4: `Register_WithMissingRequiredField_Returns400`
@@ -235,16 +241,22 @@ Story: [US-002 — User Login](../user-stories/US-002-user-login.md)
 - [ ] AC-2: `Login_WithWrongPassword_Returns401WithGenericMessage`
 - [ ] AC-2: `Login_WithNonExistentEmail_Returns401WithSameGenericMessage`
 - [ ] AC-3: `Login_WithMissingEmailOrPassword_Returns400`
+- [ ] Security: `Login_WithNonExistentEmail_ResponseTimeMatchesWrongPasswordTime`
+- [ ] Security: `Login_ExceedsRateLimit_Returns429WithRetryAfter`
 - [ ] Happy path: `Login_WithValidCredentials_Returns200WithAccessToken`
 
-#### US-003 — Protected Access (cross-cutting, all `/api/tasks/*`)
+#### US-003 — Protected Access (cross-cutting + `GET /api/auth/me`)
 
 Story: [US-003 — Protected Access](../user-stories/US-003-protected-access.md)
 
 - [ ] AC-1: `ProtectedEndpoint_WithValidToken_AllowsRequest`
 - [ ] AC-2: `ProtectedEndpoint_WithMissingToken_Returns401`
-- [ ] AC-3: `ProtectedEndpoint_WithExpiredOrTamperedToken_Returns401`
+- [ ] AC-3: `ProtectedEndpoint_WithExpiredToken_Returns401`
+- [ ] AC-3: `ProtectedEndpoint_WithTamperedToken_Returns401`
+- [ ] AC-3: `ProtectedEndpoint_Returns401_WithCustomJsonShape`
 - [ ] AC-4: `ProtectedEndpoint_QueryOrMutation_IsScopedToOwnerIdClaim`
+- [ ] EP01: `GetAuthMe_WithValidToken_ReturnsUserProfile`
+- [ ] EP01: `GetAuthMe_WithoutToken_Returns401`
 
 #### US-004 — Create Task (`POST /api/tasks`)
 
@@ -263,6 +275,12 @@ Story: [US-005 — List Tasks](../user-stories/US-005-list-tasks.md)
 - [ ] AC-2: `ListTasks_WhenUserHasNoTasks_ReturnsEmptyItemsNotError`
 - [ ] AC-3: `ListTasks_OnlyReturnsTasksOwnedByCaller`
 - [ ] AC-4: `ListTasks_EachItem_ExposesTitleStatusAndDueDate`
+- [ ] Paging: `ListTasks_NoParams_ReturnsFirstPageWithServerDefault`
+- [ ] Paging: `ListTasks_SecondPage_ReturnsPrevLinkAndCorrectItems`
+- [ ] Paging: `ListTasks_PageBeyondTotal_ReturnsEmptyItemsWithTotal`
+- [ ] Paging: `ListTasks_InvalidPage_Returns400`
+- [ ] Paging: `ListTasks_PerPageExceeds100_Returns400`
+- [ ] Paging: `ListTasks_WithStatusFilter_PagingLinksPreserveFilter`
 
 #### US-006 — View Task Detail (`GET /api/tasks/{id}`)
 
@@ -374,6 +392,7 @@ flowchart LR
 - [ ] `DeleteTask_FromUI_RemovesFromListAndConfirms`
 - [ ] `FilterTasksByStatus_FromUI_ShowsOnlyMatchingTasks`
 - [ ] `FilterTasksByStatus_NoMatches_ShowsEmptyState`
+- [ ] `ListTasks_NavigatePages_UpdatesListAndPagingControls`
 
 ### 4.4 Auth flow coverage
 

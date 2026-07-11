@@ -59,7 +59,19 @@ Partial completion is not completion — all boxes must be checked with evidence
 ## 3. Grooming / Refinement Protocol
 
 Every epic and its user stories MUST be groomed before a sprint or implementation batch
-starts. Grooming is a read-and-verify activity — it produces no code.
+starts. Grooming bridges the gap between Discovery (high-level stories) and Implementation
+(sprint-ready work). Discovery defines the **what** and **why**; Refinement adds the **how**.
+
+### 3.1 Discovery vs. Refinement
+
+| Aspect | Discovery | Refinement |
+| ------ | --------- | ---------- |
+| Depth | High-level: persona, value, acceptance criteria | Technical: approach, migrations, test strategy, infra needs |
+| Output | User stories with Given/When/Then ACs | Sprint-ready stories with technical approach defined |
+| Code | None | None — but technical decisions are made |
+| Timing | Once per epic (before architecture) | Once per epic (before implementation) |
+
+### 3.2 Refinement Checklist
 
 - [ ] Read the epic and all of its user stories in full
 - [ ] Cross-reference each story against [api-contract.md](architecture/api-contract.md)
@@ -69,8 +81,21 @@ starts. Grooming is a read-and-verify activity — it produces no code.
 - [ ] Verify the [Definition of Ready](#1-definition-of-ready-dor) checklist for every story
       in the batch
 - [ ] Identify implementation order based on dependencies between stories
+- [ ] Define the technical approach per story — the team defines **how** to implement,
+      the PO/orchestrator defines **what** and **why**
+- [ ] Size each story — if a story cannot be completed in one implementation batch, split it
+- [ ] Identify cross-epic dependencies and infrastructure prerequisites
+- [ ] Identify risks and unknowns — document mitigations or spikes needed
 - [ ] Break the epic into implementation batches if it is too large for one pass
-- [ ] Document any discoveries, risks, or open questions found during grooming
+- [ ] Document all discoveries, risks, and decisions made during grooming
+
+### 3.3 Anti-Patterns
+
+- **Over-refining**: aiming for absolute certainty when basic clarity is enough — refine to
+  "ready to commit", not to "perfect spec"
+- **Refining too early**: stories far from implementation drift — refine only the next epic
+- **Skipping the "how"**: discovery-level stories without technical approach lead to
+  implementation surprises
 
 ## 4. Story Completion Protocol
 

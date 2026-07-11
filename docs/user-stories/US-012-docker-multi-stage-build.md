@@ -7,7 +7,7 @@
 **Epic**: EP00 - Project Infrastructure
 **Dependencies**: None (first story in EP00)
 **Priority**: Must Have
-**Status**: [ ] Not Started
+**Status**: [x] Done (documentation/planning)
 
 ## Story
 

@@ -151,10 +151,10 @@ flowchart LR
 
 ## User Stories
 
-- [ ] [US-012 — Docker Multi-Stage Build](../user-stories/US-012-docker-multi-stage-build.md) `Must Have`
-- [ ] [US-013 — Docker Compose Environment](../user-stories/US-013-docker-compose-environment.md) `Must Have`
-- [ ] [US-014 — Test Infrastructure](../user-stories/US-014-test-infrastructure.md) `Must Have`
-- [ ] [US-015 — Seed Data and Demo Credentials](../user-stories/US-015-seed-data-and-credentials.md) `Must Have`
+- [x] [US-012 — Docker Multi-Stage Build](../user-stories/US-012-docker-multi-stage-build.md) `Must Have`
+- [x] [US-013 — Docker Compose Environment](../user-stories/US-013-docker-compose-environment.md) `Must Have`
+- [x] [US-014 — Test Infrastructure](../user-stories/US-014-test-infrastructure.md) `Must Have`
+- [x] [US-015 — Seed Data and Demo Credentials](../user-stories/US-015-seed-data-and-credentials.md) `Must Have`
 
 ## Acceptance Boundaries
 

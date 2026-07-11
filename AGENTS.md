@@ -33,7 +33,7 @@ flowchart LR
     D --> E([Submission])
 
     style A fill:#22c55e,color:#fff
-    style B fill:#94a3b8,color:#fff
+    style B fill:#22c55e,color:#fff
     style C fill:#94a3b8,color:#fff
     style D fill:#94a3b8,color:#fff
     style E fill:#94a3b8,color:#fff
@@ -41,7 +41,7 @@ flowchart LR
 
 ## Current Phase
 
-**Architecture** — Technology decisions, layer design, and API contract documentation. Still no code.
+**Implementation** — EP00 (documentation/planning) done. Building EP01 (auth), EP02 (tasks), EP04 (frontend). EP03 runs in parallel. Infrastructure from EP00 materializes during functional epics.
 
 ## Conventions
 

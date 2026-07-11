@@ -15,6 +15,7 @@ the two API groups: **Auth API** (public) and **Tasks API** (protected).
 - [5. Authentication Flow](#5-authentication-flow)
 - [6. Status Codes Reference](#6-status-codes-reference)
 - [7. Filtering](#7-filtering)
+- [8. Pagination](#8-pagination)
 
 ## 1. Endpoint Summary
 
@@ -22,9 +23,10 @@ the two API groups: **Auth API** (public) and **Tasks API** (protected).
 | ------ | ---- | ---- | -- | ----------- |
 | GET | `/health` | Public | US-012 | Liveness + database connectivity check |
 | POST | `/api/auth/register` | Public | US-001 | Register a new user account |
-| POST | `/api/auth/login` | Public | US-002 | Authenticate and receive a JWT access token |
+| POST | `/api/auth/login` | Public | US-002 | Authenticate and receive a JWT access token (rate-limited) |
+| GET | `/api/auth/me` | Bearer | US-003 | Return the authenticated user's profile |
 | POST | `/api/tasks` | Bearer | US-004 | Create a new task owned by the caller |
-| GET | `/api/tasks` | Bearer | US-005, US-009 | List the caller's tasks, optionally filtered by status |
+| GET | `/api/tasks` | Bearer | US-005, US-009 | List the caller's tasks with pagination, optionally filtered by status |
 | GET | `/api/tasks/{id}` | Bearer | US-006 | Retrieve a single task owned by the caller |
 | PATCH | `/api/tasks/{id}` | Bearer | US-007 | Partially update an existing task owned by the caller |
 | DELETE | `/api/tasks/{id}` | Bearer | US-008 | Permanently delete a task owned by the caller |
@@ -36,7 +38,7 @@ user isolation) since that user story is a cross-cutting requirement, not a stan
 
 - [x] [US-001 — User Registration](../user-stories/US-001-user-registration.md) → `POST /api/auth/register`
 - [x] [US-002 — User Login](../user-stories/US-002-user-login.md) → `POST /api/auth/login`
-- [x] [US-003 — Protected Access](../user-stories/US-003-protected-access.md) → enforced on all `/api/tasks/*` endpoints via JWT middleware
+- [x] [US-003 — Protected Access](../user-stories/US-003-protected-access.md) → `GET /api/auth/me` + enforced on all `/api/tasks/*` endpoints via JWT middleware
 - [x] [US-004 — Create Task](../user-stories/US-004-create-task.md) → `POST /api/tasks`
 - [x] [US-005 — List Tasks](../user-stories/US-005-list-tasks.md) → `GET /api/tasks`
 - [x] [US-006 — View Task Detail](../user-stories/US-006-view-task-detail.md) → `GET /api/tasks/{id}`
@@ -111,9 +113,9 @@ Maps to [US-001](../user-stories/US-001-user-registration.md) (AC-1 through AC-4
 
 ```jsonc
 {
-  "email": "string (required, valid email format, unique)",
+  "email": "string (required, valid email format, unique, lowercase only — uppercase rejected with 400)",
   "name": "string (required, non-empty)",
-  "password": "string (required, must meet minimum strength requirements)"
+  "password": "string (required, min 8 chars, at least 1 uppercase, 1 number, 1 special character)"
 }
 ```
 
@@ -133,8 +135,8 @@ Maps to [US-001](../user-stories/US-001-user-registration.md) (AC-1 through AC-4
 | Status | Condition | AC |
 | ------ | --------- | -- |
 | 400 | Missing required field (`email`, `name`, or `password`) | AC-4 |
-| 400 | Email format invalid | AC-1 |
-| 400 | Password does not meet minimum strength requirements | AC-3 |
+| 400 | Email format invalid or contains uppercase characters | AC-1 |
+| 400 | Password does not meet strength requirements (min 8, 1 upper, 1 number, 1 special) | AC-3 |
 | 409 | Email already registered | AC-2 |
 
 ### 3.2 Login — `POST /api/auth/login`
@@ -173,9 +175,36 @@ Maps to [US-002](../user-stories/US-002-user-login.md) (AC-1 through AC-3).
 | ------ | --------- | -- |
 | 400 | Missing `email` or `password` | AC-3 |
 | 401 | Invalid email or password (generic message, does not reveal which field is wrong) | AC-2 |
+| 429 | Too many login attempts — `Retry-After` header included (5 attempts/min/IP, exponential backoff) | Security |
 
 Note on AC-2: the `message` field must read identically whether the email does not exist or the
-password is wrong (e.g., `"Invalid email or password."`), to prevent user enumeration.
+password is wrong (e.g., `"Invalid email or password."`), to prevent user enumeration. Both code
+paths must take the same time (dummy BCrypt.Verify when user not found) to prevent timing attacks.
+
+### 3.3 Current User — `GET /api/auth/me`
+
+Maps to [US-003](../user-stories/US-003-protected-access.md) (AC-1 through AC-3).
+
+**Auth**: Bearer token (protected).
+
+**Request Body**: None.
+
+**Success Response — `200 OK`**:
+
+```jsonc
+{
+  "id": "string (uuid v7, required)",
+  "email": "string (required)",
+  "name": "string (required)",
+  "createdAt": "string (ISO 8601 timestamp, required)"
+}
+```
+
+**Error Responses**:
+
+| Status | Condition | AC |
+| ------ | --------- | -- |
+| 401 | Missing, invalid, or expired token | AC-2, AC-3 |
 
 ## 4. Tasks API (Protected)
 
@@ -235,11 +264,14 @@ Maps to [US-005](../user-stories/US-005-list-tasks.md) (AC-1 through AC-4) and
 
 **Query Parameters**:
 
-| Parameter | Type | Required | Description |
-| --------- | ---- | -------- | ------------ |
-| `status` | string, one of `Pending`, `In Progress`, `Completed` | No | Filter tasks to a single status. Omit to return all statuses (US-005 AC-1, US-009 AC-4) |
+| Parameter | Type | Required | Default | Description |
+| --------- | ---- | -------- | ------- | ----------- |
+| `status` | string, one of `Pending`, `In Progress`, `Completed` | No | — | Filter tasks to a single status. Omit to return all statuses (US-005 AC-1, US-009 AC-4) |
+| `page` | integer (≥ 1) | No | `1` | Page number. Values ≤ 0 return `400`. Omit to get the first page |
+| `perPage` | integer (1–MaxPerPage) | No | Server constant | Items per page. Default and max defined in `PaginationDefaults`. Values outside range return `400` |
 
 See [Section 7 — Filtering](#7-filtering) for full behavior.
+See [Section 8 — Pagination](#8-pagination) for paging mechanics.
 
 **Success Response — `200 OK`**:
 
@@ -253,20 +285,28 @@ See [Section 7 — Filtering](#7-filtering) for full behavior.
       "dueDate": "string (ISO 8601 date, nullable)"
     }
   ],
-  "count": "number (required, total items in the returned list)"
+  "paging": {
+    "page": "number (required, current page number)",
+    "perPage": "number (required, items per page)",
+    "total": "number (required, total items matching the filter across all pages)",
+    "prev": "string | null (required, relative URL to previous page, null on first page)",
+    "next": "string | null (required, relative URL to next page, null on last page)"
+  }
 }
 ```
 
-- `items` is `[]` (empty array) when the user has no tasks, or none match the filter — never an
-  error (US-005 AC-2, US-009 AC-2).
+- `items` is `[]` (empty array) when the user has no tasks, none match the filter, or `page`
+  exceeds total pages — never an error (US-005 AC-2, US-009 AC-2).
 - `items` only ever contains tasks owned by the caller (US-005 AC-3).
 - Each item exposes at minimum `title`, `status`, and `dueDate` as required by US-005 AC-4.
+- `paging.prev` and `paging.next` preserve any active `status` filter in the URL.
 
 **Error Responses**:
 
 | Status | Condition | AC |
 | ------ | --------- | -- |
 | 400 | `status` query parameter has a value outside the valid enum | US-009 AC-3 |
+| 400 | `page` ≤ 0 or `perPage` outside 1–100 | Pagination |
 | 401 | Missing, invalid, or expired token | US-003 |
 
 ### 4.3 View Task Detail — `GET /api/tasks/{id}`
@@ -415,10 +455,11 @@ sequenceDiagram
 | 200 | OK | Successful `GET`, `PATCH`, `POST /api/auth/login` responses |
 | 201 | Created | Successful `POST /api/auth/register`, `POST /api/tasks` |
 | 204 | No Content | Successful `DELETE /api/tasks/{id}` |
-| 400 | Bad Request | Validation errors: missing/empty required fields, weak password, invalid email format, past due date on create, invalid status enum value |
+| 400 | Bad Request | Validation errors: missing/empty required fields, weak password, invalid email format, uppercase email, past due date on create, invalid status enum value |
 | 401 | Unauthorized | Missing `Authorization` header, invalid/expired/tampered JWT, or wrong login credentials |
 | 404 | Not Found | Task does not exist, or exists but belongs to a different user (ownership violations are masked as not-found) |
 | 409 | Conflict | Registration attempted with an email that already exists |
+| 429 | Too Many Requests | Login rate limit exceeded (5 attempts/min/IP, exponential backoff) |
 
 ## 7. Filtering
 
@@ -453,6 +494,83 @@ currently `In Progress`.
   ]
 }
 ```
+
+## 8. Pagination
+
+The list endpoint (`GET /api/tasks`) supports cursor-free page-based pagination via `page` and
+`perPage` query parameters. Pagination composes with the `status` filter — both are applied
+simultaneously.
+
+The endpoint works with **zero pagination parameters**. Calling `GET /api/tasks` without `page`
+or `perPage` returns the first page using the server's default page size — both values are
+defined as constants in the backend (`PaginationDefaults.Page`, `PaginationDefaults.PerPage`).
+The client never needs to know or hardcode these defaults.
+
+| Aspect | Behavior |
+| ------ | -------- |
+| Default page | `1` (first page) — from `PaginationDefaults.Page` |
+| Default perPage | Server-defined constant (`PaginationDefaults.PerPage`) — the API contract does not hardcode this value; the backend owns it |
+| Maximum perPage | Server-defined constant (`PaginationDefaults.MaxPerPage`) — values above return `400` |
+| Minimum perPage | `1` — values below return `400` |
+| Page ≤ 0 | Returns `400 Bad Request` |
+| Page beyond total | Returns `200 OK` with `"items": []` and `paging.total` reflecting the real count |
+| Ordering | By `createdAt` descending (newest first) — deterministic for paging stability |
+| No params | Equivalent to `?page=1&perPage={PaginationDefaults.PerPage}` — always valid, always returns data if tasks exist |
+
+**Example — first page**: `GET /api/tasks?page=1&perPage=5`
+
+```jsonc
+{
+  "items": [ /* 5 tasks */ ],
+  "paging": {
+    "page": 1,
+    "perPage": 5,
+    "total": 12,
+    "prev": null,
+    "next": "/api/tasks?page=2&perPage=5"
+  }
+}
+```
+
+**Example — middle page with status filter**: `GET /api/tasks?status=Pending&page=2&perPage=5`
+
+```jsonc
+{
+  "items": [ /* up to 5 pending tasks */ ],
+  "paging": {
+    "page": 2,
+    "perPage": 5,
+    "total": 8,
+    "prev": "/api/tasks?status=Pending&page=1&perPage=5",
+    "next": null
+  }
+}
+```
+
+**Example — page beyond total**: `GET /api/tasks?page=99&perPage=10`
+
+```jsonc
+{
+  "items": [],
+  "paging": {
+    "page": 99,
+    "perPage": 10,
+    "total": 12,
+    "prev": "/api/tasks?page=2&perPage=10",
+    "next": null
+  }
+}
+```
+
+**Link format**: `prev` and `next` are relative paths (no host/scheme) including all active
+query parameters. This makes them safe to use directly in the frontend without URL parsing.
+
+**Implementation opacity**: the paging contract is engine-agnostic by design. The response
+exposes `page`, `perPage`, and `total` — never database-specific artifacts like offsets,
+cursors, row IDs, or query plans. The backend translates `page`/`perPage` into whatever the
+data layer requires (e.g., `OFFSET`/`LIMIT` for SQL) internally. This keeps the API contract
+stable regardless of the underlying database engine and prevents leaking infrastructure
+details to consumers.
 
 ## Related Documents
 
