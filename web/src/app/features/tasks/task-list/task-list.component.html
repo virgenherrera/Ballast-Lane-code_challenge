@@ -1,0 +1,49 @@
+<div>
+  <app-task-status-filter
+    [currentStatus]="status()"
+    (statusChange)="onStatusChange($event)"
+  />
+
+  <div data-testid="task-list">
+    @if (tasks().length === 0) {
+      <p data-testid="empty-state">
+        @if (status()) {
+          No tasks match the selected filter.
+        } @else {
+          No tasks yet.
+        }
+      </p>
+    } @else {
+      <ul>
+        @for (task of tasks(); track task.id) {
+          <li data-testid="task-list-item">
+            <a [routerLink]="['/tasks', task.id]">
+              <span>{{ task.title }}</span>
+              <span>{{ task.status }}</span>
+              <span>{{ task.dueDate ?? 'No due date' }}</span>
+            </a>
+          </li>
+        }
+      </ul>
+    }
+  </div>
+
+  <div>
+    <button
+      type="button"
+      data-testid="page-prev"
+      [disabled]="!paging()?.prev"
+      (click)="onPrevPage()"
+    >
+      Previous
+    </button>
+    <button
+      type="button"
+      data-testid="page-next"
+      [disabled]="!paging()?.next"
+      (click)="onNextPage()"
+    >
+      Next
+    </button>
+  </div>
+</div>

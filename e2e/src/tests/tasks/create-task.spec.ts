@@ -12,7 +12,7 @@ test.describe('Create Task', () => {
     await expect(page.getByText('Task created successfully.')).toBeVisible();
 
     await page.goto('/tasks');
-    await expect(page.getByTestId('task-list-stub')).toBeVisible();
+    await expect(page.getByTestId('task-list')).toBeVisible();
     await expect(page.getByText(uniqueTitle)).toBeVisible();
   });
 

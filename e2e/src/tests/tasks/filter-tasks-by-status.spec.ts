@@ -1,0 +1,85 @@
+import { expect, test } from '@playwright/test';
+
+test.describe('Filter Tasks by Status', () => {
+  test('FilterTasksByStatus_FromUI_ShowsOnlyMatchingTasks', async ({ page, request }) => {
+    // Arrange: create 3 tasks via API — Pending, In Progress, Completed
+    const suffix = Date.now();
+
+    const pendingResponse = await request.post('/api/tasks', {
+      data: {
+        title: `E2E filter pending ${suffix}`,
+        dueDate: new Date(Date.now() + 86400000).toISOString(),
+      },
+    });
+    const pendingTask = await pendingResponse.json();
+
+    const inProgressResponse = await request.post('/api/tasks', {
+      data: {
+        title: `E2E filter in-progress ${suffix}`,
+        dueDate: new Date(Date.now() + 86400000).toISOString(),
+      },
+    });
+    const inProgressTask = await inProgressResponse.json();
+    await request.patch(`/api/tasks/${inProgressTask.id}`, {
+      data: { status: 'In Progress' },
+    });
+
+    const completedResponse = await request.post('/api/tasks', {
+      data: {
+        title: `E2E filter completed ${suffix}`,
+        dueDate: new Date(Date.now() + 86400000).toISOString(),
+      },
+    });
+    const completedTask = await completedResponse.json();
+    await request.patch(`/api/tasks/${completedTask.id}`, {
+      data: { status: 'Completed' },
+    });
+
+    // Act: navigate to /tasks, select "In Progress" from status filter dropdown
+    await page.goto('/tasks');
+    await page.waitForSelector('[data-testid="task-list"]');
+
+    await Promise.all([
+      page.waitForResponse(
+        (res) => res.request().method() === 'GET' && res.url().includes('/api/tasks?'),
+      ),
+      page.selectOption('[data-testid="status-filter"]', 'In Progress'),
+    ]);
+
+    // Assert: only the In Progress task is visible; others are NOT visible
+    await expect(page.getByText(inProgressTask.title)).toBeVisible();
+    await expect(page.getByText(pendingTask.title)).not.toBeVisible();
+    await expect(page.getByText(completedTask.title)).not.toBeVisible();
+
+    // Assert: URL contains ?status=In%20Progress or ?status=In+Progress
+    expect(page.url()).toMatch(/status=In(%20|\+)Progress/);
+  });
+
+  test('FilterTasksByStatus_NoMatches_ShowsEmptyState', async ({ page, request }) => {
+    // Arrange: create 1 task (defaults to Pending)
+    const createResponse = await request.post('/api/tasks', {
+      data: {
+        title: `E2E filter no-matches ${Date.now()}`,
+        dueDate: new Date(Date.now() + 86400000).toISOString(),
+      },
+    });
+    await createResponse.json();
+
+    // Act: navigate to /tasks, select "Completed" from filter
+    await page.goto('/tasks');
+    await page.waitForSelector('[data-testid="task-list"]');
+
+    await Promise.all([
+      page.waitForResponse(
+        (res) => res.request().method() === 'GET' && res.url().includes('/api/tasks?'),
+      ),
+      page.selectOption('[data-testid="status-filter"]', 'Completed'),
+    ]);
+
+    // Assert: empty-state element visible; no task-list-item elements;
+    // task-list container still present (not an error state)
+    await expect(page.getByTestId('empty-state')).toBeVisible();
+    await expect(page.getByTestId('task-list-item')).toHaveCount(0);
+    await expect(page.getByTestId('task-list')).toBeVisible();
+  });
+});

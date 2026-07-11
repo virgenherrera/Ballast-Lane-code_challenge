@@ -5,6 +5,8 @@ using TaskFlow.Application.Common.Interfaces;
 using TaskFlow.Application.Tasks.Commands.CreateTask;
 using TaskFlow.Application.Tasks.Commands.DeleteTask;
 using TaskFlow.Application.Tasks.Commands.UpdateTask;
+using TaskFlow.Application.Tasks.Queries.GetTaskById;
+using TaskFlow.Application.Tasks.Queries.ListTasks;
 
 namespace TaskFlow.API.Controllers;
 
@@ -14,47 +16,107 @@ public class TasksController : ControllerBase
 {
     private readonly IValidator<CreateTaskCommand> _createTaskValidator;
     private readonly CreateTaskCommandHandler _createTaskHandler;
-    private readonly ITaskRepository _taskRepository;
     private readonly IValidator<UpdateTaskCommand> _updateValidator;
     private readonly UpdateTaskCommandHandler _updateHandler;
     private readonly DeleteTaskCommandHandler _deleteHandler;
+    private readonly IValidator<ListTasksQuery> _listTasksValidator;
+    private readonly ListTasksQueryHandler _listTasksHandler;
+    private readonly GetTaskByIdQueryHandler _getTaskByIdHandler;
+    private readonly ICurrentUserContext _currentUserContext;
 
     public TasksController(
         IValidator<CreateTaskCommand> createTaskValidator,
         CreateTaskCommandHandler createTaskHandler,
-        ITaskRepository taskRepository,
         IValidator<UpdateTaskCommand> updateValidator,
         UpdateTaskCommandHandler updateHandler,
-        DeleteTaskCommandHandler deleteHandler)
+        DeleteTaskCommandHandler deleteHandler,
+        IValidator<ListTasksQuery> listTasksValidator,
+        ListTasksQueryHandler listTasksHandler,
+        GetTaskByIdQueryHandler getTaskByIdHandler,
+        ICurrentUserContext currentUserContext)
     {
         _createTaskValidator = createTaskValidator;
         _createTaskHandler = createTaskHandler;
-        _taskRepository = taskRepository;
         _updateValidator = updateValidator;
         _updateHandler = updateHandler;
         _deleteHandler = deleteHandler;
+        _listTasksValidator = listTasksValidator;
+        _listTasksHandler = listTasksHandler;
+        _getTaskByIdHandler = getTaskByIdHandler;
+        _currentUserContext = currentUserContext;
     }
 
-    // TEMPORARY: returns all tasks with no filtering/sorting/pagination.
-    // Superseded by US-005 (list/filter/paginate tasks).
     [HttpGet]
-    [ProducesResponseType(typeof(IEnumerable<TaskResponse>), StatusCodes.Status200OK)]
-    public async Task<IActionResult> GetAll(CancellationToken ct)
+    [ProducesResponseType(typeof(TaskListResponse), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public async Task<IActionResult> GetList(
+        [FromQuery] string? status,
+        [FromQuery] int? page,
+        [FromQuery] int? perPage,
+        CancellationToken ct)
     {
-        var tasks = await _taskRepository.GetAllAsync(ct);
+        var query = new ListTasksQuery(_currentUserContext.OwnerId, status, page, perPage);
 
-        var response = tasks.Select(task => new TaskResponse(
-            task.Id,
-            task.Title,
-            task.Description,
-            task.Status.ToString(),
-            task.DueDate,
-            task.OwnerId,
-            task.CreatedAt,
-            task.UpdatedAt));
+        var validationResult = await _listTasksValidator.ValidateAsync(query, ct);
+        if (!validationResult.IsValid)
+        {
+            // Caught by ValidationExceptionHandler (IExceptionHandler),
+            // which maps it to the standard error response shape.
+            throw new ValidationException(validationResult.Errors);
+        }
+
+        var result = await _listTasksHandler.Handle(query, ct);
+
+        var response = new TaskListResponse(
+            result.Items
+                .Select(item => new TaskListItemResponse(item.Id, item.Title, item.Status, item.DueDate))
+                .ToList(),
+            new PagingResponse(
+                result.Paging.Page,
+                result.Paging.PerPage,
+                result.Paging.Total,
+                result.Paging.Prev,
+                result.Paging.Next));
 
         return Ok(response);
     }
+
+    // Route param is deliberately `string id`, NOT `Guid id` / `{id:guid}`,
+    // matching the Update/Delete actions' pattern — see remarks above Update.
+    [HttpGet("{id}")]
+    [ProducesResponseType(typeof(TaskResponse), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<IActionResult> GetById(string id, CancellationToken ct)
+    {
+        if (!Guid.TryParse(id, out var taskId))
+        {
+            return BadRequest(new
+            {
+                status = 400,
+                error = "VALIDATION_ERROR",
+                message = "Task id is not a valid GUID.",
+                details = new[] { new { field = "id", issue = "must be a valid UUID/GUID" } }
+            });
+        }
+
+        var query = new GetTaskByIdQuery(taskId, _currentUserContext.OwnerId);
+        var taskDto = await _getTaskByIdHandler.Handle(query, ct);
+
+        var response = new TaskResponse(
+            taskDto.Id,
+            taskDto.Title,
+            taskDto.Description,
+            taskDto.Status,
+            taskDto.DueDate,
+            taskDto.OwnerId,
+            taskDto.CreatedAt,
+            taskDto.UpdatedAt);
+
+        return Ok(response);
+    }
+    // TaskNotFoundException thrown by handler is caught by existing
+    // TaskNotFoundExceptionHandler middleware -> 404 standard error shape.
 
     [HttpPost]
     [ProducesResponseType(typeof(TaskResponse), StatusCodes.Status201Created)]

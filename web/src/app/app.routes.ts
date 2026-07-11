@@ -15,12 +15,18 @@ export const routes: Routes = [
         (m) => m.CreateTaskComponent,
       ),
   },
-  // TEMPORARY route — superseded by US-005 (real task list view).
   {
     path: 'tasks',
     loadComponent: () =>
-      import('./features/tasks/task-list-stub/task-list-stub.component').then(
-        (m) => m.TaskListStubComponent,
+      import('./features/tasks/task-list/task-list.component').then(
+        (m) => m.TaskListComponent,
+      ),
+  },
+  {
+    path: 'tasks/:id',
+    loadComponent: () =>
+      import('./features/tasks/task-detail/task-detail.component').then(
+        (m) => m.TaskDetailComponent,
       ),
   },
 ];

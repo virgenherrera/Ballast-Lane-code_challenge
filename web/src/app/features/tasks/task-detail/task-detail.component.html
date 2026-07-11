@@ -1,0 +1,34 @@
+<div data-testid="task-detail">
+  <a routerLink="/tasks">Back to list</a>
+
+  @if (isLoading()) {
+    <p>Loading...</p>
+  } @else if (notFound()) {
+    <p data-testid="task-not-found">Task not found.</p>
+  } @else if (task(); as currentTask) {
+    <h1>{{ currentTask.title }}</h1>
+
+    <dl>
+      <dt>Status</dt>
+      <dd>{{ currentTask.status }}</dd>
+
+      <dt>Description</dt>
+      <dd>{{ currentTask.description ?? 'No description' }}</dd>
+
+      <dt>Due Date</dt>
+      <dd>{{ currentTask.dueDate ?? 'No due date' }}</dd>
+
+      <dt>Owner</dt>
+      <dd>{{ currentTask.ownerId }}</dd>
+
+      <dt>Created At</dt>
+      <dd>{{ currentTask.createdAt }}</dd>
+
+      <dt>Updated At</dt>
+      <dd>{{ currentTask.updatedAt }}</dd>
+
+      <dt>Id</dt>
+      <dd>{{ currentTask.id }}</dd>
+    </dl>
+  }
+</div>

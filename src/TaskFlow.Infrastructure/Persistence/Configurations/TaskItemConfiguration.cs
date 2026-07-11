@@ -43,5 +43,12 @@ public sealed class TaskItemConfiguration : IEntityTypeConfiguration<TaskItem>
 
         builder.Property(x => x.UpdatedAt)
             .HasColumnName("updated_at");
+
+        // Backs ITaskRepository.ListAsync's ownership filter + deterministic
+        // ordering (CreatedAt DESC, Id DESC tie-breaker) used by GET /api/tasks
+        // (US-005, US-009).
+        builder.HasIndex(x => new { x.OwnerId, x.CreatedAt, x.Id })
+            .HasDatabaseName("IX_tasks_owner_id_created_at_id")
+            .IsDescending(false, true, true);
     }
 }
