@@ -319,7 +319,9 @@ Every team member returns the same structured schema per user story:
 Takes REFINED user stories for a batch (already carrying DOD, DOR, acceptance criteria, and
 deliverables from Refinement) and decomposes the batch into sub-task **handoff files**
 following the [Handoff Template](docs/process/handoff-template.md), ready for implementation
-delegation.
+delegation. The orchestrator never writes files or validates inline — it only orchestrates,
+delegating ALL substantive work (briefing synthesis, team analysis, validation, and writing)
+to sub-agents.
 
 #### Guard
 
@@ -330,61 +332,81 @@ Refinement runs first. No handoff file is produced from an ungroomed story.
 #### Process
 
 ```mermaid
-%% Planning ceremony — orchestrator-driven, guarded by DOD check
+%% Planning ceremony — fully delegated, orchestrator only launches agents and receives verdicts
 flowchart TD
-    GUARD{"DOD Guard:\nall stories have DOD?"} -->|No| STOP([STOP — run\nRefinement first])
-    GUARD -->|Yes| READ([1. Orchestrator reads\nsource docs])
-    READ --> BUNDLE([2. Condense into\nplanning briefing])
-    BUNDLE --> TASKS([3. Launch one agent\nper sub-task, in parallel])
-    TASKS --> VALIDATE([4. Orchestrator validates\neach handoff])
-    VALIDATE --> WRITE([5. Orchestrator writes\nhandoff files to repo])
+    BRIEF([1. Delegate DOD Guard +\nBriefing Creation])
+    BRIEF -->|BLOCKED: missing DOD| STOP([STOP — run\nRefinement first])
+    BRIEF -->|PASS: briefing ready| SPLIT{{2. Launch Scrum Team +\nHandoff Expert Team, parallel}}
+    SPLIT --> SCRUM([Team A: Scrum Team\n8 roles in parallel])
+    SPLIT --> EXPERT([Team B: AI Agentic /\nHandoff Expert Team, 2-3x])
+    SCRUM --> SYNTH([Synthesis Agent\nmerges both teams])
+    EXPERT --> SYNTH
+    SYNTH --> VALIDATE([3. Delegate validation\nagents — pass/fail verdict])
+    VALIDATE -->|fail| SYNTH
+    VALIDATE -->|pass| WRITE([4. Delegate writing\nhandoffs + engram save])
 
-    style GUARD fill:#ef4444,color:#fff
     style STOP fill:#ef4444,color:#fff
-    style READ fill:#3b82f6,color:#fff
-    style BUNDLE fill:#3b82f6,color:#fff
-    style TASKS fill:#f59e0b,color:#fff
+    style BRIEF fill:#3b82f6,color:#fff
+    style SPLIT fill:#f59e0b,color:#fff
+    style SCRUM fill:#f59e0b,color:#fff
+    style EXPERT fill:#f59e0b,color:#fff
+    style SYNTH fill:#8b5cf6,color:#fff
     style VALIDATE fill:#8b5cf6,color:#fff
     style WRITE fill:#22c55e,color:#fff
 ```
 
-**Step 1 — Orchestrator reads source docs** (inline, not delegated):
+**Step 1 — Delegate DOD Guard + Briefing Creation**:
 
-- Refined user story files (`docs/user-stories/US-0XX-*.md`) — must already have DOD, DOR,
-  acceptance criteria, deliverables
-- Engineering addenda (`docs/epics/EP0X-engineering-addenda.md`) — batch plan and binding
-  engineering decisions
-- API contract (relevant endpoints)
-- Handoff template (`docs/process/handoff-template.md`)
-- Existing handoff files in `docs/handoffs/EP0X/` to avoid duplicates
-- Prior planning from engram
+- Orchestrator delegates a sub-agent that performs TWO actions in sequence:
+  1. **DOD Guard**: reads every user story file in scope and verifies each has a
+     `## Definition of Done (DOD)` section. If any story lacks DOD → agent returns
+     BLOCKED with the list of missing story IDs. Orchestrator stops and tells the user
+     to run Refinement first.
+  2. **Briefing Synthesis**: if DOD guard passes, the same agent reads ALL source material
+     (refined user stories with DOD/DOR/AC/deliverables/test plan, engineering addenda,
+     API contract, handoff template, existing handoffs, prior planning from engram) and
+     condenses it into a single planning briefing file written to **scratchpad** (never
+     committed).
+- The orchestrator passes only **file paths and batch scope** — the briefing agent reads
+  and synthesizes everything. The orchestrator does NOT read file contents itself.
+- Briefing contains: all refined stories with DOD/DOR/AC/deliverables/test plan, batch scope
+  and constraints, the handoff template's 11-section structure, applicable engineering
+  decisions, API contract details, and a proposed sub-task breakdown table.
+- This briefing is the ONLY input every downstream agent receives — no file paths, no
+  references to read.
 
-**Step 2 — Condense into planning briefing**:
+**Step 2 — Launch Scrum Team + AI Handoff Expert Team (Workflow, parallel)**:
 
-- Write a single markdown file to **scratchpad** (never committed)
-- Contains: all refined stories with DOD/DOR/AC/deliverables/test plan, batch scope and
-  constraints, the handoff template's 11-section structure, applicable engineering
-  decisions, API contract details, and the orchestrator's own sub-task breakdown table
-- This is the ONLY input the task agents receive — no file paths, no references to read
+The briefing is passed to TWO parallel teams:
 
-**Step 3 — Launch planning agents** (Workflow, parallel):
+- **Team A — Scrum Team** (8 roles, same as Refinement): PO, SM, TL, FE, BA, QA, QA-Auto,
+  Infra. Each analyzes the briefing from their lens and proposes sub-task decomposition
+  (what chunks of work, in what order), risks and dependencies per sub-task, and quality
+  criteria from their perspective.
+- **Team B — AI Agentic/Handoff Expert Team** (2-3 agents specialized in autonomous agent
+  execution patterns): ensures each handoff file is self-contained (no external reads needed
+  by the implementing agent), drift-proof (boundaries explicit enough that no agent can
+  deviate), verifiable (quality gates are deterministic shell commands), and correctly scoped
+  (under 300 lines, one cohesive unit of work).
 
-- **One agent per sub-task** (not per role — per TASK, unlike Refinement's role-based team)
-- Each agent receives the full briefing plus its specific task scope
-- Each agent produces one COMPLETE handoff file (all 11 sections) as structured output
-- Model: sonnet, effort: high
+A **Synthesis Agent** (opus) then merges both teams' outputs into final handoff files,
+incorporating the scrum team's domain expertise and the handoff team's execution-quality
+patterns.
 
-**Step 4 — Orchestrator validates** (inline):
+**Step 3 — Delegate validation**:
 
-- Every relevant acceptance criterion is covered by a deliverable or quality gate
-- Quality gates are copy-pasteable shell commands with explicit pass criteria
-- Boundaries name at least 3 explicit OUT OF SCOPE items
-- Anti-patterns section is populated, not left as a placeholder
-- Handoff passes the [Pre-Flight Checklist](docs/process/handoff-template.md#orchestrator-pre-flight-checklist)
+- Orchestrator delegates validation agents that cross-check AC coverage (every AC mapped to
+  at least one handoff), verify no file overlap between handoffs, run the
+  [Orchestrator Pre-Flight Checklist](docs/process/handoff-template.md#orchestrator-pre-flight-checklist),
+  and compare deliverables listed in handoffs against the DOD
+- The orchestrator receives a pass/fail verdict — it does NOT read code or handoff content
+  itself
+- On fail, findings route back to the Synthesis Agent for correction before re-validation
 
-**Step 5 — Write handoff files to real project files**:
+**Step 4 — Delegate writing**:
 
-- Write to `docs/handoffs/EP0X/EP0X-B{N}-{NN}-{task-slug}.md`
+- Orchestrator delegates writing the validated handoffs to real project files at
+  `docs/handoffs/EP0X/EP0X-B{N}-{NN}-{task-slug}.md`
 - Create/update the batch plan tracking file if needed
 - Save to engram
 
@@ -393,18 +415,25 @@ flowchart TD
 | Anti-Pattern | Why It Fails | Do Instead |
 | ------------ | ------------ | ---------- |
 | Planning without DOD | Handoffs derive scope from DOD — missing DOD means hallucinated gates | Guard rejects; run Refinement first |
-| Each agent reading source files | N-x redundant reads, context waste | Orchestrator reads once, injects text |
-| Vague quality gates | Sub-agent can't self-verify, PDC fails | Every gate is a copy-pasteable shell command |
+| Orchestrator writing briefing | Inflates orchestrator context, violates delegation principle | Delegate to a briefing synthesis agent |
+| One agent per task (no team) | Misses cross-cutting concerns each role would catch | Full scrum team + handoff experts |
+| Orchestrator validating inline | Inflates context, subjective assessment risk | Delegate validation to verification agents |
+| Skipping handoff experts | Handoffs lack drift-proofing for autonomous agents | Always pair scrum team with handoff specialists |
+| Each team agent reading source files | N-x redundant reads, context waste | Briefing agent reads once, all others receive pre-digested |
+| Vague quality gates | Implementing agent can't self-verify, PDC fails | Every gate is a copy-pasteable shell command |
 | Missing boundaries | Scope creep during implementation | Explicit OUT OF SCOPE list, minimum 3 items |
-| One handoff per role instead of per task | Doesn't match implementation delegation model | One agent, one handoff, per sub-task |
+| Writing handoffs to scratchpad only | Lost after session, not delegatable | Delegate write to real docs/handoffs/EP0X/ files |
 
 #### Model Assignment
 
 | Phase | Model | Reason |
 | ----- | ----- | ------ |
-| Orchestrator reads | — | Inline, no agent |
-| Task agents (Nx) | sonnet | Structured writing, not architecture |
-| Validation | — | Inline, orchestrator |
+| DOD Guard + Briefing (Step 1) | sonnet | Reading + synthesis, no architecture decisions |
+| Scrum Team (Step 2, Team A, 8x) | sonnet | Structured analysis, not architecture |
+| Handoff Experts (Step 2, Team B, 2-3x) | sonnet | Pattern application, drift-proofing |
+| Synthesis (Step 2) | opus | Cross-perspective merge, conflict resolution |
+| Validation agents (Step 3) | sonnet | Checklist verification |
+| Write agent (Step 4) | haiku | Mechanical file writing |
 
 ## Compact Rules for Sub-Agent Injection
 
