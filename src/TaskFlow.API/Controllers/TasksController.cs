@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using TaskFlow.API.Contracts;
 using TaskFlow.Application.Common.Interfaces;
 using TaskFlow.Application.Tasks.Commands.CreateTask;
+using TaskFlow.Application.Tasks.Commands.UpdateTask;
 
 namespace TaskFlow.API.Controllers;
 
@@ -13,15 +14,21 @@ public class TasksController : ControllerBase
     private readonly IValidator<CreateTaskCommand> _createTaskValidator;
     private readonly CreateTaskCommandHandler _createTaskHandler;
     private readonly ITaskRepository _taskRepository;
+    private readonly IValidator<UpdateTaskCommand> _updateValidator;
+    private readonly UpdateTaskCommandHandler _updateHandler;
 
     public TasksController(
         IValidator<CreateTaskCommand> createTaskValidator,
         CreateTaskCommandHandler createTaskHandler,
-        ITaskRepository taskRepository)
+        ITaskRepository taskRepository,
+        IValidator<UpdateTaskCommand> updateValidator,
+        UpdateTaskCommandHandler updateHandler)
     {
         _createTaskValidator = createTaskValidator;
         _createTaskHandler = createTaskHandler;
         _taskRepository = taskRepository;
+        _updateValidator = updateValidator;
+        _updateHandler = updateHandler;
     }
 
     // TEMPORARY: returns all tasks with no filtering/sorting/pagination.
@@ -78,5 +85,55 @@ public class TasksController : ControllerBase
             taskDto.UpdatedAt);
 
         return CreatedAtAction(nameof(Create), new { id = response.Id }, response);
+    }
+
+    // Route param is deliberately `string id`, NOT `Guid id` / `{id:guid}`.
+    // A failed {id:guid} route constraint yields 404 by default, which
+    // contradicts AC-007.8 (malformed GUID must return 400). Parsing is
+    // done manually below so we control the response shape.
+    [HttpPatch("{id}")]
+    [ProducesResponseType(typeof(TaskResponse), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<IActionResult> Update(
+        string id,
+        [FromBody] UpdateTaskRequest request,
+        CancellationToken ct)
+    {
+        if (!Guid.TryParse(id, out var taskId))
+        {
+            return BadRequest(new
+            {
+                status = 400,
+                error = "VALIDATION_ERROR",
+                message = "Task id is not a valid GUID.",
+                details = new[] { new { field = "id", issue = "must be a valid UUID/GUID" } }
+            });
+        }
+
+        var command = new UpdateTaskCommand(
+            taskId, request.Title, request.Description, request.Status, request.DueDate);
+
+        var validationResult = await _updateValidator.ValidateAsync(command, ct);
+        if (!validationResult.IsValid)
+        {
+            // Caught by ValidationExceptionHandler (IExceptionHandler),
+            // which maps it to the standard error response shape.
+            throw new ValidationException(validationResult.Errors);
+        }
+
+        var taskDto = await _updateHandler.Handle(command, ct);
+
+        var response = new TaskResponse(
+            taskDto.Id,
+            taskDto.Title,
+            taskDto.Description,
+            taskDto.Status,
+            taskDto.DueDate,
+            taskDto.OwnerId,
+            taskDto.CreatedAt,
+            taskDto.UpdatedAt);
+
+        return Ok(response);
     }
 }

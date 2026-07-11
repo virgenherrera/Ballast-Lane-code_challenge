@@ -17,6 +17,14 @@ public abstract class IntegrationTestBase : IAsyncLifetime
 
     protected HttpClient Client { get; private set; } = null!;
 
+    /// <summary>
+    /// Exposes the factory's DI container so tests can create a scoped
+    /// <see cref="AppDbContext"/> for direct-DB setup (e.g. seeding a task
+    /// owned by a different user than the active <c>ICurrentUserContext</c>
+    /// principal) that cannot be reached through the public HTTP surface.
+    /// </summary>
+    protected IServiceProvider Services => _factory.Services;
+
     public async Task InitializeAsync()
     {
         await _factory.InitializeAsync();

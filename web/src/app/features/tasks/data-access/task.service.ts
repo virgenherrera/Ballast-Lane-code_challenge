@@ -17,4 +17,11 @@ export class TaskService {
   getTasks(): Observable<TaskResponse[]> {
     return this.http.get<TaskResponse[]>(`${environment.apiBaseUrl}/api/tasks`);
   }
+
+  updateTask(
+    id: string,
+    payload: { title?: string; description?: string; status?: string; dueDate?: string },
+  ): Observable<TaskResponse> {
+    return this.http.patch<TaskResponse>(`${environment.apiBaseUrl}/api/tasks/${id}`, payload);
+  }
 }

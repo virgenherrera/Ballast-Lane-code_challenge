@@ -71,4 +71,51 @@ public sealed class TaskItem
             ownerId,
             DateTime.UtcNow);
     }
+
+    public void Rename(string title)
+    {
+        var trimmedTitle = title?.Trim() ?? string.Empty;
+
+        if (string.IsNullOrWhiteSpace(trimmedTitle))
+        {
+            throw new InvalidTaskTitleException("title required");
+        }
+
+        if (trimmedTitle.Length > FieldLengths.TitleMaxLength)
+        {
+            throw new InvalidTaskTitleException(
+                $"title must not exceed {FieldLengths.TitleMaxLength} characters");
+        }
+
+        Title = trimmedTitle;
+        UpdatedAt = DateTime.UtcNow;
+    }
+
+    public void ChangeStatus(Enums.TaskStatus status)
+    {
+        // Free-form transition — no state machine guard (AC-007.2)
+        Status = status;
+        UpdatedAt = DateTime.UtcNow;
+    }
+
+    public void UpdateDescription(string? description)
+    {
+        if (description is not null && description.Length > FieldLengths.DescriptionMaxLength)
+        {
+            throw new InvalidTaskTitleException(
+                $"description must not exceed {FieldLengths.DescriptionMaxLength} characters");
+        }
+
+        Description = description;
+        UpdatedAt = DateTime.UtcNow;
+    }
+
+    public void Reschedule(DateTime? dueDate)
+    {
+        // CRITICAL ASYMMETRY: past dates EXPLICITLY ALLOWED here (unlike Create).
+        // See TaskItemTests.Task_CreateWithPastDueDate_ThrowsDomainException for the
+        // Create-side rejection this method intentionally does NOT replicate (US-007).
+        DueDate = dueDate;
+        UpdatedAt = DateTime.UtcNow;
+    }
 }

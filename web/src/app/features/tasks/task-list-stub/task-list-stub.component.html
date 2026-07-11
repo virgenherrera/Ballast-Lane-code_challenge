@@ -1,6 +1,16 @@
-<!-- TEMPORARY stub — superseded by US-005. Titles only, no styling. -->
+<!-- TEMPORARY stub — superseded by US-005. Titles + status only, no styling. -->
 <ul data-testid="task-list-stub">
   @for (task of tasks(); track task.id) {
-    <li data-testid="task-list-item">{{ task.title }}</li>
+    <li data-testid="task-list-item">
+      {{ task.title }}
+      <select
+        [attr.data-testid]="'status-select-' + task.id"
+        [value]="task.status"
+        (change)="onStatusChange(task.id, $event)">
+        <option value="Pending">Pending</option>
+        <option value="In Progress">In Progress</option>
+        <option value="Completed">Completed</option>
+      </select>
+    </li>
   }
 </ul>

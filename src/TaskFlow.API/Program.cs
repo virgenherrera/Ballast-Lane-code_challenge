@@ -6,6 +6,7 @@ using TaskFlow.API.Configuration;
 using TaskFlow.API.Middleware;
 using TaskFlow.Application.Common.Interfaces;
 using TaskFlow.Application.Tasks.Commands.CreateTask;
+using TaskFlow.Application.Tasks.Commands.UpdateTask;
 using TaskFlow.Infrastructure.Identity;
 using TaskFlow.Infrastructure.Persistence;
 using TaskFlow.Infrastructure.Persistence.Repositories;
@@ -57,6 +58,10 @@ builder.Services.AddControllers();
 // See TaskFlow.API.Middleware.ValidationExceptionHandler for the response
 // contract.
 builder.Services.AddExceptionHandler<ValidationExceptionHandler>();
+
+// Project-wide reusable TaskNotFoundException -> standard 404 error shape
+// mapper. See TaskFlow.API.Middleware.TaskNotFoundExceptionHandler.
+builder.Services.AddExceptionHandler<TaskNotFoundExceptionHandler>();
 builder.Services.AddProblemDetails();
 
 // --- Composition root: EF Core + FluentValidation + repositories/identity -
@@ -72,6 +77,8 @@ builder.Services.AddValidatorsFromAssemblyContaining<CreateTaskCommandValidator>
 
 builder.Services.AddScoped<ITaskRepository, TaskRepository>();
 builder.Services.AddScoped<CreateTaskCommandHandler>();
+builder.Services.AddScoped<UpdateTaskCommandHandler>();
+builder.Services.AddScoped<UpdateTaskCommandValidator>();
 
 // TODO(Delivery-3): Replace with a JWT-claim-backed ICurrentUserContext
 // registration. Singleton is safe ONLY because the seed shim is stateless.

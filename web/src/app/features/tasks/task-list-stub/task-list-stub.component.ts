@@ -5,7 +5,7 @@ import type { Task } from '../models/task.model';
 
 // TEMPORARY: minimal stub to unblock EP01-B1-06 E2E coverage.
 // Superseded by US-005 (list/filter/paginate tasks) — no styling, no
-// filtering, no sorting. Titles only.
+// filtering, no sorting. Titles + status dropdown only.
 @Component({
   selector: 'app-task-list-stub',
   standalone: true,
@@ -19,5 +19,15 @@ export class TaskListStubComponent {
 
   constructor() {
     this.taskService.getTasks().subscribe((tasks) => this.tasks.set(tasks));
+  }
+
+  onStatusChange(taskId: string, event: Event): void {
+    const status = (event.target as HTMLSelectElement).value;
+
+    this.taskService.updateTask(taskId, { status }).subscribe((updated) => {
+      this.tasks.update((tasks) =>
+        tasks.map((task) => (task.id === taskId ? updated : task)),
+      );
+    });
   }
 }

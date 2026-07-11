@@ -346,7 +346,7 @@ callers cannot distinguish "does not exist" from "not yours" — preventing enum
 
 ### 4.4 Update Task — `PATCH /api/tasks/{id}`
 
-Maps to [US-007](../user-stories/US-007-update-task.md) (AC-007.1 through AC-007.6).
+Maps to [US-007](../user-stories/US-007-update-task.md) (AC-007.1 through AC-007.8).
 
 **Path Parameters**:
 
@@ -386,6 +386,8 @@ Maps to [US-007](../user-stories/US-007-update-task.md) (AC-007.1 through AC-007
 | ------ | --------- | -- |
 | 400 | `title` provided as an empty string | AC-007.6 |
 | 400 | `status` provided with a value outside the valid enum | AC-007.4 |
+| 400 | Request body is empty (no fields provided) | AC-007.7 |
+| 400 | `id` path parameter is not a valid GUID | AC-007.8 |
 | 401 | Missing, invalid, or expired token | US-003 |
 | 404 | Task does not exist, or is owned by another user | AC-007.5 |
 

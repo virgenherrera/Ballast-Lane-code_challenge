@@ -24,4 +24,14 @@ public sealed class TaskRepository : ITaskRepository
     {
         return await _dbContext.Tasks.AsNoTracking().ToListAsync(ct);
     }
+
+    public async Task<TaskItem?> GetByIdAsync(Guid id, CancellationToken ct)
+    {
+        return await _dbContext.Tasks.FirstOrDefaultAsync(t => t.Id == id, ct);
+    }
+
+    public async Task SaveChangesAsync(CancellationToken ct)
+    {
+        await _dbContext.SaveChangesAsync(ct);
+    }
 }

@@ -9,4 +9,8 @@ public interface ITaskRepository
     // TEMPORARY: returns all tasks with no filtering/sorting/pagination.
     // Superseded by US-005 (list/filter/paginate tasks).
     Task<List<TaskItem>> GetAllAsync(CancellationToken ct);
+
+    Task<TaskItem?> GetByIdAsync(Guid id, CancellationToken ct);
+
+    Task SaveChangesAsync(CancellationToken ct);
 }
