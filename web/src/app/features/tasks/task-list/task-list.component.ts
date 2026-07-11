@@ -3,6 +3,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 
 import { TaskService } from '../data-access/task.service';
+import { TASK_STATUSES } from '../models/task-status.enum';
 import type { TaskListItem, Paging } from '../models/task.model';
 import { TaskStatusFilterComponent } from '../task-status-filter/task-status-filter.component';
 
@@ -21,6 +22,7 @@ export class TaskListComponent {
   readonly status = signal<string | null>(null);
   readonly page = signal<number>(DEFAULT_PAGE);
   readonly isLoading = signal(false);
+  readonly taskStatuses = TASK_STATUSES;
 
   private readonly taskService = inject(TaskService);
   private readonly route = inject(ActivatedRoute);
@@ -45,6 +47,24 @@ export class TaskListComponent {
       relativeTo: this.route,
       queryParams: { status: status ?? null, page: null },
       queryParamsHandling: 'merge',
+    });
+  }
+
+  onStatusUpdate(taskId: string, event: Event): void {
+    const value = (event.target as HTMLSelectElement).value;
+
+    this.taskService.updateTask(taskId, { status: value }).subscribe({
+      next: () => this.fetchTasks(),
+    });
+  }
+
+  onDelete(task: TaskListItem): void {
+    if (!window.confirm(`Delete task "${task.title}"?`)) {
+      return;
+    }
+
+    this.taskService.deleteTask(task.id).subscribe({
+      next: () => this.fetchTasks(),
     });
   }
 

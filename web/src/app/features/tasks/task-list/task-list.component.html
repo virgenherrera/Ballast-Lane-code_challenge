@@ -22,6 +22,24 @@
               <span>{{ task.status }}</span>
               <span>{{ task.dueDate ?? 'No due date' }}</span>
             </a>
+
+            <select
+              [attr.data-testid]="'status-select-' + task.id"
+              [value]="task.status"
+              (change)="onStatusUpdate(task.id, $event)"
+            >
+              @for (taskStatus of taskStatuses; track taskStatus) {
+                <option [value]="taskStatus">{{ taskStatus }}</option>
+              }
+            </select>
+
+            <button
+              type="button"
+              [attr.data-testid]="'delete-btn-' + task.id"
+              (click)="onDelete(task)"
+            >
+              Delete
+            </button>
           </li>
         }
       </ul>

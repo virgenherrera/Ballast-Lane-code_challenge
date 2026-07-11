@@ -69,7 +69,7 @@ public sealed class TaskItem
             description,
             dueDate,
             ownerId,
-            DateTime.UtcNow);
+            UtcNowTruncated());
     }
 
     public void Rename(string title)
@@ -88,14 +88,14 @@ public sealed class TaskItem
         }
 
         Title = trimmedTitle;
-        UpdatedAt = DateTime.UtcNow;
+        UpdatedAt = UtcNowTruncated();
     }
 
     public void ChangeStatus(Enums.TaskStatus status)
     {
         // Free-form transition — no state machine guard (AC-007.2)
         Status = status;
-        UpdatedAt = DateTime.UtcNow;
+        UpdatedAt = UtcNowTruncated();
     }
 
     public void UpdateDescription(string? description)
@@ -107,7 +107,7 @@ public sealed class TaskItem
         }
 
         Description = description;
-        UpdatedAt = DateTime.UtcNow;
+        UpdatedAt = UtcNowTruncated();
     }
 
     public void Reschedule(DateTime? dueDate)
@@ -116,6 +116,23 @@ public sealed class TaskItem
         // See TaskItemTests.Task_CreateWithPastDueDate_ThrowsDomainException for the
         // Create-side rejection this method intentionally does NOT replicate (US-007).
         DueDate = dueDate;
-        UpdatedAt = DateTime.UtcNow;
+        UpdatedAt = UtcNowTruncated();
+    }
+
+    private const long TicksPerMicrosecond = 10;
+
+    // PostgreSQL's `timestamp with time zone` stores microsecond precision
+    // (6 fractional digits), while .NET's DateTime.UtcNow carries 100ns-tick
+    // precision (7 fractional digits). Without truncation, the in-memory
+    // value returned immediately after Create/Update (never round-tripped
+    // through the DB) would serialize with 7-digit precision, while a
+    // subsequent GET reads back the DB-truncated 6-digit value — two
+    // different JSON strings for what should be the same instant. Truncating
+    // at the source keeps API responses byte-for-byte consistent whether or
+    // not the value has round-tripped through PostgreSQL.
+    private static DateTime UtcNowTruncated()
+    {
+        var now = DateTime.UtcNow;
+        return now.AddTicks(-(now.Ticks % TicksPerMicrosecond));
     }
 }

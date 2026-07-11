@@ -34,8 +34,18 @@ test.describe('View Task Detail', () => {
     await expect(page.getByText(task.status, { exact: true })).toBeVisible();
     await expect(page.getByText(task.ownerId, { exact: true })).toBeVisible();
     await expect(page.getByText(task.id, { exact: true })).toBeVisible();
-    await expect(page.getByText(task.createdAt, { exact: true })).toBeVisible();
-    await expect(page.getByText(task.updatedAt, { exact: true })).toBeVisible();
     await expect(page.getByText(task.dueDate, { exact: true })).toBeVisible();
+
+    // Created At / Updated At are asserted via their <dt>/<dd> pair rather
+    // than a bare getByText: for a freshly created (never updated) task the
+    // two timestamps are identical, so a global text search matches both
+    // <dd> elements and trips Playwright's strict-mode uniqueness check.
+    const dl = page.locator('dl');
+    await expect(dl.locator('dt', { hasText: 'Created At' }).locator('+ dd')).toHaveText(
+      task.createdAt,
+    );
+    await expect(dl.locator('dt', { hasText: 'Updated At' }).locator('+ dd')).toHaveText(
+      task.updatedAt,
+    );
   });
 });
