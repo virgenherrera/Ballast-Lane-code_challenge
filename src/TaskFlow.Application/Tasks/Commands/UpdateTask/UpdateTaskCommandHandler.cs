@@ -1,4 +1,5 @@
 using TaskFlow.Application.Common.Interfaces;
+using TaskFlow.Application.Common.Mapping;
 using TaskFlow.Application.Common.Specifications;
 using TaskFlow.Application.Tasks.Dtos;
 using DomainTaskStatus = TaskFlow.Domain.Enums.TaskStatus;
@@ -56,7 +57,7 @@ public sealed class UpdateTaskCommandHandler
             task.Id,
             task.Title,
             task.Description,
-            task.Status.ToString(),
+            TaskStatusMapper.ToDisplayString(task.Status),
             task.DueDate,
             task.OwnerId,
             task.CreatedAt,

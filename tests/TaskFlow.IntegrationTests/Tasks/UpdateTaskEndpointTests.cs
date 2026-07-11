@@ -82,11 +82,12 @@ public sealed class UpdateTaskEndpointTests : IntegrationTestBase
     // ---- AC-007.2 ----------------------------------------------------
 
     // Input status string (accepted by the validator/ParseStatus switch) ->
-    // expected serialized output (Domain TaskStatus enum ToString(), which
-    // has no space for the "InProgress" member — this is the real API
-    // contract, distinct from the space-separated input spelling).
+    // expected serialized output, which MUST go through TaskStatusMapper.
+    // ToDisplayString and therefore round-trips "In Progress" WITH the space
+    // — this is the real API contract (TASKFLOW-ANTI-DRIFT), distinct from
+    // the enum member's own ToString() ("InProgress", no space).
     [Theory]
-    [InlineData("In Progress", "InProgress")]
+    [InlineData("In Progress", "In Progress")]
     [InlineData("Completed", "Completed")]
     [InlineData("Pending", "Pending")]
     public async Task UpdateTask_WithValidStatusTransitionAnyDirection_Returns200WithNewStatus(
@@ -383,7 +384,7 @@ public sealed class UpdateTaskEndpointTests : IntegrationTestBase
 
         Assert.Equal(created.Id, root.GetProperty("id").GetGuid());
         Assert.Equal("Updated title", root.GetProperty("title").GetString());
-        Assert.Equal("InProgress", root.GetProperty("status").GetString());
+        Assert.Equal("In Progress", root.GetProperty("status").GetString());
         Assert.Equal(SeedIdentity.SeedOwnerId, root.GetProperty("ownerId").GetGuid());
     }
 }

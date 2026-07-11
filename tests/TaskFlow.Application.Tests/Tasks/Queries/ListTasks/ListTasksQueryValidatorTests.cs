@@ -96,6 +96,17 @@ public class ListTasksQueryValidatorTests
     }
 
     [Fact]
+    public void Validate_WithPageTooLarge_IsInvalid()
+    {
+        var query = new ListTasksQuery(Guid.CreateVersion7(), null, 21_474_837, null);
+
+        var result = _validator.Validate(query);
+
+        Assert.False(result.IsValid);
+        Assert.Contains(result.Errors, e => e.PropertyName == nameof(ListTasksQuery.Page));
+    }
+
+    [Fact]
     public void Validate_WithMultipleInvalidFields_CollectsAllErrorsDueToGlobalCascadeContinue()
     {
         var query = new ListTasksQuery(Guid.CreateVersion7(), "Archived", 0, 999);

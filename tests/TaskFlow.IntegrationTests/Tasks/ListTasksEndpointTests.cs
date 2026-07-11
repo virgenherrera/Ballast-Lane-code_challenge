@@ -302,6 +302,22 @@ public sealed class ListTasksEndpointTests : IntegrationTestBase
         await AssertErrorResponse.HasValidationErrorAsync(response);
     }
 
+    // ---- Non-integer page/perPage: must not fall through to ASP.NET's
+    // default ProblemDetails shape via automatic [ApiController] model
+    // binding failure -------------------------------------------------------
+
+    [Theory]
+    [InlineData("?page=abc")]
+    [InlineData("?page=1.5")]
+    [InlineData("?perPage=abc")]
+    [InlineData("?perPage=1.5")]
+    public async Task GetList_WithNonIntegerParams_Returns400WithStandardShape(string queryString)
+    {
+        var response = await Client.GetAsync($"{Endpoint}{queryString}");
+
+        await AssertErrorResponse.HasValidationErrorAsync(response);
+    }
+
     // ---- Filter + pagination combined ------------------------------------
 
     [Fact]

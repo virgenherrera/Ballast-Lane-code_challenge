@@ -46,16 +46,57 @@ public class TasksController : ControllerBase
         _currentUserContext = currentUserContext;
     }
 
+    // page/perPage are deliberately `string?`, NOT `int?`. With `int?`,
+    // non-integer values (e.g. "abc", "1.5") fail ASP.NET Core's automatic
+    // model binding BEFORE the FluentValidation validator runs, and the
+    // [ApiController] attribute's automatic 400 kicks in with the default
+    // ProblemDetails shape ({type,title,status,errors}) instead of the
+    // project's standard error shape. Parsing manually here (same pattern
+    // as `Guid.TryParse` for `id` elsewhere in this controller) keeps us in
+    // control of the response shape for every invalid-input path.
     [HttpGet]
     [ProducesResponseType(typeof(TaskListResponse), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> GetList(
         [FromQuery] string? status,
-        [FromQuery] int? page,
-        [FromQuery] int? perPage,
+        [FromQuery] string? page,
+        [FromQuery] string? perPage,
         CancellationToken ct)
     {
-        var query = new ListTasksQuery(_currentUserContext.OwnerId, status, page, perPage);
+        int? parsedPage = null;
+        int? parsedPerPage = null;
+
+        if (page is not null)
+        {
+            if (!int.TryParse(page, out var p))
+            {
+                return BadRequest(new
+                {
+                    status = 400,
+                    error = "VALIDATION_ERROR",
+                    message = "One or more validation errors occurred.",
+                    details = new[] { new { field = "page", issue = "must be a valid integer" } }
+                });
+            }
+            parsedPage = p;
+        }
+
+        if (perPage is not null)
+        {
+            if (!int.TryParse(perPage, out var pp))
+            {
+                return BadRequest(new
+                {
+                    status = 400,
+                    error = "VALIDATION_ERROR",
+                    message = "One or more validation errors occurred.",
+                    details = new[] { new { field = "perPage", issue = "must be a valid integer" } }
+                });
+            }
+            parsedPerPage = pp;
+        }
+
+        var query = new ListTasksQuery(_currentUserContext.OwnerId, status, parsedPage, parsedPerPage);
 
         var validationResult = await _listTasksValidator.ValidateAsync(query, ct);
         if (!validationResult.IsValid)

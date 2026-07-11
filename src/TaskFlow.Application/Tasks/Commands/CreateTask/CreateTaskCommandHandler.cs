@@ -1,4 +1,5 @@
 using TaskFlow.Application.Common.Interfaces;
+using TaskFlow.Application.Common.Mapping;
 using TaskFlow.Application.Tasks.Dtos;
 using TaskFlow.Domain.Entities;
 
@@ -37,7 +38,7 @@ public sealed class CreateTaskCommandHandler
             task.Id,
             task.Title,
             task.Description,
-            task.Status.ToString(),
+            TaskStatusMapper.ToDisplayString(task.Status),
             task.DueDate,
             task.OwnerId,
             task.CreatedAt,

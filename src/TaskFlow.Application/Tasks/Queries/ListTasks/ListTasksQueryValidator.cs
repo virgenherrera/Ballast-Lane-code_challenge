@@ -21,6 +21,14 @@ public sealed class ListTasksQueryValidator : AbstractValidator<ListTasksQuery>
             .When(x => x.Page.HasValue)
             .WithMessage("page must be >= 1");
 
+        // Upper bound prevents (page - 1) * perPage from overflowing Int32
+        // (perPage is capped at PaginationDefaults.MaxPerPage) and producing
+        // a negative Skip argument -> ArgumentOutOfRangeException -> 500.
+        RuleFor(x => x.Page)
+            .LessThanOrEqualTo(int.MaxValue / PaginationDefaults.MaxPerPage)
+            .When(x => x.Page.HasValue)
+            .WithMessage("page value is too large");
+
         RuleFor(x => x.PerPage)
             .Must(p => p!.Value is >= 1 and <= PaginationDefaults.MaxPerPage)
             .When(x => x.PerPage.HasValue)
