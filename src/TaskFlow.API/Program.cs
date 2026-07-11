@@ -1,6 +1,14 @@
+using FluentValidation;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Npgsql;
 using TaskFlow.API.Configuration;
+using TaskFlow.API.Middleware;
+using TaskFlow.Application.Common.Interfaces;
+using TaskFlow.Application.Tasks.Commands.CreateTask;
+using TaskFlow.Infrastructure.Identity;
+using TaskFlow.Infrastructure.Persistence;
+using TaskFlow.Infrastructure.Persistence.Repositories;
 
 // --- Fail-fast environment validation -------------------------------------
 // Must run before builder.Build() / app.Run() so a misconfigured environment
@@ -43,6 +51,31 @@ builder.WebHost.UseUrls($"http://0.0.0.0:{apiPort}");
 
 // --- Services ---------------------------------------------------------
 builder.Services.AddOpenApi();
+builder.Services.AddControllers();
+
+// Project-wide reusable ValidationException -> standard error shape mapper.
+// See TaskFlow.API.Middleware.ValidationExceptionHandler for the response
+// contract.
+builder.Services.AddExceptionHandler<ValidationExceptionHandler>();
+builder.Services.AddProblemDetails();
+
+// --- Composition root: EF Core + FluentValidation + repositories/identity -
+builder.Services.AddDbContext<AppDbContext>(opt =>
+    opt.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection") ?? connectionString));
+
+// SET ONCE, GLOBALLY — do NOT set CascadeMode per-validator (see
+// CreateTaskCommandValidator remarks). Continue mode ensures every rule
+// runs and every failure is collected, instead of stopping at the first.
+ValidatorOptions.Global.DefaultRuleLevelCascadeMode = CascadeMode.Continue;
+
+builder.Services.AddValidatorsFromAssemblyContaining<CreateTaskCommandValidator>();
+
+builder.Services.AddScoped<ITaskRepository, TaskRepository>();
+builder.Services.AddScoped<CreateTaskCommandHandler>();
+
+// TODO(Delivery-3): Replace with a JWT-claim-backed ICurrentUserContext
+// registration. Singleton is safe ONLY because the seed shim is stateless.
+builder.Services.AddSingleton<ICurrentUserContext, SeedCurrentUserContext>();
 
 // PostgreSQL connectivity probe backed by AspNetCore.HealthChecks.NpgSql —
 // NOT an EF Core DbContext (out of scope for this batch). Failures are
@@ -53,8 +86,6 @@ builder.Services.AddHealthChecks()
 
 // Placeholder — future DI registration:
 // - Auth middleware / JWT bearer authentication (uses JwtOptions above)
-// - EF Core DbContext (TaskFlowDbContext) registration
-// - Repository and use-case service registrations
 
 var app = builder.Build();
 
@@ -69,8 +100,15 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
+// Project-wide ValidationException -> standard error shape mapping. Must be
+// registered before endpoint routing/execution so it can catch exceptions
+// thrown by any controller action.
+app.UseExceptionHandler();
+
 // Placeholder — future middleware:
 // - JWT authentication / authorization middleware
+
+app.MapControllers();
 
 // GET /health — public, outside the /api prefix, no authentication.
 // Always returns 200 OK, even when PostgreSQL is unreachable.
@@ -92,3 +130,9 @@ app.MapGet("/health", async (HealthCheckService healthCheckService) =>
 });
 
 app.Run();
+
+// Exposes the implicit Program class generated from top-level statements so
+// WebApplicationFactory<Program> (integration tests) can reference it.
+public partial class Program
+{
+}

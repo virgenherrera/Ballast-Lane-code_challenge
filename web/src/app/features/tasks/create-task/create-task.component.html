@@ -1,0 +1,87 @@
+<div class="mx-auto max-w-xl px-4 py-10">
+  <div class="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm sm:p-8">
+    <h1 class="mb-6 text-xl font-semibold text-gray-900">Create Task</h1>
+
+    @if (submitSucceeded()) {
+      <div class="mb-6 rounded-lg border border-green-200 bg-green-50 px-4 py-3 text-sm text-green-700">
+        Task created successfully.
+      </div>
+    }
+
+    <form [formGroup]="form" (ngSubmit)="onSubmit()" novalidate>
+      <app-form-field
+        label="Title"
+        fieldId="title"
+        [errorMessage]="
+          fieldErrors()['title'] ||
+          (form.controls.title.touched && form.controls.title.hasError('required')
+            ? 'Title is required'
+            : null) ||
+          (form.controls.title.touched && form.controls.title.hasError('notBlank')
+            ? 'Title cannot be blank'
+            : null) ||
+          (form.controls.title.touched && form.controls.title.hasError('maxlength')
+            ? 'Title must not exceed ' + titleMaxLength + ' characters'
+            : null)
+        "
+      >
+        <input
+          id="title"
+          type="text"
+          formControlName="title"
+          class="block w-full rounded-lg border border-gray-300 px-3.5 py-2.5 text-sm text-gray-900 shadow-sm placeholder:text-gray-400 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+          placeholder="e.g. Buy groceries"
+        />
+      </app-form-field>
+
+      <app-form-field
+        label="Description"
+        fieldId="description"
+        [errorMessage]="
+          fieldErrors()['description'] ||
+          (form.controls.description.touched && form.controls.description.hasError('maxlength')
+            ? 'Description must not exceed ' + descriptionMaxLength + ' characters'
+            : null)
+        "
+      >
+        <textarea
+          id="description"
+          rows="4"
+          formControlName="description"
+          class="block w-full rounded-lg border border-gray-300 px-3.5 py-2.5 text-sm text-gray-900 shadow-sm placeholder:text-gray-400 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+          placeholder="Add more details (optional)"
+        ></textarea>
+      </app-form-field>
+
+      <app-form-field
+        label="Due date"
+        fieldId="dueDate"
+        [errorMessage]="
+          fieldErrors()['dueDate'] ||
+          (form.controls.dueDate.touched && form.controls.dueDate.hasError('futureDate')
+            ? 'Due date must be in the future'
+            : null)
+        "
+      >
+        <input
+          id="dueDate"
+          type="datetime-local"
+          formControlName="dueDate"
+          class="block w-full rounded-lg border border-gray-300 px-3.5 py-2.5 text-sm text-gray-900 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+        />
+      </app-form-field>
+
+      <button
+        type="submit"
+        [disabled]="form.invalid || isLoading()"
+        class="mt-2 inline-flex w-full items-center justify-center rounded-lg bg-blue-600 px-4 py-2.5 text-sm font-medium text-white shadow-sm transition-colors hover:bg-blue-700 disabled:cursor-not-allowed disabled:bg-gray-300"
+      >
+        @if (isLoading()) {
+          <span>Creating...</span>
+        } @else {
+          <span>Create Task</span>
+        }
+      </button>
+    </form>
+  </div>
+</div>

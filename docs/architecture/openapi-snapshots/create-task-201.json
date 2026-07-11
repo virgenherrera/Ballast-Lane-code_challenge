@@ -1,0 +1,10 @@
+{
+  "id": "01961234-89ab-7cde-f012-3456789abcde",
+  "title": "Buy groceries",
+  "description": "Milk, eggs, bread",
+  "status": "Pending",
+  "dueDate": "2026-07-18T12:00:00Z",
+  "ownerId": "01961234-5678-7abc-def0-123456789abc",
+  "createdAt": "2026-07-11T12:00:00Z",
+  "updatedAt": "2026-07-11T12:00:00Z"
+}
