@@ -11,9 +11,10 @@
 ## Deliverables
 
 - [ ] Backend API with Clean Architecture and TDD
-- [ ] Frontend with CRUD operations
+- [x] Frontend scaffold with health semaphore (Angular 22.0.6, Docker, nginx)
+- [ ] Frontend CRUD operations
 - [ ] GenAI process documentation (mandatory)
-- [ ] README with setup instructions and thought process
+- [x] README with setup instructions and thought process
 - [ ] Seeded data and credentials for demo
 
 ## Repository Rules

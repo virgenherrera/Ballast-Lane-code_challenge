@@ -77,7 +77,7 @@ hardcoding versions. Updated as dependencies are added during implementation.
 
 | Package | Version | Role |
 | ------- | ------- | ---- |
-| Playwright | 1.53.1 | E2E browser tests |
+| Playwright | 1.61.1 | E2E browser tests |
 | Vitest | 4.1.10 | Unit test runner (Angular component tests) |
 
 ### Infrastructure
@@ -169,6 +169,24 @@ the full GenAI process documentation, including prompts, outputs, and validation
 | DELETE | `/api/tasks/{id}` | Bearer | Delete a task |
 
 Full contract: [docs/architecture/api-contract.md](docs/architecture/api-contract.md)
+
+## Running E2E Tests
+
+Requires the Docker stack running and Playwright browsers installed.
+
+```bash
+# 1. Start the stack
+docker compose up -d
+
+# 2. Install Playwright browsers (one-time)
+cd e2e && npx playwright install chromium
+
+# 3. Run tests
+WEB_PORT=4200 API_PORT=3000 npx playwright test
+```
+
+Environment variables `WEB_PORT` and `API_PORT` are required (no defaults — Zod validation
+enforces this). See [e2e/README.md](e2e/README.md) for details.
 
 ## License
 
