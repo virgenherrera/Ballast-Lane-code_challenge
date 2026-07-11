@@ -406,7 +406,7 @@ patterns.
 **Step 4 — Delegate writing**:
 
 - Orchestrator delegates writing the validated handoffs to real project files at
-  `docs/handoffs/EP0X/EP0X-B{N}-{NN}-{task-slug}.md`
+  `docs/subtasks/EP0X/EP0X-B{N}-{NN}-{task-slug}.md`
 - Create/update the batch plan tracking file if needed
 - Save to engram
 
@@ -422,7 +422,7 @@ patterns.
 | Each team agent reading source files | N-x redundant reads, context waste | Briefing agent reads once, all others receive pre-digested |
 | Vague quality gates | Implementing agent can't self-verify, PDC fails | Every gate is a copy-pasteable shell command |
 | Missing boundaries | Scope creep during implementation | Explicit OUT OF SCOPE list, minimum 3 items |
-| Writing handoffs to scratchpad only | Lost after session, not delegatable | Delegate write to real docs/handoffs/EP0X/ files |
+| Writing handoffs to scratchpad only | Lost after session, not delegatable | Delegate write to real docs/subtasks/EP0X/ files |
 
 #### Model Assignment
 
