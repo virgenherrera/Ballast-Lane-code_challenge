@@ -24,4 +24,8 @@ export class TaskService {
   ): Observable<TaskResponse> {
     return this.http.patch<TaskResponse>(`${environment.apiBaseUrl}/api/tasks/${id}`, payload);
   }
+
+  deleteTask(id: string): Observable<void> {
+    return this.http.delete<void>(`${environment.apiBaseUrl}/api/tasks/${id}`);
+  }
 }

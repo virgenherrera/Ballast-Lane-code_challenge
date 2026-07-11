@@ -30,4 +30,20 @@ export class TaskListStubComponent {
       );
     });
   }
+
+  onDelete(taskId: string): void {
+    if (!confirm('Are you sure you want to delete this task?')) {
+      return;
+    }
+
+    this.taskService.deleteTask(taskId).subscribe({
+      next: () => {
+        this.tasks.update((tasks) => tasks.filter((t) => t.id !== taskId));
+      },
+      error: () => {
+        // On failure, task remains in list — no state change.
+        // Error handling can be enhanced in future stories.
+      },
+    });
+  }
 }

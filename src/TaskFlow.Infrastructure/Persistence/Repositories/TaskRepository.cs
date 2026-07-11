@@ -34,4 +34,13 @@ public sealed class TaskRepository : ITaskRepository
     {
         await _dbContext.SaveChangesAsync(ct);
     }
+
+    public async Task<bool> DeleteAsync(Guid id, Guid ownerId, CancellationToken ct)
+    {
+        var rowsAffected = await _dbContext.Tasks
+            .Where(t => t.Id == id && t.OwnerId == ownerId)
+            .ExecuteDeleteAsync(ct);
+
+        return rowsAffected > 0;
+    }
 }

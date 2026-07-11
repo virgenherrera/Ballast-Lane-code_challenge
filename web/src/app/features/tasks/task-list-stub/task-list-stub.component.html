@@ -11,6 +11,12 @@
         <option value="In Progress">In Progress</option>
         <option value="Completed">Completed</option>
       </select>
+      <button
+        type="button"
+        [attr.data-testid]="'delete-btn-' + task.id"
+        (click)="onDelete(task.id)">
+        Delete
+      </button>
     </li>
   }
 </ul>

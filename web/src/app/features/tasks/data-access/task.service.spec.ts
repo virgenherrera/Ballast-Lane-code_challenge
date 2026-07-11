@@ -64,4 +64,34 @@ describe('TaskService', () => {
 
     expect(actual).toEqual(response);
   });
+
+  it('TaskService_deleteTask_SendsDeleteToCorrectEndpoint', () => {
+    const taskId = '01961234-89ab-7cde-f012-3456789abcde';
+    service.deleteTask(taskId).subscribe();
+
+    const req = httpMock.expectOne(
+      `${environment.apiBaseUrl}/api/tasks/${taskId}`
+    );
+    expect(req.request.method).toBe('DELETE');
+    req.flush(null, { status: 204, statusText: 'No Content' });
+  });
+
+  it('TaskService_deleteTask_CompletesWithoutErrorOn204', () => {
+    const taskId = '01961234-89ab-7cde-f012-3456789abcde';
+    let completed = false;
+    let errored = false;
+
+    service.deleteTask(taskId).subscribe({
+      complete: () => { completed = true; },
+      error: () => { errored = true; },
+    });
+
+    const req = httpMock.expectOne(
+      `${environment.apiBaseUrl}/api/tasks/${taskId}`
+    );
+    req.flush(null, { status: 204, statusText: 'No Content' });
+
+    expect(completed).toBe(true);
+    expect(errored).toBe(false);
+  });
 });

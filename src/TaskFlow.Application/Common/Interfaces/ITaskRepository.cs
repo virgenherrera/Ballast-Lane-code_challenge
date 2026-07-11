@@ -13,4 +13,6 @@ public interface ITaskRepository
     Task<TaskItem?> GetByIdAsync(Guid id, CancellationToken ct);
 
     Task SaveChangesAsync(CancellationToken ct);
+
+    Task<bool> DeleteAsync(Guid id, Guid ownerId, CancellationToken ct);
 }

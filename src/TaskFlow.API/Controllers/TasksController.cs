@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using TaskFlow.API.Contracts;
 using TaskFlow.Application.Common.Interfaces;
 using TaskFlow.Application.Tasks.Commands.CreateTask;
+using TaskFlow.Application.Tasks.Commands.DeleteTask;
 using TaskFlow.Application.Tasks.Commands.UpdateTask;
 
 namespace TaskFlow.API.Controllers;
@@ -16,19 +17,22 @@ public class TasksController : ControllerBase
     private readonly ITaskRepository _taskRepository;
     private readonly IValidator<UpdateTaskCommand> _updateValidator;
     private readonly UpdateTaskCommandHandler _updateHandler;
+    private readonly DeleteTaskCommandHandler _deleteHandler;
 
     public TasksController(
         IValidator<CreateTaskCommand> createTaskValidator,
         CreateTaskCommandHandler createTaskHandler,
         ITaskRepository taskRepository,
         IValidator<UpdateTaskCommand> updateValidator,
-        UpdateTaskCommandHandler updateHandler)
+        UpdateTaskCommandHandler updateHandler,
+        DeleteTaskCommandHandler deleteHandler)
     {
         _createTaskValidator = createTaskValidator;
         _createTaskHandler = createTaskHandler;
         _taskRepository = taskRepository;
         _updateValidator = updateValidator;
         _updateHandler = updateHandler;
+        _deleteHandler = deleteHandler;
     }
 
     // TEMPORARY: returns all tasks with no filtering/sorting/pagination.
@@ -136,4 +140,32 @@ public class TasksController : ControllerBase
 
         return Ok(response);
     }
+
+    // Route param is deliberately `string id`, NOT `Guid id` / `{id:guid}`,
+    // matching the Update action's pattern for consistency — see remarks
+    // above Update. Malformed-GUID -> 400 is not an AC for this story, but
+    // the pattern is kept identical rather than mixing conventions.
+    [HttpDelete("{id}")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<IActionResult> Delete(string id, CancellationToken ct)
+    {
+        if (!Guid.TryParse(id, out var taskId))
+        {
+            return BadRequest(new
+            {
+                status = 400,
+                error = "VALIDATION_ERROR",
+                message = "Task id is not a valid GUID.",
+                details = new[] { new { field = "id", issue = "must be a valid UUID/GUID" } }
+            });
+        }
+
+        var command = new DeleteTaskCommand(taskId);
+        await _deleteHandler.Handle(command, ct);
+
+        return NoContent();
+    }
+    // TaskNotFoundException thrown by handler is caught by existing
+    // TaskNotFoundExceptionHandler middleware -> 404 standard error shape.
 }

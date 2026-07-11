@@ -6,6 +6,7 @@ using TaskFlow.API.Configuration;
 using TaskFlow.API.Middleware;
 using TaskFlow.Application.Common.Interfaces;
 using TaskFlow.Application.Tasks.Commands.CreateTask;
+using TaskFlow.Application.Tasks.Commands.DeleteTask;
 using TaskFlow.Application.Tasks.Commands.UpdateTask;
 using TaskFlow.Infrastructure.Identity;
 using TaskFlow.Infrastructure.Persistence;
@@ -79,6 +80,7 @@ builder.Services.AddScoped<ITaskRepository, TaskRepository>();
 builder.Services.AddScoped<CreateTaskCommandHandler>();
 builder.Services.AddScoped<UpdateTaskCommandHandler>();
 builder.Services.AddScoped<UpdateTaskCommandValidator>();
+builder.Services.AddScoped<DeleteTaskCommandHandler>();
 
 // TODO(Delivery-3): Replace with a JWT-claim-backed ICurrentUserContext
 // registration. Singleton is safe ONLY because the seed shim is stateless.
