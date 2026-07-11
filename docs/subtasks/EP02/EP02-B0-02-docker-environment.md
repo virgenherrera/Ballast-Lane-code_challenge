@@ -1,13 +1,13 @@
-# Handoff: EP01-B0-02 — Docker Compose + Environment
+# Handoff: EP02-B0-02 — Docker Compose + Environment
 
 ## 1. Metadata
 
 | Field | Value |
 | --- | --- |
-| Task ID | EP01-B0-02 |
+| Task ID | EP02-B0-02 |
 | Task Name | Docker Compose + Environment |
 | Batch | 0 of 7 |
-| Epic | EP01 — User Management |
+| Epic | EP02 — User Management |
 | User Stories | none (infrastructure only) |
 | Persona | Kelsey Hightower — Cloud Native Pioneer |
 | Model Tier | sonnet |
@@ -32,7 +32,7 @@ Read ONLY these files. Do not explore beyond this list.
 
 | File | Lines | Why |
 | --- | --- | --- |
-| `docs/epics/EP01-engineering-addenda.md` | 1-181 (full file) | Grooming decisions — no section directly defines env vars, but confirms Batch 0 scope and no auth/API containers yet |
+| `docs/epics/EP02-engineering-addenda.md` | 1-181 (full file) | Grooming decisions — no section directly defines env vars, but confirms Batch 0 scope and no auth/API containers yet |
 | `docs/architecture/build-pipeline.md` | 81-93 | Stage 0 (setUp) — env var validation and `docker compose up -d db` gate this task must satisfy |
 | `README.md` | 30-46 | Version Manifest — PostgreSQL 17.5 pinned, Docker Engine/Compose versions |
 | `AGENTS.md` | 234-244 | TASKFLOW-BUILD-PIPELINE compact rule — Docker Compose topology and env var rules |
@@ -51,7 +51,7 @@ Read ONLY these files. Do not explore beyond this list.
 
 | File Path | Change |
 | --- | --- |
-| `.gitignore` | Ensure `.env` is listed (should already be covered by EP01-B0-01's `.gitignore` update if that task ran first; add it here if missing) |
+| `.gitignore` | Ensure `.env` is listed (should already be covered by EP02-B0-01's `.gitignore` update if that task ran first; add it here if missing) |
 
 ### Expected Signatures (when precision matters)
 
@@ -116,7 +116,7 @@ WEB_PORT=4200
 
 Generate the `JWT_SECRET` value with a secure random generator (e.g.
 `openssl rand -hex 32`), not a hand-typed placeholder — it must be at least 32 characters per
-[Engineering Addenda — Section 2 (JWT Configuration)](../../epics/EP01-engineering-addenda.md#2-jwt-configuration).
+[Engineering Addenda — Section 2 (JWT Configuration)](../../epics/EP02-engineering-addenda.md#2-jwt-configuration).
 
 ## 6. Quality Gates
 
@@ -146,7 +146,7 @@ Generate the `JWT_SECRET` value with a secure random generator (e.g.
 - `docker-compose.yml`, `.env.example`, and `.env` all exist and match the shapes in Section 5
 - All quality gates in Section 6 pass
 - Do NOT proceed to writing the health endpoint or wiring the connection string into the API
-  (that is EP01-B0-03's job)
+  (that is EP02-B0-03's job)
 
 ## 8. Anti-Patterns
 

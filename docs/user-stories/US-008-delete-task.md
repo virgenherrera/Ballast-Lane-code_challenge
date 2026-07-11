@@ -1,8 +1,8 @@
-> [📚 INDEX](../INDEX.md) / [EP02 — Task Management](../epics/EP02-task-management.md) / US-008
+> [📚 INDEX](../INDEX.md) / [EP01 — Task Management](../epics/EP01-task-management.md) / US-008
 
 # US-008 — Delete Task
 
-**Epic**: [EP02 - Task Management](../epics/EP02-task-management.md)
+**Epic**: [EP01 - Task Management](../epics/EP01-task-management.md)
 **Priority**: Must Have
 **Status**: [ ] Not Started
 

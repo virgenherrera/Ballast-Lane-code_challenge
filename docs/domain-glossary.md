@@ -47,7 +47,7 @@ directional transitions for this CRUD-scoped application.
 
 ### Task
 A unit of work that a user wants to track. Has a lifecycle from creation to completion or removal.
-See [EP02 — Task Management](epics/EP02-task-management.md) for the full CRUD lifecycle.
+See [EP01 — Task Management](epics/EP01-task-management.md) for the full CRUD lifecycle.
 
 **Properties:**
 - **Title**: short, descriptive name for the task (required)
@@ -63,7 +63,7 @@ The current state of a task in its lifecycle:
 
 ### User
 A person who registers and authenticates to use the system. Each user owns their own tasks.
-See [EP01 — User Management](epics/EP01-user-management.md) for registration and authentication flows.
+See [EP02 — User Management](epics/EP02-user-management.md) for registration and authentication flows.
 
 **Properties:**
 - **Email**: unique identifier for authentication (required)
@@ -99,5 +99,5 @@ A task belongs to the user who created it. Users can only perform CRUD operation
 ## Related Documents
 
 - [Project Brief](project-brief.md) — overall vision this glossary supports
-- [EP01 — User Management](epics/EP01-user-management.md) and [EP02 — Task Management](epics/EP02-task-management.md) — epics using these terms
+- [EP02 — User Management](epics/EP02-user-management.md) and [EP01 — Task Management](epics/EP01-task-management.md) — epics using these terms
 - [API Contract](architecture/api-contract.md) — where these entities appear as request/response shapes

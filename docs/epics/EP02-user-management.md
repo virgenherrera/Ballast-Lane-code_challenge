@@ -1,6 +1,6 @@
-> [📚 INDEX](../INDEX.md) / [Epics](../INDEX.md#epics) / EP01
+> [📚 INDEX](../INDEX.md) / [Epics](../INDEX.md#epics) / EP02
 
-# EP01 — User Management
+# EP02 — User Management
 
 ## Summary
 
@@ -58,7 +58,7 @@ sequenceDiagram
 
 ## Related Documents
 
-- [Engineering Addenda](EP01-engineering-addenda.md) — technical refinement decisions, batch plan, security specs
+- [Engineering Addenda](EP02-engineering-addenda.md) — technical refinement decisions, batch plan, security specs
 - [API Contract — Auth API](../architecture/api-contract.md#3-auth-api-public) — registration and login endpoint specs
 - [API Contract — Tasks API](../architecture/api-contract.md#4-tasks-api-protected) — protected endpoint auth rules (US-003)
 - [Testing Strategy — US-001 through US-003 coverage](../architecture/testing-strategy.md#33-mapping-acceptance-criteria-to-test-cases)

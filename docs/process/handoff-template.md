@@ -32,7 +32,7 @@ applicable.
 
 | Field         | Value                                     |
 | ------------- | ----------------------------------------- |
-| Task ID       | {TASK-ID} (e.g., EP01-B3-01)              |
+| Task ID       | {TASK-ID} (e.g., EP02-B3-01)              |
 | Task Name     | {short descriptive name}                  |
 | Batch         | {batch number} of {total batches}         |
 | Epic          | {epic ID and name}                        |

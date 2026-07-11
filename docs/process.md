@@ -125,9 +125,9 @@ contract that a sub-agent can execute autonomously — no ad-hoc prompts, no imp
 %% Sprint Planning produces handoff files from grooming outputs
 flowchart LR
     GROOM["Grooming\n(engineering addenda)"] --> PLAN["Sprint Planning\n(task decomposition)"]
-    PLAN --> HF1["Handoff\nEP01-B0-01"]
-    PLAN --> HF2["Handoff\nEP01-B0-02"]
-    PLAN --> HF3["Handoff\nEP01-B0-03"]
+    PLAN --> HF1["Handoff\nEP02-B0-01"]
+    PLAN --> HF2["Handoff\nEP02-B0-02"]
+    PLAN --> HF3["Handoff\nEP02-B0-03"]
     HF1 --> AGENT1["Sub-Agent"]
     HF2 --> AGENT2["Sub-Agent"]
     HF3 --> AGENT3["Sub-Agent"]

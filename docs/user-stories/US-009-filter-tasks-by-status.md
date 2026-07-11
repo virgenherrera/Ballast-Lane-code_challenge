@@ -1,8 +1,8 @@
-> [📚 INDEX](../INDEX.md) / [EP02 — Task Management](../epics/EP02-task-management.md) / US-009
+> [📚 INDEX](../INDEX.md) / [EP01 — Task Management](../epics/EP01-task-management.md) / US-009
 
 # US-009 — Filter Tasks by Status
 
-**Epic**: [EP02 - Task Management](../epics/EP02-task-management.md)
+**Epic**: [EP01 - Task Management](../epics/EP01-task-management.md)
 **Priority**: Should Have
 **Status**: [ ] Not Started
 

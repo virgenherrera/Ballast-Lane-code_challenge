@@ -1,6 +1,6 @@
-> [📚 INDEX](../INDEX.md) / [Epics](../INDEX.md#epics) / EP02
+> [📚 INDEX](../INDEX.md) / [Epics](../INDEX.md#epics) / EP01
 
-# EP02 — Task Management
+# EP01 — Task Management
 
 ## Summary
 

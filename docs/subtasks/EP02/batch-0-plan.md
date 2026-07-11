@@ -1,8 +1,8 @@
-> [📚 INDEX](../../INDEX.md) / [EP01](../../epics/EP01-user-management.md) / Batch 0 Plan
+> [📚 INDEX](../../INDEX.md) / [EP02](../../epics/EP02-user-management.md) / Batch 0 Plan
 
-# EP01 — Batch 0: Infra Bootstrap
+# EP02 — Batch 0: Infra Bootstrap
 
-Batch summary for the first implementation batch of EP01 (User Management). Batch 0 lays the
+Batch summary for the first implementation batch of EP02 (User Management). Batch 0 lays the
 foundation every later batch depends on: the .NET solution structure, the local PostgreSQL
 environment, and a working health endpoint that proves the API boots and can reach the database.
 No domain logic, no auth, no entities — pure scaffolding.
@@ -18,7 +18,7 @@ No domain logic, no auth, no entities — pure scaffolding.
 
 ## 1. Scope
 
-Per the [EP01 Engineering Addenda — Batch Plan](../../epics/EP01-engineering-addenda.md#12-batch-plan),
+Per the [EP02 Engineering Addenda — Batch Plan](../../epics/EP02-engineering-addenda.md#12-batch-plan),
 Batch 0 delivers:
 
 - .NET solution with 8 projects (4 src + 4 test), wired with correct project references
@@ -32,36 +32,36 @@ Application) and later batches build on top of.
 
 | Task ID | Task Name | Persona | Model | Depends On |
 | --- | --- | --- | --- | --- |
-| [EP01-B0-01](EP01-B0-01-solution-scaffold.md) | Solution Scaffold | Uncle Bob | sonnet | none |
-| [EP01-B0-02](EP01-B0-02-docker-environment.md) | Docker Compose + Environment | Kelsey Hightower | sonnet | none |
-| [EP01-B0-03](EP01-B0-03-health-endpoint.md) | Health Endpoint + Program.cs | Uncle Bob | sonnet | EP01-B0-01 |
+| [EP02-B0-01](EP02-B0-01-solution-scaffold.md) | Solution Scaffold | Uncle Bob | sonnet | none |
+| [EP02-B0-02](EP02-B0-02-docker-environment.md) | Docker Compose + Environment | Kelsey Hightower | sonnet | none |
+| [EP02-B0-03](EP02-B0-03-health-endpoint.md) | Health Endpoint + Program.cs | Uncle Bob | sonnet | EP02-B0-01 |
 
 ## 3. Dependency Graph
 
 ```mermaid
 %% Batch 0 — task dependency graph
 flowchart LR
-    B01["EP01-B0-01\nSolution Scaffold"] --> B03["EP01-B0-03\nHealth Endpoint"]
-    B02["EP01-B0-02\nDocker Compose + Env"] -.provides DB.-> B03
+    B01["EP02-B0-01\nSolution Scaffold"] --> B03["EP02-B0-03\nHealth Endpoint"]
+    B02["EP02-B0-02\nDocker Compose + Env"] -.provides DB.-> B03
 
     style B01 fill:#3b82f6,color:#fff
     style B02 fill:#f59e0b,color:#fff
     style B03 fill:#22c55e,color:#fff
 ```
 
-`EP01-B0-01` and `EP01-B0-02` have no dependency on each other and can run in parallel.
-`EP01-B0-03` requires `EP01-B0-01` (the solution must exist before Program.cs can be written)
-and benefits from `EP01-B0-02` being complete so the health check's database probe can be
+`EP02-B0-01` and `EP02-B0-02` have no dependency on each other and can run in parallel.
+`EP02-B0-03` requires `EP02-B0-01` (the solution must exist before Program.cs can be written)
+and benefits from `EP02-B0-02` being complete so the health check's database probe can be
 exercised end-to-end, though it is not a hard blocker — the endpoint must return `db: "down"`
 gracefully when PostgreSQL is unreachable.
 
 ## 4. Execution Order
 
-1. **Parallel wave 1**: `EP01-B0-01` (Solution Scaffold) and `EP01-B0-02` (Docker Compose +
+1. **Parallel wave 1**: `EP02-B0-01` (Solution Scaffold) and `EP02-B0-02` (Docker Compose +
    Environment) — independent, no shared files.
-2. **Sequential**: `EP01-B0-03` (Health Endpoint + Program.cs) — starts only after
-   `EP01-B0-01` reports `DONE` with `dotnet build` passing. Verify against a running
-   `EP01-B0-02` database when available for the full `db: "ok"` path, but the endpoint must
+2. **Sequential**: `EP02-B0-03` (Health Endpoint + Program.cs) — starts only after
+   `EP02-B0-01` reports `DONE` with `dotnet build` passing. Verify against a running
+   `EP02-B0-02` database when available for the full `db: "ok"` path, but the endpoint must
    also be verified against a stopped database for the `db: "down"` path.
 
 ## 5. Definition of Done — Batch 0
@@ -81,7 +81,7 @@ gracefully when PostgreSQL is unreachable.
 
 ## 6. Related Documents
 
-- [EP01 — Engineering Addenda](../../epics/EP01-engineering-addenda.md) — grooming decisions,
+- [EP02 — Engineering Addenda](../../epics/EP02-engineering-addenda.md) — grooming decisions,
   batch plan
 - [Clean Architecture](../../architecture/clean-architecture.md) — project structure and
   reference graph

@@ -577,4 +577,4 @@ details to consumers.
 - [Clean Architecture](clean-architecture.md) — how requests flow through layers to reach these endpoints
 - [Tech Stack](tech-stack.md) — technology decisions behind this API (JWT, EF Core, PostgreSQL)
 - [Testing Strategy — Mapping: Acceptance Criteria to Test Cases](testing-strategy.md#33-mapping-acceptance-criteria-to-test-cases) — integration tests for every endpoint here
-- [EP01 — User Management](../epics/EP01-user-management.md) and [EP02 — Task Management](../epics/EP02-task-management.md) — epics these endpoints implement
+- [EP02 — User Management](../epics/EP02-user-management.md) and [EP01 — Task Management](../epics/EP01-task-management.md) — epics these endpoints implement

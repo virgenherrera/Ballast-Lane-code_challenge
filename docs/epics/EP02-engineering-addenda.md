@@ -1,8 +1,8 @@
-> [📚 INDEX](../INDEX.md) / [EP01](EP01-user-management.md) / Engineering Addenda
+> [📚 INDEX](../INDEX.md) / [EP02](EP02-user-management.md) / Engineering Addenda
 
-# EP01 — Engineering Addenda
+# EP02 — Engineering Addenda
 
-Refinement decisions made during EP01 grooming. These are binding technical specs that
+Refinement decisions made during EP02 grooming. These are binding technical specs that
 complement the user stories' "what" with the "how." Produced by the full scrum team
 (TL, QA, BE, DevOps, FE) and approved by the PO.
 
@@ -69,22 +69,22 @@ work factor 4 to avoid slow test suites.
 ## 6. US-003 — Protected Endpoint for Testing
 
 US-003 (Protected Access) is cross-cutting and applies to all `/api/tasks/*` endpoints,
-which belong to EP02. To test US-003 within EP01 scope:
+which belong to EP01. To test US-003 within EP02 scope:
 
 - Add `GET /api/auth/me` — returns the authenticated user's profile
-- This gives US-003 a concrete EP01-owned endpoint to test against
+- This gives US-003 a concrete EP02-owned endpoint to test against
 - Response: `{ id, email, name, createdAt }` (same shape as register response)
 - 401 if no token / expired / tampered
 
-## 7. E2E Test Strategy for EP01
+## 7. E2E Test Strategy for EP02
 
-EP01 is backend-only. Full E2E tests (browser-driven) require EP04's UI. Instead:
+EP02 is backend-only. Full E2E tests (browser-driven) require EP04's UI. Instead:
 
 - Initialize the Playwright project structure (scaffold, config)
 - Write one **smoke test**: load the frontend URL, verify the page loads, verify the
   backend is alive via `/health`
 - Full auth E2E tests (register form, login form, protected routes) move to EP04's DOD
-- Integration tests at the API level ARE the primary confidence layer for EP01
+- Integration tests at the API level ARE the primary confidence layer for EP02
 
 ## 8. Angular Proxy (No CORS)
 
@@ -173,7 +173,7 @@ Startup DB validation uses `DbContext.Database.CanConnectAsync()` — not raw
 ## 13. Implementation Order
 
 ```mermaid
-%% EP01 implementation — strictly sequential with shared foundation
+%% EP02 implementation — strictly sequential with shared foundation
 flowchart LR
     B0["Batch 0\nInfra Bootstrap"] --> B1["Batch 1\nDomain + App"]
     B1 --> B2["Batch 2\nInfrastructure"]
@@ -193,7 +193,7 @@ flowchart LR
 
 ## Related Documents
 
-- [EP01 — User Management](EP01-user-management.md) — parent epic
+- [EP02 — User Management](EP02-user-management.md) — parent epic
 - [API Contract](../architecture/api-contract.md) — endpoint specs
 - [Testing Strategy](../architecture/testing-strategy.md) — test coverage mapping
 - [Tech Stack](../architecture/tech-stack.md) — technology decisions

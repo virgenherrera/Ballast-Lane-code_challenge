@@ -28,7 +28,7 @@ flowchart TD
 ## Deliverables
 
 - [ ] **D1** — Backend API: RESTful API with CRUD operations, user auth, layered architecture — see
-      [EP01 — User Management](epics/EP01-user-management.md), [EP02 — Task Management](epics/EP02-task-management.md),
+      [EP02 — User Management](epics/EP02-user-management.md), [EP01 — Task Management](epics/EP01-task-management.md),
       and [Clean Architecture](architecture/clean-architecture.md)
 - [ ] **D2** — Frontend: Responsive web UI with CRUD operations connected to the API — see
       [Tech Stack — Decision 5](architecture/tech-stack.md#decision-5-frontend-framework)
@@ -64,4 +64,4 @@ Presentation via Google Meet/Zoom with screen share. Code review by interview pa
 
 - [Domain Glossary](domain-glossary.md) — ubiquitous language for User and Task entities
 - [Tech Stack](architecture/tech-stack.md) — technology decisions behind the Backend API deliverable
-- [EP01 — User Management](epics/EP01-user-management.md), [EP02 — Task Management](epics/EP02-task-management.md), [EP03 — GenAI Process Documentation](epics/EP03-genai-documentation.md) — epics implementing these deliverables
+- [EP02 — User Management](epics/EP02-user-management.md), [EP01 — Task Management](epics/EP01-task-management.md), [EP03 — GenAI Process Documentation](epics/EP03-genai-documentation.md) — epics implementing these deliverables

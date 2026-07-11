@@ -83,7 +83,7 @@ flowchart TD
 
 - This story provides the infrastructure only; the test cases themselves are defined per-AC in
   [Testing Strategy](../architecture/testing-strategy.md) (Sections 3.3, 4.3–4.6) and implemented
-  alongside each corresponding user story (EP01, EP02).
+  alongside each corresponding user story (EP02, EP01).
 - **PostgreSQL is the ONLY database engine** — no EF Core InMemory, no SQLite in-memory. The
   Docker test container runs the exact same PostgreSQL version (`17.5`) used in the Docker Compose
   demo, so migration and constraint behavior in tests matches what the evaluator sees.

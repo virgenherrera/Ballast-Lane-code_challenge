@@ -1,13 +1,13 @@
-# Handoff: EP01-B0-03 — Health Endpoint + Program.cs
+# Handoff: EP02-B0-03 — Health Endpoint + Program.cs
 
 ## 1. Metadata
 
 | Field | Value |
 | --- | --- |
-| Task ID | EP01-B0-03 |
+| Task ID | EP02-B0-03 |
 | Task Name | Health Endpoint + Program.cs |
 | Batch | 0 of 7 |
-| Epic | EP01 — User Management |
+| Epic | EP02 — User Management |
 | User Stories | none (infrastructure — health endpoint defined in API Contract, not a user story) |
 | Persona | Uncle Bob — Clean Architecture Author |
 | Model Tier | sonnet |
@@ -21,7 +21,7 @@ the API boots and can (attempt to) reach PostgreSQL.
 
 ## 3. Pre-Conditions
 
-- [ ] `EP01-B0-01` (Solution Scaffold) reports `DONE` — `TaskFlow.sln` and `src/TaskFlow.API/`
+- [ ] `EP02-B0-01` (Solution Scaffold) reports `DONE` — `TaskFlow.sln` and `src/TaskFlow.API/`
   exist
 - [ ] `dotnet build` exits 0 on the current solution
 - [ ] `src/TaskFlow.API/TaskFlow.API.csproj` targets `net10.0` and has no `WeatherForecast`
@@ -35,7 +35,7 @@ Read ONLY these files. Do not explore beyond this list.
 | --- | --- | --- |
 | `docs/architecture/api-contract.md` | 85-102 | Exact `GET /health` request/response shape (`status`, `liveSince`, `db`) |
 | `docs/architecture/clean-architecture.md` | 95-143 | Confirms `Program.cs` lives in `TaskFlow.API` and is the composition root |
-| `docs/epics/EP01-engineering-addenda.md` | 141-151 | Batch Plan — confirms Batch 0 scope: appsettings wiring, fail-fast env var validation |
+| `docs/epics/EP02-engineering-addenda.md` | 141-151 | Batch Plan — confirms Batch 0 scope: appsettings wiring, fail-fast env var validation |
 | `README.md` | 30-64 | Version Manifest — `Microsoft.Extensions.Diagnostics.HealthChecks` is built-in, no version to pin |
 | `AGENTS.md` | 234-244 | TASKFLOW-BUILD-PIPELINE compact rule — env var fail-fast rule |
 

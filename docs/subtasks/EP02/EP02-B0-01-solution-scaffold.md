@@ -1,13 +1,13 @@
-# Handoff: EP01-B0-01 — Solution Scaffold
+# Handoff: EP02-B0-01 — Solution Scaffold
 
 ## 1. Metadata
 
 | Field | Value |
 | --- | --- |
-| Task ID | EP01-B0-01 |
+| Task ID | EP02-B0-01 |
 | Task Name | Solution Scaffold |
 | Batch | 0 of 7 |
-| Epic | EP01 — User Management |
+| Epic | EP02 — User Management |
 | User Stories | none (infrastructure only) |
 | Persona | Uncle Bob — Clean Architecture Author |
 | Model Tier | sonnet |
@@ -68,7 +68,7 @@ classes.
 `TaskFlow.API` is generated from the `dotnet new webapi` template. After generation, delete the
 default `WeatherForecast.cs` file and the `WeatherForecastController` (or minimal-API equivalent)
 that ships with the template. Leave `Program.cs` otherwise close to template defaults — Batch 0
-Task 3 (EP01-B0-03) rewrites it as the composition root.
+Task 3 (EP02-B0-03) rewrites it as the composition root.
 
 ## 6. Quality Gates
 
@@ -90,8 +90,8 @@ Task 3 (EP01-B0-03) rewrites it as the composition root.
   `classlib`, `webapi`, and `xunit` templates generate by default
 - Create any entity, value object, interface, or controller — those belong to Batch 1 onward
 - Write the health endpoint or modify `Program.cs` beyond template defaults (that is
-  EP01-B0-03's job)
-- Touch `docker-compose.yml`, `.env`, or `.env.example` (that is EP01-B0-02's job)
+  EP02-B0-03's job)
+- Touch `docker-compose.yml`, `.env`, or `.env.example` (that is EP02-B0-02's job)
 - Use any target framework other than `net10.0`
 
 ### SCOPE BOUNDARY — Stop when

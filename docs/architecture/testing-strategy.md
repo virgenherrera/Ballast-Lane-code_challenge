@@ -255,8 +255,8 @@ Story: [US-003 — Protected Access](../user-stories/US-003-protected-access.md)
 - [ ] AC-003.3: `ProtectedEndpoint_WithTamperedToken_Returns401`
 - [ ] AC-003.3: `ProtectedEndpoint_Returns401_WithCustomJsonShape`
 - [ ] AC-003.4: `ProtectedEndpoint_QueryOrMutation_IsScopedToOwnerIdClaim`
-- [ ] EP01: `GetAuthMe_WithValidToken_ReturnsUserProfile`
-- [ ] EP01: `GetAuthMe_WithoutToken_Returns401`
+- [ ] EP02: `GetAuthMe_WithValidToken_ReturnsUserProfile`
+- [ ] EP02: `GetAuthMe_WithoutToken_Returns401`
 
 #### US-004 — Create Task (`POST /api/tasks`)
 

@@ -1,8 +1,8 @@
-> [INDEX](../INDEX.md) / [EP01 — User Management](../epics/EP01-user-management.md) / US-003
+> [INDEX](../INDEX.md) / [EP02 — User Management](../epics/EP02-user-management.md) / US-003
 
 # US-003 — Protected Access
 
-**Epic**: [EP01 - User Management](../epics/EP01-user-management.md)
+**Epic**: [EP02 - User Management](../epics/EP02-user-management.md)
 **Priority**: Must Have
 **Status**: [ ] Not Started
 
@@ -23,8 +23,8 @@ and testing moves to Batch 3 (API layer) and Batch 5 (US-003 dedicated).
 
 - [ ] Confirmed that US-003 is ONLY PARTIALLY deliverable in Batch 1. Batch 1 delivers Domain/Application contracts only.
 - [ ] ITokenService interface shape decided: GenerateToken(User) -> string confirmed. ValidateToken(string) -> ClaimsPrincipal? RECOMMENDED for Batch 1 to avoid reopening Domain contracts in Batch 3.
-- [ ] GET /api/auth/me is confirmed as the testing surface for US-003 within EP01 (Decision #6), but its handler is ABSENT from Batch 1 blueprint. Deferred to Batch 3.
-- [ ] AC-003.4 (user isolation) has no business resource entity (Task) in EP01 to test against. Deferred to EP02.
+- [ ] GET /api/auth/me is confirmed as the testing surface for US-003 within EP02 (Decision #6), but its handler is ABSENT from Batch 1 blueprint. Deferred to Batch 3.
+- [ ] AC-003.4 (user isolation) has no business resource entity (Task) in EP02 to test against. Deferred to EP01.
 - [ ] JWT claim names confirmed as literal keys: sub, email, name. .NET ClaimTypes remapping behavior documented (known gotcha: 'sub' remapped to long URI).
 - [ ] Custom 401 shape (Decision #8) confirmed as API-layer concern, not Batch 1 unit test scope.
 - [ ] Sprint board splits US-003 into "US-003a: Token contract (Batch 1)" and "US-003b: Enforcement + isolation (Batch 3+)".
@@ -55,8 +55,8 @@ and testing moves to Batch 3 (API layer) and Batch 5 (US-003 dedicated).
   - **When** an expired or malformed token is presented
   - **Then** DEFERRED. Note: 'expired' and 'invalid signature' are two distinct failure modes needing distinct test cases when implemented.
 
-- [ ] **AC-003.4: User isolation** *(DEFERRED to EP02)*
-  - **Given** no user-owned business resource (Task entity) exists in EP01
+- [ ] **AC-003.4: User isolation** *(DEFERRED to EP01)*
+  - **Given** no user-owned business resource (Task entity) exists in EP02
   - **When** user isolation is tested
   - **Then** DEFERRED. Batch 1 ensures User.Id (UUID v7) is the sole authorization key for future resource scoping.
 
@@ -89,7 +89,7 @@ US-003 artifacts are produced in Batch 3+ (middleware, controller, integration t
 - Authentication middleware / [Authorize] attribute — Batch 3 (API layer)
 - GET /api/auth/me controller, route, and use case handler — Batch 3
 - Custom 401 response shape (Decision #8) — Batch 3
-- Cross-user data isolation testing — requires Task entity with ownership (EP02)
+- Cross-user data isolation testing — requires Task entity with ownership (EP01)
 - Any GetCurrentUser/Me use case — not in Batch 1 blueprint
 - JwtBearer configuration in Program.cs — Batch 3
 - Clock-skew/leeway policy for token expiry — Batch 2+
@@ -103,9 +103,9 @@ US-003 artifacts are produced in Batch 3+ (middleware, controller, integration t
 ## Related Documents
 
 - [API Contract — Tasks API (Protected)](../architecture/api-contract.md#4-tasks-api-protected) — where this story's rules are enforced
-- [API Contract — GET /api/auth/me](../architecture/api-contract.md#33-current-user--get-apiauthme) — EP01-owned testing surface
+- [API Contract — GET /api/auth/me](../architecture/api-contract.md#33-current-user--get-apiauthme) — EP02-owned testing surface
 - [Testing Strategy — US-003 coverage](../architecture/testing-strategy.md#us-003--protected-access-cross-cutting-all-apitasks)
-- [EP01 Engineering Addenda](../epics/EP01-engineering-addenda.md) — binding engineering decisions
+- [EP02 Engineering Addenda](../epics/EP02-engineering-addenda.md) — binding engineering decisions
 - [Clean Architecture — Cross-Cutting Concerns](../architecture/clean-architecture.md#6-cross-cutting-concerns)
 
 This story is cross-cutting: it applies to every protected task endpoint. Related task user

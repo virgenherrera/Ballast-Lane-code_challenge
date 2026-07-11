@@ -1,8 +1,8 @@
-> [INDEX](../INDEX.md) / [EP01 — User Management](../epics/EP01-user-management.md) / US-002
+> [INDEX](../INDEX.md) / [EP02 — User Management](../epics/EP02-user-management.md) / US-002
 
 # US-002 — User Login
 
-**Epic**: [EP01 - User Management](../epics/EP01-user-management.md)
+**Epic**: [EP02 - User Management](../epics/EP02-user-management.md)
 **Priority**: Must Have
 **Status**: [ ] Not Started
 
@@ -130,6 +130,6 @@ As a **registered user**, I want to **log in with my credentials** so that **I c
 
 - [API Contract — Login](../architecture/api-contract.md#32-login--post-apiauthlogin) — request/response shape and error codes
 - [Testing Strategy — US-002 coverage](../architecture/testing-strategy.md#us-002--user-login-post-apiauthlogin)
-- [EP01 Engineering Addenda](../epics/EP01-engineering-addenda.md) — binding engineering decisions
+- [EP02 Engineering Addenda](../epics/EP02-engineering-addenda.md) — binding engineering decisions
 - [US-001 — User Registration](US-001-user-registration.md) — prerequisite account creation
 - [US-003 — Protected Access](US-003-protected-access.md) — what login unlocks

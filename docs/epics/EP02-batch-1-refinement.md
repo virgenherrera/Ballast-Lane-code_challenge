@@ -1,6 +1,6 @@
-> [INDEX](../INDEX.md) / [EP01](EP01-user-management.md) / Batch 1 Refinement
+> [INDEX](../INDEX.md) / [EP02](EP02-user-management.md) / Batch 1 Refinement
 
-# EP01 — Batch 1 Refinement Summary
+# EP02 — Batch 1 Refinement Summary
 
 **Batch**: 1 — Domain + Application
 **Scope**: User entity, Email/PasswordHash VOs, IUserRepository, ITokenService, IPasswordHasher, RegisterUserUseCase, AuthenticateUserUseCase, FluentValidation validators, unit tests
@@ -80,8 +80,8 @@ Tests drive implementation. Create test files in this order:
 
 ## Related Documents
 
-- [EP01 — User Management](EP01-user-management.md)
-- [EP01 Engineering Addenda](EP01-engineering-addenda.md)
+- [EP02 — User Management](EP02-user-management.md)
+- [EP02 Engineering Addenda](EP02-engineering-addenda.md)
 - [US-001 — User Registration](../user-stories/US-001-user-registration.md)
 - [US-002 — User Login](../user-stories/US-002-user-login.md)
 - [US-003 — Protected Access](../user-stories/US-003-protected-access.md)

@@ -1,8 +1,8 @@
-> [INDEX](../INDEX.md) / [EP01 — User Management](../epics/EP01-user-management.md) / US-001
+> [INDEX](../INDEX.md) / [EP02 — User Management](../epics/EP02-user-management.md) / US-001
 
 # US-001 — User Registration
 
-**Epic**: [EP01 - User Management](../epics/EP01-user-management.md)
+**Epic**: [EP02 - User Management](../epics/EP02-user-management.md)
 **Priority**: Must Have
 **Status**: [ ] Not Started
 
@@ -186,6 +186,6 @@ As a **visitor**, I want to **register an account** so that **I can access the t
 
 - [API Contract — Register](../architecture/api-contract.md#31-register--post-apiauthregister) — request/response shape and error codes
 - [Testing Strategy — US-001 coverage](../architecture/testing-strategy.md#us-001--user-registration-post-apiauthregister)
-- [EP01 Engineering Addenda](../epics/EP01-engineering-addenda.md) — binding engineering decisions
+- [EP02 Engineering Addenda](../epics/EP02-engineering-addenda.md) — binding engineering decisions
 - [US-002 — User Login](US-002-user-login.md) — next step after registration
 - [US-003 — Protected Access](US-003-protected-access.md) — cross-cutting auth enforcement

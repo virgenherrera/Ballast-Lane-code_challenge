@@ -14,8 +14,8 @@ flowchart TD
 
     IDX --> EPICS["Epics"]
     EPICS --> EP00["EP00\nInfrastructure\n(US-012…015)"]
-    EPICS --> EP01["EP01\nUser Mgmt\n(US-001…003)"]
-    EPICS --> EP02["EP02\nTask Mgmt\n(US-004…009)"]
+    EPICS --> EP02["EP02\nUser Mgmt\n(US-001…003)"]
+    EPICS --> EP01["EP01\nTask Mgmt\n(US-004…009)"]
     EPICS --> EP03["EP03\nGenAI Docs\n(US-010…011)"]
     EPICS --> EP04["EP04\nFrontend\n(US-016…019)"]
 
@@ -26,10 +26,10 @@ flowchart TD
     ARCH --> TEST["Testing Strategy"]
     ARCH --> BP["Build Pipeline"]
 
-    EP01 -.->|"ACs map to"| APIC
     EP02 -.->|"ACs map to"| APIC
-    EP01 -.->|"tests defined in"| TEST
+    EP01 -.->|"ACs map to"| APIC
     EP02 -.->|"tests defined in"| TEST
+    EP01 -.->|"tests defined in"| TEST
     EP00 -.->|"pipeline defined in"| BP
     EP04 -.->|"consumes"| APIC
 
@@ -50,11 +50,11 @@ flowchart TD
   - [x] [US-013 — Docker Compose Environment](user-stories/US-013-docker-compose-environment.md)
   - [x] [US-014 — Test Infrastructure](user-stories/US-014-test-infrastructure.md)
   - [x] [US-015 — Seed Data and Demo Credentials](user-stories/US-015-seed-data-and-credentials.md)
-- [ ] [EP01 — User Management](epics/EP01-user-management.md)
+- [ ] [EP02 — User Management](epics/EP02-user-management.md)
   - [ ] [US-001 — User Registration](user-stories/US-001-user-registration.md)
   - [ ] [US-002 — User Login](user-stories/US-002-user-login.md)
   - [ ] [US-003 — Protected Access](user-stories/US-003-protected-access.md)
-- [ ] [EP02 — Task Management](epics/EP02-task-management.md)
+- [ ] [EP01 — Task Management](epics/EP01-task-management.md)
   - [ ] [US-004 — Create Task](user-stories/US-004-create-task.md)
   - [ ] [US-005 — List Tasks](user-stories/US-005-list-tasks.md)
   - [ ] [US-006 — View Task Detail](user-stories/US-006-view-task-detail.md)
@@ -85,16 +85,16 @@ flowchart TD
 
 ## Sprint Planning — Handoffs
 
-### EP01 — Batch 0 (Infra Bootstrap)
+### EP02 — Batch 0 (Infra Bootstrap)
 
-- [x] [Batch 0 Plan](subtasks/EP01/batch-0-plan.md) — scope, dependency graph, execution order
-  - [x] [EP01-B0-01 — Solution Scaffold](subtasks/EP01/EP01-B0-01-solution-scaffold.md)
-  - [x] [EP01-B0-02 — Docker Compose + Environment](subtasks/EP01/EP01-B0-02-docker-environment.md)
-  - [x] [EP01-B0-03 — Health Endpoint + Program.cs](subtasks/EP01/EP01-B0-03-health-endpoint.md)
+- [x] [Batch 0 Plan](subtasks/EP02/batch-0-plan.md) — scope, dependency graph, execution order
+  - [x] [EP02-B0-01 — Solution Scaffold](subtasks/EP02/EP02-B0-01-solution-scaffold.md)
+  - [x] [EP02-B0-02 — Docker Compose + Environment](subtasks/EP02/EP02-B0-02-docker-environment.md)
+  - [x] [EP02-B0-03 — Health Endpoint + Program.cs](subtasks/EP02/EP02-B0-03-health-endpoint.md)
 
 ## Navigation Notes
 
-- Implementation order: EP00 (infrastructure) → EP02 (tasks CRUD, full-stack) → EP01 (register/login, full-stack) → auth middleware + ownership wiring. EP03 (GenAI docs) runs in parallel throughout.
+- Implementation order: EP00 (infrastructure) → EP01 (tasks CRUD, full-stack) → EP02 (register/login, full-stack) → auth middleware + ownership wiring. EP03 (GenAI docs) runs in parallel throughout.
 - Every document links back to this index via a breadcrumb header at the top.
 - Epics link down to their user stories and to related architecture documents.
 - User stories link up to their epic and out to relevant API contract and testing strategy sections.
