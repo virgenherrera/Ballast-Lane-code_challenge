@@ -1,0 +1,13 @@
+{
+  "editor.minimap.enabled": false,
+  "files.eol": "\n",
+  "files.insertFinalNewline": true,
+  "files.trimFinalNewlines": true,
+  "files.exclude": {
+    "**/.claude": true
+  },
+  "search.exclude": {
+    "**/.claude": true
+  },
+  "dotnet.defaultSolution": "TaskFlow.sln"
+}

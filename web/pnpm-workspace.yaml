@@ -1,0 +1,9 @@
+# Save exact versions (no ^ or ~ prefixes)
+savePrefix: ''
+
+# Controls whether a package is allowed to run postinstall scripts (native build, telemetry, etc.).
+allowBuilds:
+  '@parcel/watcher': true # Required: file watcher for Angular dev server
+  esbuild: true # Required: bundler used by build pipeline
+  lmdb: true # Required: Angular build cache (native bindings)
+  msgpackr-extract: true # Required: serialization for lmdb (Angular build cache)

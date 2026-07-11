@@ -1,0 +1,59 @@
+.health-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+
+  h1 {
+    font-size: 2.5rem;
+    font-weight: 600;
+    margin-bottom: 2rem;
+    color: #1a1a2e;
+  }
+}
+
+.semaphore {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 1.5rem;
+
+  .indicator {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    transition: background-color 0.3s ease, box-shadow 0.3s ease;
+  }
+
+  &[data-status='loading'] .indicator {
+    background-color: #9e9e9e;
+    box-shadow: 0 0 12px rgba(158, 158, 158, 0.5);
+  }
+
+  &[data-status='ok'] .indicator {
+    background-color: #4caf50;
+    box-shadow: 0 0 12px rgba(76, 175, 80, 0.5);
+  }
+
+  &[data-status='degraded'] .indicator {
+    background-color: #ff9800;
+    box-shadow: 0 0 12px rgba(255, 152, 0, 0.5);
+  }
+
+  &[data-status='error'] .indicator {
+    background-color: #f44336;
+    box-shadow: 0 0 12px rgba(244, 67, 54, 0.5);
+  }
+}
+
+.status-details {
+  text-align: center;
+
+  p {
+    font-size: 1.125rem;
+    color: #555;
+    margin: 0;
+  }
+}

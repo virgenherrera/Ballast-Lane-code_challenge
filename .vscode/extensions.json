@@ -1,0 +1,15 @@
+{
+  "recommendations": [
+    "ms-dotnettools.csdevkit",
+    "ms-dotnettools.csharp",
+    "humao.rest-client",
+    "ms-azuretools.vscode-docker",
+    "angular.ng-template",
+    "ms-playwright.playwright",
+    "esbenp.prettier-vscode",
+    "DavidAnson.vscode-markdownlint",
+    "eamodio.gitlens",
+    "streetsidesoftware.code-spell-checker",
+    "usernamehw.errorlens"
+  ]
+}

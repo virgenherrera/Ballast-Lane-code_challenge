@@ -1,6 +1,6 @@
 # IDE
 .idea/
-.vscode/
+## .vscode/ — committed for evaluator convenience (launch.json, tasks, extensions)
 *.swp
 *.swo
 *~
@@ -26,3 +26,8 @@ obj/
 .env
 node_modules/
 dist/
+
+# Playwright
+e2e/results/
+e2e/report/
+e2e/test-results/

@@ -18,7 +18,7 @@ No domain logic, no auth, no entities — pure scaffolding.
 
 ## 1. Scope
 
-Per the [EP01 Engineering Addenda — Batch Plan](../../epics/EP01-engineering-addenda.md#11-batch-plan),
+Per the [EP01 Engineering Addenda — Batch Plan](../../epics/EP01-engineering-addenda.md#12-batch-plan),
 Batch 0 delivers:
 
 - .NET solution with 8 projects (4 src + 4 test), wired with correct project references

@@ -39,19 +39,21 @@ hardcoding versions. Updated as dependencies are added during implementation.
 | .NET | 10.0 (LTS) | Backend SDK and runtime |
 | ASP.NET Core | 10.0 | Web API framework |
 | PostgreSQL | 17.5 | Database engine (Docker image: `postgres:17.5`) |
-| Angular | 19.x | Frontend SPA framework |
+| Angular | 22.0.6 | Frontend SPA framework |
 | Node.js | 22.x (LTS) | Frontend build toolchain |
-| pnpm | 10.x | Frontend package manager |
-| nginx | 1.27.x | Frontend static file server (Docker) |
+| pnpm | 11.11.0 | Frontend package manager |
+| nginx | 1.27 | Frontend static file server (Docker) |
 
 ### Backend Libraries (NuGet)
 
 | Package | Version | Role |
 | ------- | ------- | ---- |
-| Entity Framework Core | 10.0.x | ORM / data access |
+| Microsoft.EntityFrameworkCore | 10.0.9 *(Batch 2)* | ORM — LINQ-only data access (no raw SQL) |
+| Npgsql.EntityFrameworkCore.PostgreSQL | 10.0.3 *(Batch 2)* | EF Core PostgreSQL provider |
+| Npgsql | 10.0.3 | PostgreSQL driver (used by EF Core provider) |
+| AspNetCore.HealthChecks.NpgSql | 9.0.0 | `/health` DB connectivity probe |
 | FluentValidation | — | Request DTO validation |
-| Microsoft.AspNetCore.OpenApi | built-in | OpenAPI spec generation |
-| Microsoft.Extensions.Diagnostics.HealthChecks | built-in | `/health` endpoint |
+| Microsoft.AspNetCore.OpenApi | 10.0.9 | OpenAPI spec generation |
 
 ### Backend Test Libraries (NuGet)
 
@@ -67,15 +69,16 @@ hardcoding versions. Updated as dependencies are added during implementation.
 
 | Package | Version | Role |
 | ------- | ------- | ---- |
-| Zod | — | API response validation (contract enforcement) |
+| TypeScript | 6.0.3 | Type-safe frontend development |
+| Zod | 4.4.3 | API response validation (contract enforcement) |
 | Tailwind CSS | — | Utility-first CSS framework |
 
 ### Frontend Test Libraries (npm)
 
 | Package | Version | Role |
 | ------- | ------- | ---- |
-| Playwright | — | E2E browser tests |
-| Vitest | — | Unit test runner (if needed) |
+| Playwright | 1.53.1 | E2E browser tests |
+| Vitest | 4.1.10 | Unit test runner (Angular component tests) |
 
 ### Infrastructure
 
@@ -84,7 +87,7 @@ hardcoding versions. Updated as dependencies are added during implementation.
 | Docker Engine | 27.x+ | Container runtime |
 | Docker Compose | v2 | Multi-container orchestration |
 | ESLint | — | Linting (FE) |
-| Prettier | — | Formatting (FE) |
+| Prettier | 3.9.5 | Formatting (FE) |
 
 > **`—`** = exact version will be pinned during implementation and updated here.
 > No `^`, no `~`, no `latest`. See [Tech Stack — Decision 8](docs/architecture/tech-stack.md#decision-8-dependency-version-pinning).

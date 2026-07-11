@@ -1,1 +1,9 @@
-@TaskFlow.API_HostAddress = http://localhost:5185
+@host = http://localhost:5050
+
+### Health Check
+GET {{host}}/health
+Accept: application/json
+
+### OpenAPI spec (dev only)
+GET {{host}}/openapi/v1.json
+Accept: application/json

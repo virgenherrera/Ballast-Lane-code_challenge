@@ -1,0 +1,13 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "TaskFlow: Full Stack",
+      "type": "chrome",
+      "request": "launch",
+      "preLaunchTask": "docker-compose-up",
+      "url": "http://localhost:4200",
+      "webRoot": "${workspaceFolder}/web/src"
+    }
+  ]
+}

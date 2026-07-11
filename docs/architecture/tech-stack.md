@@ -94,14 +94,30 @@ flowchart LR
 
 ## Decision 3: ORM / Data Access
 
-- [x] Entity Framework Core
+- [x] Entity Framework Core 10.0.9
 - [ ] Dapper
 - [ ] ADO.NET (raw)
+
+**Pinned packages**:
+
+| Package | Version | Role |
+| ------- | ------- | ---- |
+| `Microsoft.EntityFrameworkCore` | 10.0.9 | ORM core |
+| `Npgsql.EntityFrameworkCore.PostgreSQL` | 10.0.3 | PostgreSQL provider |
+| `Microsoft.EntityFrameworkCore.Design` | 10.0.9 | Migrations CLI tooling |
 
 **Why**: EF Core is the standard data-access technology for ASP.NET and fits Clean Architecture
 naturally: the infrastructure layer implements repository interfaces defined in the domain, and EF
 Core handles mapping, migrations, and change tracking behind that boundary. Code-first migrations
 also double as the seeding mechanism the challenge requires.
+
+**Data access rule — LINQ only**: all queries and data operations go through EF Core's
+`IQueryable<T>` via LINQ. No raw SQL (`FromSqlRaw`, `ExecuteSqlRaw`), no ADO.NET
+(`NpgsqlConnection`, `NpgsqlCommand`), no Dapper. Repository implementations compose LINQ
+expressions over `DbSet<T>` and let EF Core translate to SQL. This is non-negotiable — raw SQL
+bypasses change tracking, breaks testability, and undermines the Clean Architecture boundary.
+Health check packages (`AspNetCore.HealthChecks.NpgSql`) are exempt — they operate outside the
+application data access boundary and do not participate in domain logic or change tracking.
 
 **Tradeoffs**: We give up the raw performance and SQL-level control that Dapper or ADO.NET offer.
 We gain significantly faster development, built-in migration tooling, and less boilerplate — a
@@ -343,7 +359,9 @@ side can silently drift from the documented contract without a test failing.
 |---------------------|-------------------------------------|--------------------------------------------------------------|
 | .NET version        | .NET 10 (latest LTS)                | Matches verified installed SDK                               |
 | Database            | PostgreSQL (Docker)                 | Same engine everywhere — full fidelity, no mismatch          |
-| ORM                 | Entity Framework Core               | Clean Architecture fit + migrations-as-seeding               |
+| ORM                 | Entity Framework Core 10.0.9        | Clean Architecture fit + migrations-as-seeding               |
+| DB provider         | Npgsql.EntityFrameworkCore.PostgreSQL 10.0.3 | EF Core ↔ PostgreSQL bridge                          |
+| Query mechanism     | LINQ only (no raw SQL)              | All data ops via IQueryable — change tracking, testability   |
 | Auth                | JWT Bearer                          | Stateless SPA/API separation                                 |
 | Frontend            | Angular                             | Candidate expertise + existing production-ready base project |
 | Backend testing     | xUnit unit tests (NSubstitute) + xUnit integration tests (API-level) | Unit for fast Domain/Application feedback, integration as primary confidence layer |

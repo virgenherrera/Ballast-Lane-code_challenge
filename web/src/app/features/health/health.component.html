@@ -1,0 +1,12 @@
+<div class="health-container">
+  <h1>TaskFlow</h1>
+  <div class="semaphore" [attr.data-status]="status()">
+    <span class="indicator"></span>
+  </div>
+  <div class="status-details">
+    <p>{{ message() }}</p>
+    @if (liveSince()) {
+      <p class="live-since">Live since: {{ liveSince() }}</p>
+    }
+  </div>
+</div>

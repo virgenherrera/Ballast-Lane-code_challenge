@@ -106,9 +106,8 @@ middleware, EF Core `DbContext`) — do not implement them now.
 ### OUT OF SCOPE — Do NOT
 
 - Add authentication/authorization middleware — no `[Authorize]`, no JWT validation logic yet
-- Create an EF Core `DbContext` or register `AddDbContext` — the health check's DB probe uses
-  a lightweight raw connection attempt (e.g. `Npgsql` connection open/close or the
-  `AspNetCore.HealthChecks.NpgSql` style check), not the full ORM
+- Create an EF Core `DbContext` or register `AddDbContext` — the health check uses
+  `AspNetCore.HealthChecks.NpgSql` (not raw `NpgsqlConnection`), not the full ORM
 - Add any controller beyond the health endpoint
 - Register any entity or repository
 - Read `IConfiguration` directly inside a controller or minimal-API handler — always go through
@@ -129,7 +128,7 @@ middleware, EF Core `DbContext`) — do not implement them now.
 | Letting the health endpoint throw/500 when DB is unreachable | Contradicts the contract — `db: "down"` must still be a `200 OK` response | Wrap the DB probe in a try/catch (or use the health check's built-in degraded/unhealthy handling) and map it to `"down"` without propagating the exception |
 | Adding `[Authorize]` to `/health` "for consistency" | Contradicts the API Contract — `/health` is explicitly public, used by Docker `HEALTHCHECK` before auth is even relevant | Leave the endpoint fully anonymous |
 | Reading env vars ad hoc inside the health check handler | Scatters config logic, bypasses fail-fast validation at startup | Validate and bind all env vars once in `Program.cs` via `EnvVarValidator` and the options pattern |
-| Registering an EF Core `DbContext` for the health check | Out of scope — pulls in ORM machinery a batch early | Use a raw lightweight connection check (e.g. `NpgsqlConnection.OpenAsync()`) |
+| Registering an EF Core `DbContext` for the health check | Out of scope — pulls in ORM machinery a batch early | Use `AspNetCore.HealthChecks.NpgSql` package — no raw `NpgsqlConnection` |
 
 ## 9. Rollback Guidance
 

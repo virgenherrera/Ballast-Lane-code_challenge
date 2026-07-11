@@ -21,6 +21,9 @@ var connectionString = new NpgsqlConnectionStringBuilder
     Database = envVars["DB_NAME"],
 }.ConnectionString;
 
+// TD: When EF Core is configured, add startup DB connectivity validation here
+// (throw if DbContext.Database.CanConnectAsync() fails)
+
 builder.Configuration["Database:ConnectionString"] = connectionString;
 builder.Configuration["Jwt:Secret"] = envVars["JWT_SECRET"];
 builder.Configuration["Jwt:Issuer"] = envVars["JWT_ISSUER"];
@@ -41,26 +44,12 @@ builder.WebHost.UseUrls($"http://0.0.0.0:{apiPort}");
 // --- Services ---------------------------------------------------------
 builder.Services.AddOpenApi();
 
-// Lightweight PostgreSQL connectivity probe — a raw connection open/close,
+// PostgreSQL connectivity probe backed by AspNetCore.HealthChecks.NpgSql —
 // NOT an EF Core DbContext (out of scope for this batch). Failures are
 // reported as "Unhealthy" by the health check framework and never throw
 // past this delegate, so /health always returns 200 OK.
 builder.Services.AddHealthChecks()
-    .AddCheck("postgresql", () =>
-    {
-        try
-        {
-            using var connection = new NpgsqlConnection(connectionString);
-            connection.Open();
-            using var cmd = new NpgsqlCommand("SELECT 1", connection);
-            cmd.ExecuteNonQuery();
-            return HealthCheckResult.Healthy();
-        }
-        catch (Exception ex)
-        {
-            return HealthCheckResult.Unhealthy(exception: ex);
-        }
-    });
+    .AddNpgSql(connectionString, name: "postgresql");
 
 // Placeholder — future DI registration:
 // - Auth middleware / JWT bearer authentication (uses JwtOptions above)

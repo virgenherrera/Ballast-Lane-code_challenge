@@ -138,19 +138,39 @@ Custom middleware maps JWT authentication failures to:
 }
 ```
 
-## 11. Batch Plan
+## 11. Data Access Standards
+
+| Parameter | Value |
+| --------- | ----- |
+| ORM | Entity Framework Core 10.0.9 |
+| PostgreSQL provider | Npgsql.EntityFrameworkCore.PostgreSQL 10.0.3 |
+| Query mechanism | LINQ only — all operations via `IQueryable<T>` |
+| Raw SQL | Forbidden (`FromSqlRaw`, `ExecuteSqlRaw`, ADO.NET, `NpgsqlCommand`) |
+| Health checks | `AspNetCore.HealthChecks.NpgSql` (not raw `NpgsqlConnection`) |
+| DbContext | `TaskFlowDbContext` — single context, registered in `Program.cs` |
+| Migrations | EF Core code-first via `dotnet ef migrations add` |
+
+Repository implementations compose LINQ expressions over `DbSet<T>`. EF Core translates
+to SQL — the application never writes SQL strings. This preserves change tracking,
+testability, and the Clean Architecture boundary where Infrastructure implements Domain
+interfaces without leaking persistence details.
+
+Startup DB validation uses `DbContext.Database.CanConnectAsync()` — not raw
+`NpgsqlConnection.Open()`. See TD comment in `Program.cs`.
+
+## 12. Batch Plan
 
 | Batch | Scope | Deliverables |
 | ----- | ----- | ------------ |
 | 0 | Infra bootstrap | .NET solution (8 projects), docker-compose db, .env.example, health endpoint, appsettings wiring, project references |
 | 1 | Domain + Application | User entity, Email/PasswordHash VOs, IUserRepository, ITokenService, IPasswordHasher, RegisterUserUseCase, AuthenticateUserUseCase, FluentValidation validators, unit tests |
-| 2 | Infrastructure | TaskFlowDbContext, User entity config, UserRepository, initial migration (Users table), JwtTokenService, BcryptPasswordHasher |
+| 2 | Infrastructure | EF Core 10.0.9 + Npgsql.EFCore.PG 10.0.3 setup, TaskFlowDbContext, User entity config, UserRepository (LINQ only), initial migration (Users table), JwtTokenService, BcryptPasswordHasher |
 | 3 | API — US-001 | AuthController (register), exception middleware, env-var validation, integration tests for register |
 | 4 | API — US-002 | AuthController (login), dummy-hash timing protection, rate limiting, integration tests for login |
 | 5 | API — US-003 | JWT auth middleware, `GET /api/auth/me`, custom 401 shape, ownership claim extraction, integration tests |
 | 6 | Hardening | Code review, Playwright smoke test scaffold, regression suite, cleanup |
 
-## 12. Implementation Order
+## 13. Implementation Order
 
 ```mermaid
 %% EP01 implementation — strictly sequential with shared foundation

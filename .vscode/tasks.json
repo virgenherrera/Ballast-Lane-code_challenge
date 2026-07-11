@@ -1,0 +1,42 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "docker-compose-up",
+      "type": "shell",
+      "command": "docker compose up -d --build",
+      "presentation": {
+        "reveal": "always",
+        "panel": "new"
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "docker:down",
+      "type": "shell",
+      "command": "docker compose down",
+      "presentation": { "reveal": "silent" }
+    },
+    {
+      "label": "docker:logs",
+      "type": "shell",
+      "command": "docker compose logs -f",
+      "isBackground": true,
+      "problemMatcher": []
+    },
+    {
+      "label": "dotnet:build",
+      "type": "shell",
+      "command": "dotnet build --nologo",
+      "group": { "kind": "build", "isDefault": true },
+      "problemMatcher": "$msCompile"
+    },
+    {
+      "label": "dotnet:test",
+      "type": "shell",
+      "command": "dotnet test --nologo",
+      "group": { "kind": "test", "isDefault": true },
+      "problemMatcher": "$msCompile"
+    }
+  ]
+}

@@ -31,7 +31,7 @@ flowchart TD
     end
 
     subgraph Infrastructure["Infrastructure — TaskFlow.Infrastructure"]
-        I1["EF Core — DbContext & Repositories"]
+        I1["EF Core 10.0.9 — DbContext & Repositories (LINQ only)"]
         I2["JWT Auth — Token Generation & Validation"]
         I3["External Services"]
     end
@@ -177,7 +177,7 @@ interfaces, not on `Infrastructure` implementations directly.
 | Service interfaces implemented outward | Application | `ITokenService`, `IPasswordHasher` |
 | Authorization policy ("is this my task?") | Application | ownership check inside use case |
 | EF Core `DbContext` and configurations | Infrastructure | `TaskFlowDbContext` |
-| Repository implementations | Infrastructure | `EfTaskRepository` |
+| Repository implementations | Infrastructure | `EfTaskRepository` — LINQ over `DbSet<T>`, no raw SQL |
 | JWT issuing and validation logic | Infrastructure | `JwtTokenService` |
 | Password hashing implementation | Infrastructure | BCrypt/Argon2 adapter |
 | Database migrations | Infrastructure | EF Core migration files |
