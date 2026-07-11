@@ -227,20 +227,20 @@ integration test. Naming follows `MethodName_Scenario_ExpectedResult` (see
 
 Story: [US-001 — User Registration](../user-stories/US-001-user-registration.md)
 
-- [ ] AC-1: `Register_WithInvalidEmailFormat_Returns400`
-- [ ] AC-1: `Register_WithUppercaseEmail_Returns400`
-- [ ] AC-2: `Register_WithAlreadyRegisteredEmail_Returns409`
-- [ ] AC-3: `Register_WithWeakPassword_Returns400`
-- [ ] AC-4: `Register_WithMissingRequiredField_Returns400`
+- [ ] AC-001.1: `Register_WithInvalidEmailFormat_Returns400`
+- [ ] AC-001.1: `Register_WithUppercaseEmail_Returns400`
+- [ ] AC-001.2: `Register_WithAlreadyRegisteredEmail_Returns409`
+- [ ] AC-001.3: `Register_WithWeakPassword_Returns400`
+- [ ] AC-001.4: `Register_WithMissingRequiredField_Returns400`
 - [ ] Happy path: `Register_WithValidPayload_Returns201WithUserProfile`
 
 #### US-002 — User Login (`POST /api/auth/login`)
 
 Story: [US-002 — User Login](../user-stories/US-002-user-login.md)
 
-- [ ] AC-2: `Login_WithWrongPassword_Returns401WithGenericMessage`
-- [ ] AC-2: `Login_WithNonExistentEmail_Returns401WithSameGenericMessage`
-- [ ] AC-3: `Login_WithMissingEmailOrPassword_Returns400`
+- [ ] AC-002.2: `Login_WithWrongPassword_Returns401WithGenericMessage`
+- [ ] AC-002.2: `Login_WithNonExistentEmail_Returns401WithSameGenericMessage`
+- [ ] AC-002.3: `Login_WithMissingEmailOrPassword_Returns400`
 - [ ] Security: `Login_WithNonExistentEmail_ResponseTimeMatchesWrongPasswordTime`
 - [ ] Security: `Login_ExceedsRateLimit_Returns429WithRetryAfter`
 - [ ] Happy path: `Login_WithValidCredentials_Returns200WithAccessToken`
@@ -249,12 +249,12 @@ Story: [US-002 — User Login](../user-stories/US-002-user-login.md)
 
 Story: [US-003 — Protected Access](../user-stories/US-003-protected-access.md)
 
-- [ ] AC-1: `ProtectedEndpoint_WithValidToken_AllowsRequest`
-- [ ] AC-2: `ProtectedEndpoint_WithMissingToken_Returns401`
-- [ ] AC-3: `ProtectedEndpoint_WithExpiredToken_Returns401`
-- [ ] AC-3: `ProtectedEndpoint_WithTamperedToken_Returns401`
-- [ ] AC-3: `ProtectedEndpoint_Returns401_WithCustomJsonShape`
-- [ ] AC-4: `ProtectedEndpoint_QueryOrMutation_IsScopedToOwnerIdClaim`
+- [ ] AC-003.1: `ProtectedEndpoint_WithValidToken_AllowsRequest`
+- [ ] AC-003.2: `ProtectedEndpoint_WithMissingToken_Returns401`
+- [ ] AC-003.3: `ProtectedEndpoint_WithExpiredToken_Returns401`
+- [ ] AC-003.3: `ProtectedEndpoint_WithTamperedToken_Returns401`
+- [ ] AC-003.3: `ProtectedEndpoint_Returns401_WithCustomJsonShape`
+- [ ] AC-003.4: `ProtectedEndpoint_QueryOrMutation_IsScopedToOwnerIdClaim`
 - [ ] EP01: `GetAuthMe_WithValidToken_ReturnsUserProfile`
 - [ ] EP01: `GetAuthMe_WithoutToken_Returns401`
 
@@ -262,19 +262,19 @@ Story: [US-003 — Protected Access](../user-stories/US-003-protected-access.md)
 
 Story: [US-004 — Create Task](../user-stories/US-004-create-task.md)
 
-- [ ] AC-3: `CreateTask_WithEmptyTitle_Returns400`
-- [ ] AC-4: `CreateTask_WithPastDueDate_Returns400`
-- [ ] AC-5: `CreateTask_IgnoresStatusInBody_AlwaysDefaultsToPending`
+- [ ] AC-004.3: `CreateTask_WithEmptyTitle_Returns400`
+- [ ] AC-004.4: `CreateTask_WithPastDueDate_Returns400`
+- [ ] AC-004.5: `CreateTask_IgnoresStatusInBody_AlwaysDefaultsToPending`
 - [ ] Happy path: `CreateTask_WithValidPayload_Returns201WithOwnerIdSet`
 
 #### US-005 — List Tasks (`GET /api/tasks`)
 
 Story: [US-005 — List Tasks](../user-stories/US-005-list-tasks.md)
 
-- [ ] AC-1: `ListTasks_WithNoFilter_ReturnsAllOwnStatuses`
-- [ ] AC-2: `ListTasks_WhenUserHasNoTasks_ReturnsEmptyItemsNotError`
-- [ ] AC-3: `ListTasks_OnlyReturnsTasksOwnedByCaller`
-- [ ] AC-4: `ListTasks_EachItem_ExposesTitleStatusAndDueDate`
+- [ ] AC-005.1: `ListTasks_WithNoFilter_ReturnsAllOwnStatuses`
+- [ ] AC-005.2: `ListTasks_WhenUserHasNoTasks_ReturnsEmptyItemsNotError`
+- [ ] AC-005.3: `ListTasks_OnlyReturnsTasksOwnedByCaller`
+- [ ] AC-005.4: `ListTasks_EachItem_ExposesTitleStatusAndDueDate`
 - [ ] Paging: `ListTasks_NoParams_ReturnsFirstPageWithServerDefault`
 - [ ] Paging: `ListTasks_SecondPage_ReturnsPrevLinkAndCorrectItems`
 - [ ] Paging: `ListTasks_PageBeyondTotal_ReturnsEmptyItemsWithTotal`
@@ -286,75 +286,75 @@ Story: [US-005 — List Tasks](../user-stories/US-005-list-tasks.md)
 
 Story: [US-006 — View Task Detail](../user-stories/US-006-view-task-detail.md)
 
-- [ ] AC-1: `GetTaskById_WithOwnedTask_Returns200WithFullDetail`
-- [ ] AC-2: `GetTaskById_WithNonExistentId_Returns404`
-- [ ] AC-3: `GetTaskById_OwnedByAnotherUser_Returns404NotForbidden`
+- [ ] AC-006.1: `GetTaskById_WithOwnedTask_Returns200WithFullDetail`
+- [ ] AC-006.2: `GetTaskById_WithNonExistentId_Returns404`
+- [ ] AC-006.3: `GetTaskById_OwnedByAnotherUser_Returns404NotForbidden`
 
 #### US-007 — Update Task (`PATCH /api/tasks/{id}`)
 
 Story: [US-007 — Update Task](../user-stories/US-007-update-task.md)
 
-- [ ] AC-4: `UpdateTask_WithInvalidStatusEnumValue_Returns400`
-- [ ] AC-5: `UpdateTask_OwnedByAnotherUser_Returns404`
-- [ ] AC-6: `UpdateTask_WithEmptyTitleString_Returns400`
+- [ ] AC-007.4: `UpdateTask_WithInvalidStatusEnumValue_Returns400`
+- [ ] AC-007.5: `UpdateTask_OwnedByAnotherUser_Returns404`
+- [ ] AC-007.6: `UpdateTask_WithEmptyTitleString_Returns400`
 - [ ] Happy path: `UpdateTask_WithPartialValidPayload_Returns200WithUpdatedFields`
 
 #### US-008 — Delete Task (`DELETE /api/tasks/{id}`)
 
 Story: [US-008 — Delete Task](../user-stories/US-008-delete-task.md)
 
-- [ ] AC-2: `DeleteTask_WithNonExistentId_Returns404`
-- [ ] AC-3: `DeleteTask_OwnedByAnotherUser_Returns404`
-- [ ] AC-4: `DeleteTask_CalledTwice_SecondCallReturns404NotServerError`
+- [ ] AC-008.2: `DeleteTask_WithNonExistentId_Returns404`
+- [ ] AC-008.3: `DeleteTask_OwnedByAnotherUser_Returns404`
+- [ ] AC-008.4: `DeleteTask_CalledTwice_SecondCallReturns404NotServerError`
 - [ ] Happy path: `DeleteTask_WithOwnedTask_Returns204AndRemovesRecord`
 
 #### US-009 — Filter Tasks by Status (`GET /api/tasks?status=`)
 
 Story: [US-009 — Filter Tasks by Status](../user-stories/US-009-filter-tasks-by-status.md)
 
-- [ ] AC-2: `ListTasks_FilterWithNoMatches_ReturnsEmptyItemsNotError`
-- [ ] AC-3: `ListTasks_FilterWithInvalidEnumValue_Returns400ValidationError`
-- [ ] AC-4: `ListTasks_FilterOmitted_ReturnsAllStatuses`
+- [ ] AC-009.2: `ListTasks_FilterWithNoMatches_ReturnsEmptyItemsNotError`
+- [ ] AC-009.3: `ListTasks_FilterWithInvalidEnumValue_Returns400ValidationError`
+- [ ] AC-009.4: `ListTasks_FilterOmitted_ReturnsAllStatuses`
 - [ ] Happy path: `ListTasks_FilterByValidStatus_ReturnsOnlyMatchingOwnTasks`
 
 #### US-012 — Docker Multi-Stage Build
 
 Story: [US-012 — Docker Multi-Stage Build](../user-stories/US-012-docker-multi-stage-build.md)
 
-- [ ] AC-3/AC-4: `DockerBuild_BackendImage_ContainsOnlyRuntime`
-- [ ] AC-4: `DockerBuild_BackendImage_ExcludesSDKAndSource`
-- [ ] AC-2: `DockerBuild_TestStageFailure_PreventsRuntimeImage`
-- [ ] AC-6: `HealthEndpoint_ReturnsOk_WhenApiAndDbAreRunning`
-- [ ] AC-6: `HealthEndpoint_ReturnsDbDown_WhenPostgresUnreachable`
+- [ ] AC-012.3/AC-012.4: `DockerBuild_BackendImage_ContainsOnlyRuntime`
+- [ ] AC-012.4: `DockerBuild_BackendImage_ExcludesSDKAndSource`
+- [ ] AC-012.2: `DockerBuild_TestStageFailure_PreventsRuntimeImage`
+- [ ] AC-012.6: `HealthEndpoint_ReturnsOk_WhenApiAndDbAreRunning`
+- [ ] AC-012.6: `HealthEndpoint_ReturnsDbDown_WhenPostgresUnreachable`
 
 #### US-013 — Docker Compose Environment
 
 Story: [US-013 — Docker Compose Environment](../user-stories/US-013-docker-compose-environment.md)
 
-- [ ] AC-1: `DockerCompose_AllContainersStart_WhenEnvVarsValid`
-- [ ] AC-6: `DockerCompose_ApiFailsFast_WhenEnvVarMissing`
-- [ ] AC-2: `DockerCompose_NginxProxiesApi_ForApiRoutes`
-- [ ] AC-7: `DockerCompose_NginxServesIndex_ForSpaRoutes`
-- [ ] AC-4: `DockerCompose_PostgresHealthcheck_BlocksDependents`
+- [ ] AC-013.1: `DockerCompose_AllContainersStart_WhenEnvVarsValid`
+- [ ] AC-013.6: `DockerCompose_ApiFailsFast_WhenEnvVarMissing`
+- [ ] AC-013.2: `DockerCompose_NginxProxiesApi_ForApiRoutes`
+- [ ] AC-013.7: `DockerCompose_NginxServesIndex_ForSpaRoutes`
+- [ ] AC-013.4: `DockerCompose_PostgresHealthcheck_BlocksDependents`
 
 #### US-014 — Test Infrastructure
 
 Story: [US-014 — Test Infrastructure](../user-stories/US-014-test-infrastructure.md)
 
-- [ ] AC-1: `TestInfra_IntegrationTests_UseRealPostgres`
-- [ ] AC-4: `TestInfra_DatabaseReset_BetweenTests`
-- [ ] AC-6: `TestInfra_DomainTests_ProjectCompiles`
-- [ ] AC-6: `TestInfra_ApplicationTests_ProjectCompiles`
-- [ ] AC-3: `TestInfra_PlaywrightSetup_CanLaunchBrowser`
+- [ ] AC-014.1: `TestInfra_IntegrationTests_UseRealPostgres`
+- [ ] AC-014.4: `TestInfra_DatabaseReset_BetweenTests`
+- [ ] AC-014.6: `TestInfra_DomainTests_ProjectCompiles`
+- [ ] AC-014.6: `TestInfra_ApplicationTests_ProjectCompiles`
+- [ ] AC-014.3: `TestInfra_PlaywrightSetup_CanLaunchBrowser`
 
 #### US-015 — Seed Data and Demo Credentials
 
 Story: [US-015 — Seed Data and Demo Credentials](../user-stories/US-015-seed-data-and-credentials.md)
 
-- [ ] AC-1: `SeedData_DemoUser_ExistsAfterStartup`
-- [ ] AC-2: `SeedData_DemoTasks_ExistForDemoUser`
-- [ ] AC-4: `SeedData_Idempotent_RunsTwiceWithoutDuplicates`
-- [ ] AC-5: `SeedData_Credentials_MatchDocumented`
+- [ ] AC-015.1: `SeedData_DemoUser_ExistsAfterStartup`
+- [ ] AC-015.2: `SeedData_DemoTasks_ExistForDemoUser`
+- [ ] AC-015.4: `SeedData_Idempotent_RunsTwiceWithoutDuplicates`
+- [ ] AC-015.5: `SeedData_Credentials_MatchDocumented`
 
 ## 4. Frontend E2E Tests (Playwright)
 

@@ -12,17 +12,17 @@ As an **interview panel member**, I want to **see the exact prompts used with AI
 
 ## Acceptance Criteria
 
-- [ ] **AC-1: Prompt visibility**
+- [ ] **AC-010.1: Prompt visibility**
   - **Given** the candidate used a GenAI tool to generate API code
   - **When** the panel reviews the documentation
   - **Then** the exact prompt(s) used are clearly documented
 
-- [ ] **AC-2: Tool identification**
+- [ ] **AC-010.2: Tool identification**
   - **Given** the documentation includes prompts
   - **When** the panel reviews them
   - **Then** the specific AI tool used is identified (e.g., Claude Code, Cursor, Copilot)
 
-- [ ] **AC-3: Context and intent**
+- [ ] **AC-010.3: Context and intent**
   - **Given** the prompt documentation
   - **When** the panel reviews it
   - **Then** the candidate's intent behind each prompt is explained

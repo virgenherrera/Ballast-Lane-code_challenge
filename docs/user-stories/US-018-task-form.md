@@ -13,32 +13,32 @@ form** so that **I can keep my task list accurate and up to date**.
 
 ## Acceptance Criteria
 
-- [ ] **AC-1: Create a new task**
+- [ ] **AC-018.1: Create a new task**
   - **Given** an authenticated user on the Task Form in "create" mode with a title, optional
     description, and optional due date filled in
   - **When** they submit the form
   - **Then** the app calls `POST /api/tasks` and, on success, navigates back to the Task List page
     with the new task visible
 
-- [ ] **AC-2: Edit an existing task, pre-populated**
+- [ ] **AC-018.2: Edit an existing task, pre-populated**
   - **Given** an authenticated user opening the Task Form in "edit" mode for an existing task
   - **When** the page loads
   - **Then** the app calls `GET /api/tasks/{id}` and pre-fills the form fields (title, description,
     status, dueDate) with the returned values
 
-- [ ] **AC-3: Title validation**
+- [ ] **AC-018.3: Title validation**
   - **Given** an authenticated user on the Task Form (create or edit)
   - **When** they submit the form with an empty title
   - **Then** the form blocks submission client-side and shows a "title is required" message without
     calling the API
 
-- [ ] **AC-4: Status change on edit**
+- [ ] **AC-018.4: Status change on edit**
   - **Given** an authenticated user editing an existing task
   - **When** they change the status field (Pending, In Progress, Completed) and submit
   - **Then** the app calls `PATCH /api/tasks/{id}` with the updated status and the task list
     reflects the new status after navigating back
 
-- [ ] **AC-5: Success feedback**
+- [ ] **AC-018.5: Success feedback**
   - **Given** an authenticated user who successfully creates or updates a task
   - **When** the API responds with `201 Created` or `200 OK`
   - **Then** the app shows a success confirmation (toast or inline message) before or upon returning

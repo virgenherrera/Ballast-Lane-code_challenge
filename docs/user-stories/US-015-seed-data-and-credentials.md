@@ -16,31 +16,31 @@ explore the application without manual setup**.
 
 ## Acceptance Criteria
 
-- [ ] **AC-1: Demo user with known credentials**
+- [ ] **AC-015.1: Demo user with known credentials**
   - **Given** a freshly started system
   - **When** the evaluator looks up the demo credentials in the README
   - **Then** at least one demo user account exists with a documented email and password that
     successfully logs in
 
-- [ ] **AC-2: Demo tasks across statuses**
+- [ ] **AC-015.2: Demo tasks across statuses**
   - **Given** the demo user account
   - **When** the evaluator logs in and views the task list
   - **Then** pre-existing tasks are visible spanning the Pending, In Progress, and Completed
     statuses
 
-- [ ] **AC-3: Seed runs automatically on first startup**
+- [ ] **AC-015.3: Seed runs automatically on first startup**
   - **Given** the system starting up for the first time (empty database)
   - **When** EF Core migrations apply
   - **Then** the seed process runs automatically afterward, with no manual command required by the
     evaluator
 
-- [ ] **AC-4: Seed is idempotent**
+- [ ] **AC-015.4: Seed is idempotent**
   - **Given** a system that has already been seeded
   - **When** the application restarts (e.g., `docker compose down` followed by `docker compose up`
     without removing volumes, or a redeployment)
   - **Then** re-running the seed process does not duplicate the demo user or demo tasks
 
-- [ ] **AC-5: Credentials are demo-appropriate, not production-strength**
+- [ ] **AC-015.5: Credentials are demo-appropriate, not production-strength**
   - **Given** the documented demo credentials
   - **When** they are reviewed
   - **Then** they are simple and clearly intended for demo/evaluation use only, not styled or

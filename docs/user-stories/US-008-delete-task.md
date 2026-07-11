@@ -12,22 +12,22 @@ As an **authenticated user**, I want to **delete a task** so that **I can remove
 
 ## Acceptance Criteria
 
-- [ ] **AC-1: Successful deletion**
+- [ ] **AC-008.1: Successful deletion**
   - **Given** an authenticated user requesting to delete a task they own
   - **When** the request is processed
   - **Then** the task is permanently removed
 
-- [ ] **AC-2: Task not found**
+- [ ] **AC-008.2: Task not found**
   - **Given** an authenticated user requesting to delete a task that does not exist
   - **When** the request is processed
   - **Then** the system returns a not-found error
 
-- [ ] **AC-3: Cannot delete another user's task**
+- [ ] **AC-008.3: Cannot delete another user's task**
   - **Given** an authenticated user attempting to delete a task they do not own
   - **When** the request is processed
   - **Then** the system returns a not-found error
 
-- [ ] **AC-4: Idempotent deletion**
+- [ ] **AC-008.4: Idempotent deletion**
   - **Given** a task that has already been deleted
   - **When** the same delete request is sent again
   - **Then** the system returns a not-found error (not a server error)

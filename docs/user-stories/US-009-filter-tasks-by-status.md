@@ -12,22 +12,22 @@ As an **authenticated user**, I want to **filter my tasks by status** so that **
 
 ## Acceptance Criteria
 
-- [ ] **AC-1: Filter by single status**
+- [ ] **AC-009.1: Filter by single status**
   - **Given** an authenticated user with tasks in various statuses
   - **When** they request tasks filtered by "Pending"
   - **Then** only tasks with status "Pending" are returned
 
-- [ ] **AC-2: Filter returns empty**
+- [ ] **AC-009.2: Filter returns empty**
   - **Given** an authenticated user with no tasks matching the filter
   - **When** they apply a status filter
   - **Then** the system returns an empty list (not an error)
 
-- [ ] **AC-3: Invalid filter value**
+- [ ] **AC-009.3: Invalid filter value**
   - **Given** an authenticated user providing an invalid status value as filter
   - **When** the request is processed
   - **Then** the system rejects the request indicating valid status values
 
-- [ ] **AC-4: No filter returns all**
+- [ ] **AC-009.4: No filter returns all**
   - **Given** an authenticated user requesting tasks without a filter
   - **When** the request is processed
   - **Then** all tasks are returned (same as US-005)

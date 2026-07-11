@@ -12,22 +12,22 @@ As an **authenticated user**, I want to **see a list of all my tasks** so that *
 
 ## Acceptance Criteria
 
-- [ ] **AC-1: List own tasks**
+- [ ] **AC-005.1: List own tasks**
   - **Given** an authenticated user with existing tasks
   - **When** they request their task list
   - **Then** the system returns all tasks belonging to that user
 
-- [ ] **AC-2: Empty list**
+- [ ] **AC-005.2: Empty list**
   - **Given** an authenticated user with no tasks
   - **When** they request their task list
   - **Then** the system returns an empty list (not an error)
 
-- [ ] **AC-3: Only own tasks**
+- [ ] **AC-005.3: Only own tasks**
   - **Given** multiple users with tasks in the system
   - **When** a user requests their task list
   - **Then** they only see their own tasks, never another user's
 
-- [ ] **AC-4: Task summary information**
+- [ ] **AC-005.4: Task summary information**
   - **Given** an authenticated user viewing the task list
   - **When** the list is displayed
   - **Then** each item shows at minimum: title, status, and due date

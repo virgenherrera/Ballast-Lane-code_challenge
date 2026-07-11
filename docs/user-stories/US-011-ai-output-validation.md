@@ -12,27 +12,27 @@ As an **interview panel member**, I want to **see how the candidate validated an
 
 ## Acceptance Criteria
 
-- [ ] **AC-1: Output shown**
+- [ ] **AC-011.1: Output shown**
   - **Given** the AI generated code output
   - **When** the panel reviews the documentation
   - **Then** the AI's output (or representative sample) is clearly shown
 
-- [ ] **AC-2: Validation process**
+- [ ] **AC-011.2: Validation process**
   - **Given** the AI output documentation
   - **When** the panel reviews it
   - **Then** the candidate describes how they validated the code against requirements
 
-- [ ] **AC-3: Corrections documented**
+- [ ] **AC-011.3: Corrections documented**
   - **Given** the AI output needed corrections
   - **When** the panel reviews the documentation
   - **Then** specific corrections are listed with technical reasoning for each
 
-- [ ] **AC-4: Edge cases and security**
+- [ ] **AC-011.4: Edge cases and security**
   - **Given** the complete documentation
   - **When** the panel reviews it
   - **Then** the candidate explains how edge cases, authentication, and input validation were handled
 
-- [ ] **AC-5: Critical assessment**
+- [ ] **AC-011.5: Critical assessment**
   - **Given** the complete documentation
   - **When** the panel evaluates it
   - **Then** the candidate demonstrates they did not blindly accept AI output but exercised technical judgment

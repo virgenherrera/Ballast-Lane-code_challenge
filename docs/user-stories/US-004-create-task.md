@@ -12,27 +12,27 @@ As an **authenticated user**, I want to **create a new task** so that **I can tr
 
 ## Acceptance Criteria
 
-- [ ] **AC-1: Successful task creation**
+- [ ] **AC-004.1: Successful task creation**
   - **Given** an authenticated user providing at least a title
   - **When** they submit the new task
   - **Then** the task is created with status "Pending" and associated to the user
 
-- [ ] **AC-2: Full task creation**
+- [ ] **AC-004.2: Full task creation**
   - **Given** an authenticated user providing title, description, and due date
   - **When** they submit the new task
   - **Then** all fields are saved correctly
 
-- [ ] **AC-3: Title is required**
+- [ ] **AC-004.3: Title is required**
   - **Given** an authenticated user submitting a task without a title
   - **When** the form is submitted
   - **Then** the system rejects the request indicating the title is required
 
-- [ ] **AC-4: Due date validation**
+- [ ] **AC-004.4: Due date validation**
   - **Given** an authenticated user providing a due date in the past
   - **When** they submit the new task
   - **Then** the system rejects the request indicating the date must be in the future
 
-- [ ] **AC-5: Default status**
+- [ ] **AC-004.5: Default status**
   - **Given** an authenticated user creating a task without specifying a status
   - **When** the task is created
   - **Then** the status defaults to "Pending"

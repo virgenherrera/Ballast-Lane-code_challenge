@@ -67,42 +67,42 @@ sequenceDiagram
 
 ## Acceptance Criteria
 
-- [ ] **AC-1: Single command starts everything**
+- [ ] **AC-013.1: Single command starts everything**
   - **Given** a clean clone of the repository with only Docker installed
   - **When** the evaluator runs `docker compose up`
   - **Then** the backend API, frontend, and PostgreSQL database services all start without any
     additional manual setup step
 
-- [ ] **AC-2: Backend API is reachable**
+- [ ] **AC-013.2: Backend API is reachable**
   - **Given** the Compose stack is running
   - **When** the evaluator sends a request to the documented backend port
   - **Then** the API responds successfully
 
-- [ ] **AC-3: Frontend is reachable**
+- [ ] **AC-013.3: Frontend is reachable**
   - **Given** the Compose stack is running
   - **When** the evaluator opens the documented frontend port in a browser
   - **Then** the Angular application loads and can communicate with the backend API
 
-- [ ] **AC-4: Health checks confirm readiness**
+- [ ] **AC-013.4: Health checks confirm readiness**
   - **Given** the Compose stack has just started
   - **When** dependent services (e.g., `taskflow-api` depending on `postgres`, `taskflow-web`
     depending on `taskflow-api`) start up
   - **Then** Docker Compose health checks confirm each service is ready before dependent services
     are considered started
 
-- [ ] **AC-5: Full teardown**
+- [ ] **AC-013.5: Full teardown**
   - **Given** the Compose stack is running
   - **When** the evaluator runs `docker compose down`
   - **Then** all containers, networks, and (unless volumes are explicitly preserved) associated
     resources are removed cleanly
 
-- [ ] **AC-6: Environment variable fail-fast validation**
+- [ ] **AC-013.6: Environment variable fail-fast validation**
   - **Given** the `taskflow-api` container starting up
   - **When** it reads environment variables from `.env`
   - **Then** it validates all required vars are present and non-empty, and crashes immediately
     with the missing var name if any are absent
 
-- [ ] **AC-7: Nginx serves the Angular SPA fallback route**
+- [ ] **AC-013.7: Nginx serves the Angular SPA fallback route**
   - **Given** the `taskflow-web` nginx configuration
   - **When** the evaluator refreshes the browser on a deep Angular client-side route (e.g.
     `/tasks/42`)

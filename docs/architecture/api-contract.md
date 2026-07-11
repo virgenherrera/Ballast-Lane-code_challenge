@@ -105,7 +105,7 @@ No authentication required. No request body. This endpoint is outside the `/api`
 
 ### 3.1 Register — `POST /api/auth/register`
 
-Maps to [US-001](../user-stories/US-001-user-registration.md) (AC-1 through AC-4).
+Maps to [US-001](../user-stories/US-001-user-registration.md) (AC-001.1 through AC-001.4).
 
 **Auth**: None (public).
 
@@ -134,14 +134,14 @@ Maps to [US-001](../user-stories/US-001-user-registration.md) (AC-1 through AC-4
 
 | Status | Condition | AC |
 | ------ | --------- | -- |
-| 400 | Missing required field (`email`, `name`, or `password`) | AC-4 |
-| 400 | Email format invalid or contains uppercase characters | AC-1 |
-| 400 | Password does not meet strength requirements (min 8, 1 upper, 1 number, 1 special) | AC-3 |
-| 409 | Email already registered | AC-2 |
+| 400 | Missing required field (`email`, `name`, or `password`) | AC-001.4 |
+| 400 | Email format invalid or contains uppercase characters | AC-001.1 |
+| 400 | Password does not meet strength requirements (min 8, 1 upper, 1 number, 1 special) | AC-001.3 |
+| 409 | Email already registered | AC-001.2 |
 
 ### 3.2 Login — `POST /api/auth/login`
 
-Maps to [US-002](../user-stories/US-002-user-login.md) (AC-1 through AC-3).
+Maps to [US-002](../user-stories/US-002-user-login.md) (AC-002.1 through AC-002.3).
 
 **Auth**: None (public).
 
@@ -173,17 +173,17 @@ Maps to [US-002](../user-stories/US-002-user-login.md) (AC-1 through AC-3).
 
 | Status | Condition | AC |
 | ------ | --------- | -- |
-| 400 | Missing `email` or `password` | AC-3 |
-| 401 | Invalid email or password (generic message, does not reveal which field is wrong) | AC-2 |
+| 400 | Missing `email` or `password` | AC-002.3 |
+| 401 | Invalid email or password (generic message, does not reveal which field is wrong) | AC-002.2 |
 | 429 | Too many login attempts — `Retry-After` header included (5 attempts/min/IP, exponential backoff) | Security |
 
-Note on AC-2: the `message` field must read identically whether the email does not exist or the
+Note on AC-002.2: the `message` field must read identically whether the email does not exist or the
 password is wrong (e.g., `"Invalid email or password."`), to prevent user enumeration. Both code
 paths must take the same time (dummy BCrypt.Verify when user not found) to prevent timing attacks.
 
 ### 3.3 Current User — `GET /api/auth/me`
 
-Maps to [US-003](../user-stories/US-003-protected-access.md) (AC-1 through AC-3).
+Maps to [US-003](../user-stories/US-003-protected-access.md) (AC-003.1 through AC-003.3).
 
 **Auth**: Bearer token (protected).
 
@@ -204,22 +204,22 @@ Maps to [US-003](../user-stories/US-003-protected-access.md) (AC-1 through AC-3)
 
 | Status | Condition | AC |
 | ------ | --------- | -- |
-| 401 | Missing, invalid, or expired token | AC-2, AC-3 |
+| 401 | Missing, invalid, or expired token | AC-003.2, AC-003.3 |
 
 ## 4. Tasks API (Protected)
 
 All endpoints in this section require a valid `Authorization: Bearer <jwt>` header. This satisfies
 [US-003](../user-stories/US-003-protected-access.md):
 
-- AC-1: a valid token allows the request to proceed.
-- AC-2: a missing token returns `401 Unauthorized`.
-- AC-3: an expired or tampered token returns `401 Unauthorized`.
-- AC-4: every query and mutation is scoped to the authenticated user's own tasks (enforced at the
+- AC-003.1: a valid token allows the request to proceed.
+- AC-003.2: a missing token returns `401 Unauthorized`.
+- AC-003.3: an expired or tampered token returns `401 Unauthorized`.
+- AC-003.4: every query and mutation is scoped to the authenticated user's own tasks (enforced at the
   data-access layer via the `owner_id` claim extracted from the token).
 
 ### 4.1 Create Task — `POST /api/tasks`
 
-Maps to [US-004](../user-stories/US-004-create-task.md) (AC-1 through AC-5).
+Maps to [US-004](../user-stories/US-004-create-task.md) (AC-004.1 through AC-004.5).
 
 **Request Body**:
 
@@ -232,7 +232,7 @@ Maps to [US-004](../user-stories/US-004-create-task.md) (AC-1 through AC-5).
 ```
 
 `status` is never accepted in the request body — it always defaults to `"Pending"` on creation
-(AC-5).
+(AC-004.5).
 
 **Success Response — `201 Created`**:
 
@@ -253,20 +253,20 @@ Maps to [US-004](../user-stories/US-004-create-task.md) (AC-1 through AC-5).
 
 | Status | Condition | AC |
 | ------ | --------- | -- |
-| 400 | `title` missing or empty | AC-3 |
-| 400 | `dueDate` is in the past | AC-4 |
+| 400 | `title` missing or empty | AC-004.3 |
+| 400 | `dueDate` is in the past | AC-004.4 |
 | 401 | Missing, invalid, or expired token | US-003 |
 
 ### 4.2 List Tasks — `GET /api/tasks`
 
-Maps to [US-005](../user-stories/US-005-list-tasks.md) (AC-1 through AC-4) and
-[US-009](../user-stories/US-009-filter-tasks-by-status.md) (AC-1 through AC-4).
+Maps to [US-005](../user-stories/US-005-list-tasks.md) (AC-005.1 through AC-005.4) and
+[US-009](../user-stories/US-009-filter-tasks-by-status.md) (AC-009.1 through AC-009.4).
 
 **Query Parameters**:
 
 | Parameter | Type | Required | Default | Description |
 | --------- | ---- | -------- | ------- | ----------- |
-| `status` | string, one of `Pending`, `In Progress`, `Completed` | No | — | Filter tasks to a single status. Omit to return all statuses (US-005 AC-1, US-009 AC-4) |
+| `status` | string, one of `Pending`, `In Progress`, `Completed` | No | — | Filter tasks to a single status. Omit to return all statuses (US-005 AC-005.1, US-009 AC-009.4) |
 | `page` | integer (≥ 1) | No | `1` | Page number. Values ≤ 0 return `400`. Omit to get the first page |
 | `perPage` | integer (1–MaxPerPage) | No | Server constant | Items per page. Default and max defined in `PaginationDefaults`. Values outside range return `400` |
 
@@ -296,22 +296,22 @@ See [Section 8 — Pagination](#8-pagination) for paging mechanics.
 ```
 
 - `items` is `[]` (empty array) when the user has no tasks, none match the filter, or `page`
-  exceeds total pages — never an error (US-005 AC-2, US-009 AC-2).
-- `items` only ever contains tasks owned by the caller (US-005 AC-3).
-- Each item exposes at minimum `title`, `status`, and `dueDate` as required by US-005 AC-4.
+  exceeds total pages — never an error (US-005 AC-005.2, US-009 AC-009.2).
+- `items` only ever contains tasks owned by the caller (US-005 AC-005.3).
+- Each item exposes at minimum `title`, `status`, and `dueDate` as required by US-005 AC-005.4.
 - `paging.prev` and `paging.next` preserve any active `status` filter in the URL.
 
 **Error Responses**:
 
 | Status | Condition | AC |
 | ------ | --------- | -- |
-| 400 | `status` query parameter has a value outside the valid enum | US-009 AC-3 |
+| 400 | `status` query parameter has a value outside the valid enum | US-009 AC-009.3 |
 | 400 | `page` ≤ 0 or `perPage` outside 1–100 | Pagination |
 | 401 | Missing, invalid, or expired token | US-003 |
 
 ### 4.3 View Task Detail — `GET /api/tasks/{id}`
 
-Maps to [US-006](../user-stories/US-006-view-task-detail.md) (AC-1 through AC-3).
+Maps to [US-006](../user-stories/US-006-view-task-detail.md) (AC-006.1 through AC-006.3).
 
 **Path Parameters**:
 
@@ -339,14 +339,14 @@ Maps to [US-006](../user-stories/US-006-view-task-detail.md) (AC-1 through AC-3)
 | Status | Condition | AC |
 | ------ | --------- | -- |
 | 401 | Missing, invalid, or expired token | US-003 |
-| 404 | Task does not exist, **or** exists but is owned by another user | AC-2, AC-3 |
+| 404 | Task does not exist, **or** exists but is owned by another user | AC-006.2, AC-006.3 |
 
-Note on AC-3: a task owned by another user returns `404 Not Found`, never `403 Forbidden`, so that
+Note on AC-006.3: a task owned by another user returns `404 Not Found`, never `403 Forbidden`, so that
 callers cannot distinguish "does not exist" from "not yours" — preventing enumeration attacks.
 
 ### 4.4 Update Task — `PATCH /api/tasks/{id}`
 
-Maps to [US-007](../user-stories/US-007-update-task.md) (AC-1 through AC-6).
+Maps to [US-007](../user-stories/US-007-update-task.md) (AC-007.1 through AC-007.6).
 
 **Path Parameters**:
 
@@ -384,14 +384,14 @@ Maps to [US-007](../user-stories/US-007-update-task.md) (AC-1 through AC-6).
 
 | Status | Condition | AC |
 | ------ | --------- | -- |
-| 400 | `title` provided as an empty string | AC-6 |
-| 400 | `status` provided with a value outside the valid enum | AC-4 |
+| 400 | `title` provided as an empty string | AC-007.6 |
+| 400 | `status` provided with a value outside the valid enum | AC-007.4 |
 | 401 | Missing, invalid, or expired token | US-003 |
-| 404 | Task does not exist, or is owned by another user | AC-5 |
+| 404 | Task does not exist, or is owned by another user | AC-007.5 |
 
 ### 4.5 Delete Task — `DELETE /api/tasks/{id}`
 
-Maps to [US-008](../user-stories/US-008-delete-task.md) (AC-1 through AC-4).
+Maps to [US-008](../user-stories/US-008-delete-task.md) (AC-008.1 through AC-008.4).
 
 **Path Parameters**:
 
@@ -406,9 +406,9 @@ Maps to [US-008](../user-stories/US-008-delete-task.md) (AC-1 through AC-4).
 | Status | Condition | AC |
 | ------ | --------- | -- |
 | 401 | Missing, invalid, or expired token | US-003 |
-| 404 | Task does not exist (including a task already deleted), or owned by another user | AC-2, AC-3, AC-4 |
+| 404 | Task does not exist (including a task already deleted), or owned by another user | AC-008.2, AC-008.3, AC-008.4 |
 
-Note on AC-4: deletion is a hard, permanent removal. Re-sending the same delete request after
+Note on AC-008.4: deletion is a hard, permanent removal. Re-sending the same delete request after
 success returns `404 Not Found`, not a server error, making the operation idempotent from the
 caller's perspective.
 
@@ -471,9 +471,9 @@ parameter, satisfying [US-009](../user-stories/US-009-filter-tasks-by-status.md)
 | Parameter name | `status` |
 | Location | Query string, e.g. `GET /api/tasks?status=Pending` |
 | Accepted values | `Pending`, `In Progress`, `Completed` (must match the Task Status enum exactly) |
-| Omitted parameter | Returns all of the caller's tasks regardless of status (US-005 behavior, US-009 AC-4) |
-| No matches | Returns `200 OK` with `"items": []` — never an error (US-009 AC-2) |
-| Invalid value | Returns `400 Bad Request` with a `VALIDATION_ERROR` naming the valid enum values (US-009 AC-3) |
+| Omitted parameter | Returns all of the caller's tasks regardless of status (US-005 behavior, US-009 AC-009.4) |
+| No matches | Returns `200 OK` with `"items": []` — never an error (US-009 AC-009.2) |
+| Invalid value | Returns `400 Bad Request` with a `VALIDATION_ERROR` naming the valid enum values (US-009 AC-009.3) |
 | Scope | Filtering is always applied on top of the ownership rule — a user can never filter into another user's tasks (US-009 notes) |
 
 **Example — valid filter**: `GET /api/tasks?status=In%20Progress` returns only the caller's tasks

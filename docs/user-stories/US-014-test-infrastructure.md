@@ -17,38 +17,38 @@ CI, and the evaluator's Docker Compose demo**.
 
 ## Acceptance Criteria
 
-- [ ] **AC-1: Integration tests run against PostgreSQL via WebApplicationFactory**
+- [ ] **AC-014.1: Integration tests run against PostgreSQL via WebApplicationFactory**
   - **Given** a developer running the backend integration test suite locally
   - **When** the tests execute
   - **Then** they run against `WebApplicationFactory` connected to a PostgreSQL Docker container
     (started via `docker compose up db`), with real migrations and real constraints
 
-- [ ] **AC-2: CI gate runs against a Docker test container (PostgreSQL)**
+- [ ] **AC-014.2: CI gate runs against a Docker test container (PostgreSQL)**
   - **Given** a change pushed for CI evaluation
   - **When** the CI pipeline runs the backend integration suite
   - **Then** tests execute against a PostgreSQL Docker test container (`testcontainers-dotnet`)
     for full fidelity — same engine, same migrations, same constraints as production
 
-- [ ] **AC-3: Playwright E2E tests run against a seeded PostgreSQL container**
+- [ ] **AC-014.3: Playwright E2E tests run against a seeded PostgreSQL container**
   - **Given** the frontend E2E suite
   - **When** Playwright specs execute
   - **Then** they run against a real browser, the built Angular app, the API, and a PostgreSQL
     Docker container pre-seeded with a known baseline
 
-- [ ] **AC-4: Test database isolation**
+- [ ] **AC-014.4: Test database isolation**
   - **Given** multiple test runs (local or CI) executing over time
   - **When** each run starts
   - **Then** its test database state is isolated from other runs via `Respawn` or per-class
     schema recreation, with no cross-contamination of data between runs
 
-- [ ] **AC-5: AAA pattern and naming convention enforced**
+- [ ] **AC-014.5: AAA pattern and naming convention enforced**
   - **Given** any integration or E2E test in the suite
   - **When** its structure is reviewed
   - **Then** it follows Arrange/Act/Assert and the
     `<Action>_<Scenario>_<ExpectedResult>` naming convention defined in
     [Testing Strategy](../architecture/testing-strategy.md)
 
-- [ ] **AC-6: Unit test projects scaffolded with xUnit and NSubstitute**
+- [ ] **AC-014.6: Unit test projects scaffolded with xUnit and NSubstitute**
   - **Given** the test infrastructure is set up
   - **When** the solution is built
   - **Then** `TaskFlow.Domain.Tests` and `TaskFlow.Application.Tests` projects exist, reference

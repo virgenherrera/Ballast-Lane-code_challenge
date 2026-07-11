@@ -14,7 +14,7 @@ of my device**.
 
 ## Acceptance Criteria
 
-- [ ] **AC-1: Responsive across breakpoints**
+- [ ] **AC-019.1: Responsive across breakpoints**
   - **Given** the app shell (header, nav, main content area) rendered at mobile, tablet, and desktop
     viewport widths
   - **When** the viewport is resized across those breakpoints
@@ -22,17 +22,17 @@ of my device**.
     horizontal scrolling or overlapping content — satisfying the challenge's "responsive and
     user-friendly" requirement
 
-- [ ] **AC-2: Navigation between views**
+- [ ] **AC-019.2: Navigation between views**
   - **Given** an authenticated user anywhere in the app
   - **When** they use the header/nav to move between Task List and Task Form
   - **Then** the Layout component's router outlet renders the target page without a full page reload
 
-- [ ] **AC-3: Logout clears auth state**
+- [ ] **AC-019.3: Logout clears auth state**
   - **Given** an authenticated user
   - **When** they select "Log out" from the nav
   - **Then** the app clears the stored JWT and Auth State, and redirects to the Login page
 
-- [ ] **AC-4: Protected routes redirect to login**
+- [ ] **AC-019.4: Protected routes redirect to login**
   - **Given** a visitor with no valid token (or an expired token)
   - **When** they navigate directly to a protected route (Task List or Task Form URL)
   - **Then** the Auth Guard intercepts navigation and redirects to the Login page before any
@@ -68,5 +68,5 @@ flowchart TD
   — why Angular was chosen for `taskflow-web`
 - [Testing Strategy — Accessibility (A11y) Testing](../architecture/testing-strategy.md#45-accessibility-a11y-testing)
 - [EP04 — Frontend (Angular)](../epics/EP04-frontend.md)
-- [US-016 — Login & Registration Screen](US-016-login-screen.md) — the redirect target for AC-3 and
+- [US-016 — Login & Registration Screen](US-016-login-screen.md) — the redirect target for AC-019.3 and
   AC-4

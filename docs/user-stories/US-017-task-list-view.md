@@ -13,30 +13,30 @@ quickly review what I need to do**.
 
 ## Acceptance Criteria
 
-- [ ] **AC-1: List displays core task fields**
+- [ ] **AC-017.1: List displays core task fields**
   - **Given** an authenticated user with existing tasks
   - **When** the Task List page loads
   - **Then** the app calls `GET /api/tasks` and renders each task's title, status, and due date
 
-- [ ] **AC-2: Empty state message**
+- [ ] **AC-017.2: Empty state message**
   - **Given** an authenticated user with no tasks
   - **When** the Task List page loads and `GET /api/tasks` returns an empty `items` array
   - **Then** the app displays an empty state message (e.g. "You have no tasks yet — create one to
     get started") instead of a blank list
 
-- [ ] **AC-3: Filter by status**
+- [ ] **AC-017.3: Filter by status**
   - **Given** an authenticated user on the Task List page with tasks in multiple statuses
   - **When** they select a status from the filter dropdown (Pending, In Progress, Completed, or All)
   - **Then** the app calls `GET /api/tasks?status=<value>` and re-renders the list with only
     matching tasks
 
-- [ ] **AC-4: Loading state**
+- [ ] **AC-017.4: Loading state**
   - **Given** the Task List page has just been navigated to, or a filter has just changed
   - **When** the `GET /api/tasks` request is in flight
   - **Then** the app displays a loading indicator and suppresses the empty-state message until the
     response resolves
 
-- [ ] **AC-5: Navigate to detail/edit**
+- [ ] **AC-017.5: Navigate to detail/edit**
   - **Given** an authenticated user viewing the task list
   - **When** they select a task row
   - **Then** the app navigates to the Task Detail/Edit page for that task's `id`

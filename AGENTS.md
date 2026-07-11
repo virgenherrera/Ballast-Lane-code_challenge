@@ -209,6 +209,203 @@ flowchart TD
     DEC -->|Any FAIL| BLOCK([BLOCKED — fix before next launch])
 ```
 
+## Scrum Ceremonies
+
+### Refinement (Grooming)
+
+Refines user stories for a batch before implementation begins. Produces DOD, DOR,
+acceptance criteria, expected deliverables, test plan, and out-of-scope boundaries.
+
+#### Process
+
+```mermaid
+%% Refinement ceremony — orchestrator-driven, zero redundant reads
+flowchart TD
+    READ([1. Orchestrator reads\nsource docs]) --> BUNDLE([2. Condense into\nsingle briefing])
+    BUNDLE --> TEAM([3. Launch full team\n8 agents in parallel])
+    TEAM --> SYNTH([4. Synthesis agent\nmerges all perspectives])
+    SYNTH --> WRITE([5. Orchestrator writes\nrefined stories to repo])
+
+    style READ fill:#3b82f6,color:#fff
+    style BUNDLE fill:#3b82f6,color:#fff
+    style TEAM fill:#f59e0b,color:#fff
+    style SYNTH fill:#8b5cf6,color:#fff
+    style WRITE fill:#22c55e,color:#fff
+```
+
+**Step 1 — Orchestrator reads source docs** (inline, not delegated):
+- Epic file (`docs/epics/EP0X-*.md`)
+- User story files (`docs/user-stories/US-0XX-*.md`)
+- Engineering addenda (`docs/epics/EP0X-engineering-addenda.md`)
+- API contract (relevant sections)
+- Prior grooming notes from engram
+
+**Step 2 — Condense into single briefing**:
+- Write a single markdown file to **scratchpad** (never committed)
+- Contains: stories, acceptance criteria, engineering decisions, API contract, architecture scope, file blueprint, constraints
+- This is the ONLY input the team receives — no file paths, no references to read
+
+**Step 3 — Launch full scrum team** (8 agents in parallel via Workflow):
+- Each agent receives the **full briefing text injected in their prompt**
+- Each agent gets a **role-specific lens** (what to focus on)
+- Each agent returns **structured JSON** via schema (not free text)
+- **Zero file reads** by sub-agents — all context is pre-digested
+
+| Role | Lens |
+| ---- | ---- |
+| Product Owner (PO) | Business value, AC completeness, user journey gaps, prioritization |
+| Scrum Master (SM) | DOR/DOD specificity, story sizing, independence, process risks |
+| Tech Lead (TL) | Architecture alignment, interface contracts, naming, TDD order |
+| Frontend Engineer (FE) | Contract alignment with FE consumption, Zod schemas, forward planning |
+| Business Analyst (BA) | Requirements completeness, edge cases, data validation, UX gaps |
+| QA Engineer (QA) | Test cases, boundary values, negative scenarios, validation matrix |
+| QA Automation (QA-Auto) | Unit test plan, mock strategy, test naming, coverage targets, TDD order |
+| Infrastructure (Infra) | Package dependencies, project references, build impact, env vars |
+
+**Step 4 — Synthesis** (single opus agent):
+- Receives all 8 structured outputs
+- Deduplicates, resolves conflicts (prefers conservative option)
+- Produces final consolidated refinement with: DOD, DOR, acceptance criteria (Given/When/Then), deliverables (exact file paths), test plan (test names mapped to ACs), validation rules (where each runs), out-of-scope, prerequisites, TDD order, risks
+
+**Step 5 — Orchestrator writes to repo**:
+- Updates user story files with refined DOD, DOR, acceptance criteria, deliverables
+- Creates/updates batch-specific refinement doc if needed
+- These are REAL files (committed), not scratchpad
+
+#### Schema Contract
+
+Every team member returns the same structured schema per user story:
+
+```text
+{
+  role: string,
+  usXXX: {
+    dor: string[],           — Definition of Ready (checkable conditions)
+    dod: string[],           — Definition of Done (acceptance conditions)
+    acceptance_criteria: [    — Refined Given/When/Then
+      { id, given, when, then }
+    ],
+    deliverables: string[],  — Expected outputs (files, classes, tests)
+    test_coverage: [          — Test cases mapped to ACs
+      { test_name, maps_to, assertion }
+    ],
+    risks: string[],
+    out_of_scope: string[]
+  },
+  cross_cutting: string[]    — Notes that apply to all stories
+}
+```
+
+#### Anti-Patterns
+
+| Anti-Pattern | Why It Fails | Do Instead |
+| ------------ | ------------ | ---------- |
+| Each agent reads source files | 8x redundant reads, context waste | Orchestrator reads once, injects text |
+| Free-text agent output | Hard to merge, inconsistent | Structured JSON via schema |
+| Launching agents without briefing | Agents hallucinate scope | Single briefing with all context |
+| Writing refinement to scratchpad only | Lost after session | Write to real project files |
+| Skipping synthesis | 8 unmerged perspectives | Single synthesis pass deduplicates |
+
+#### Model Assignment
+
+| Phase | Model | Reason |
+| ----- | ----- | ------ |
+| Orchestrator reads | — | Inline, no agent |
+| Team members (8x) | sonnet | Structured analysis, not architecture |
+| Synthesis | opus | Cross-perspective merge, conflict resolution |
+
+### Planning (Sprint Planning)
+
+Takes REFINED user stories for a batch (already carrying DOD, DOR, acceptance criteria, and
+deliverables from Refinement) and decomposes the batch into sub-task **handoff files**
+following the [Handoff Template](docs/process/handoff-template.md), ready for implementation
+delegation.
+
+#### Guard
+
+Planning MUST NOT start unless every user story in scope already has a
+`## Definition of Done (DOD)` section. If any story lacks DOD, planning stops and
+Refinement runs first. No handoff file is produced from an ungroomed story.
+
+#### Process
+
+```mermaid
+%% Planning ceremony — orchestrator-driven, guarded by DOD check
+flowchart TD
+    GUARD{"DOD Guard:\nall stories have DOD?"} -->|No| STOP([STOP — run\nRefinement first])
+    GUARD -->|Yes| READ([1. Orchestrator reads\nsource docs])
+    READ --> BUNDLE([2. Condense into\nplanning briefing])
+    BUNDLE --> TASKS([3. Launch one agent\nper sub-task, in parallel])
+    TASKS --> VALIDATE([4. Orchestrator validates\neach handoff])
+    VALIDATE --> WRITE([5. Orchestrator writes\nhandoff files to repo])
+
+    style GUARD fill:#ef4444,color:#fff
+    style STOP fill:#ef4444,color:#fff
+    style READ fill:#3b82f6,color:#fff
+    style BUNDLE fill:#3b82f6,color:#fff
+    style TASKS fill:#f59e0b,color:#fff
+    style VALIDATE fill:#8b5cf6,color:#fff
+    style WRITE fill:#22c55e,color:#fff
+```
+
+**Step 1 — Orchestrator reads source docs** (inline, not delegated):
+
+- Refined user story files (`docs/user-stories/US-0XX-*.md`) — must already have DOD, DOR,
+  acceptance criteria, deliverables
+- Engineering addenda (`docs/epics/EP0X-engineering-addenda.md`) — batch plan and binding
+  engineering decisions
+- API contract (relevant endpoints)
+- Handoff template (`docs/process/handoff-template.md`)
+- Existing handoff files in `docs/handoffs/EP0X/` to avoid duplicates
+- Prior planning from engram
+
+**Step 2 — Condense into planning briefing**:
+
+- Write a single markdown file to **scratchpad** (never committed)
+- Contains: all refined stories with DOD/DOR/AC/deliverables/test plan, batch scope and
+  constraints, the handoff template's 11-section structure, applicable engineering
+  decisions, API contract details, and the orchestrator's own sub-task breakdown table
+- This is the ONLY input the task agents receive — no file paths, no references to read
+
+**Step 3 — Launch planning agents** (Workflow, parallel):
+
+- **One agent per sub-task** (not per role — per TASK, unlike Refinement's role-based team)
+- Each agent receives the full briefing plus its specific task scope
+- Each agent produces one COMPLETE handoff file (all 11 sections) as structured output
+- Model: sonnet, effort: high
+
+**Step 4 — Orchestrator validates** (inline):
+
+- Every relevant acceptance criterion is covered by a deliverable or quality gate
+- Quality gates are copy-pasteable shell commands with explicit pass criteria
+- Boundaries name at least 3 explicit OUT OF SCOPE items
+- Anti-patterns section is populated, not left as a placeholder
+- Handoff passes the [Pre-Flight Checklist](docs/process/handoff-template.md#orchestrator-pre-flight-checklist)
+
+**Step 5 — Write handoff files to real project files**:
+
+- Write to `docs/handoffs/EP0X/EP0X-B{N}-{NN}-{task-slug}.md`
+- Create/update the batch plan tracking file if needed
+- Save to engram
+
+#### Anti-Patterns
+
+| Anti-Pattern | Why It Fails | Do Instead |
+| ------------ | ------------ | ---------- |
+| Planning without DOD | Handoffs derive scope from DOD — missing DOD means hallucinated gates | Guard rejects; run Refinement first |
+| Each agent reading source files | N-x redundant reads, context waste | Orchestrator reads once, injects text |
+| Vague quality gates | Sub-agent can't self-verify, PDC fails | Every gate is a copy-pasteable shell command |
+| Missing boundaries | Scope creep during implementation | Explicit OUT OF SCOPE list, minimum 3 items |
+| One handoff per role instead of per task | Doesn't match implementation delegation model | One agent, one handoff, per sub-task |
+
+#### Model Assignment
+
+| Phase | Model | Reason |
+| ----- | ----- | ------ |
+| Orchestrator reads | — | Inline, no agent |
+| Task agents (Nx) | sonnet | Structured writing, not architecture |
+| Validation | — | Inline, orchestrator |
+
 ## Compact Rules for Sub-Agent Injection
 
 ### TASKFLOW-DOCS

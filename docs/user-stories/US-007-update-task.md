@@ -12,32 +12,32 @@ As an **authenticated user**, I want to **update an existing task** so that **I 
 
 ## Acceptance Criteria
 
-- [ ] **AC-1: Update title**
+- [ ] **AC-007.1: Update title**
   - **Given** an authenticated user with an existing task
   - **When** they change the title and submit
   - **Then** the title is updated
 
-- [ ] **AC-2: Update status**
+- [ ] **AC-007.2: Update status**
   - **Given** an authenticated user with an existing task
   - **When** they change the status to a valid value
   - **Then** the status is updated
 
-- [ ] **AC-3: Update description and due date**
+- [ ] **AC-007.3: Update description and due date**
   - **Given** an authenticated user with an existing task
   - **When** they change the description or due date
   - **Then** the fields are updated accordingly
 
-- [ ] **AC-4: Invalid status transition**
+- [ ] **AC-007.4: Invalid status transition**
   - **Given** an authenticated user providing an invalid status value
   - **When** they attempt to update
   - **Then** the system rejects the request indicating valid status values
 
-- [ ] **AC-5: Cannot update another user's task**
+- [ ] **AC-007.5: Cannot update another user's task**
   - **Given** an authenticated user attempting to update a task they do not own
   - **When** the request is processed
   - **Then** the system returns a not-found error
 
-- [ ] **AC-6: Title cannot be empty**
+- [ ] **AC-007.6: Title cannot be empty**
   - **Given** an authenticated user updating a task with an empty title
   - **When** the request is processed
   - **Then** the system rejects the request

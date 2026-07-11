@@ -12,17 +12,17 @@ As an **authenticated user**, I want to **view the full details of a specific ta
 
 ## Acceptance Criteria
 
-- [ ] **AC-1: View own task**
+- [ ] **AC-006.1: View own task**
   - **Given** an authenticated user requesting a task they own
   - **When** the request is processed
   - **Then** the system returns all task fields: title, description, status, due date
 
-- [ ] **AC-2: Task not found**
+- [ ] **AC-006.2: Task not found**
   - **Given** an authenticated user requesting a task that does not exist
   - **When** the request is processed
   - **Then** the system returns a not-found error
 
-- [ ] **AC-3: Access denied to other user's task**
+- [ ] **AC-006.3: Access denied to other user's task**
   - **Given** an authenticated user requesting a task owned by another user
   - **When** the request is processed
   - **Then** the system returns a not-found error (not forbidden, to avoid leaking existence)
