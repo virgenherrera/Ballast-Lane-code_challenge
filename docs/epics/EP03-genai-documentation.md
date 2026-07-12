@@ -49,6 +49,42 @@ flowchart TD
 - Explain how edge cases, authentication, and validations were handled
 - Demonstrate critical thinking, not blind acceptance
 
+## GenAI Usage Overview
+
+This is a self-contained summary of real, verifiable AI usage on this project — every claim below
+maps to an inspectable commit or code path, not a hypothetical scenario.
+
+**Tool**: Claude Code CLI (Claude Opus model), used across the entire project lifecycle — grooming,
+architecture, implementation, and this documentation itself.
+
+**Prompt categories** (full examples in [US-010](../user-stories/US-010-prompt-documentation.md)):
+
+- **Architecture & project scaffolding** — Clean Architecture solution setup (Domain, Application,
+  Infrastructure, API), corrected after the first pass leaked EF Core references into `Domain`.
+- **TDD feature implementation** — vertical slices for task CRUD (US-004/005/006/007/008/009),
+  integration tests written first against real PostgreSQL via Testcontainers.
+- **JWT security** — registration/login with BCrypt hashing, timing-attack-resistant login, and
+  rate limiting.
+- **UI redesign** — TailAdmin-inspired responsive task list built with Tailwind CSS v4.
+
+**What was validated** (full scenarios in
+[US-011](../user-stories/US-011-ai-output-validation.md)):
+
+- **Password hashing safety** — removed a `ToString()` override on `PasswordHash` that would have
+  let the BCrypt hash leak through logging or string interpolation.
+- **JWT claim mapping** — caught ASP.NET Core's silent `MapInboundClaims` default rewriting the
+  `"sub"` claim, which would have returned `401` on every real authenticated request in production.
+- **Due date validation asymmetry** — `Create` rejects past due dates, but `Reschedule`
+  deliberately allows them, so a task doesn't become permanently un-editable once its due date
+  elapses.
+- **PostgreSQL timestamp precision** — truncated `DateTime.UtcNow` from 7-digit tick precision to
+  PostgreSQL's 6-digit microsecond precision at the domain layer, closing a create-vs-fetch
+  serialization mismatch.
+
+This was not a single "generate and accept" pass — every scenario above was found through
+integration tests exercising the real pipeline (real JWT validation, real PostgreSQL) and closed
+with a targeted domain-level fix, documented with before/after code in US-011.
+
 ## Related Architecture
 
 - [Project Brief — Deliverables](../project-brief.md#deliverables) — D3: GenAI Documentation deliverable

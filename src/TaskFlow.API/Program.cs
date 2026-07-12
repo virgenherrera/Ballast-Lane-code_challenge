@@ -154,8 +154,7 @@ builder.Services.AddScoped<AuthenticateUserHandler>();
 
 // JWT-claim-backed ICurrentUserContext (EP02-B5-01). Scoped — NOT singleton —
 // because it depends on IHttpContextAccessor, which is only valid for the
-// lifetime of a single request. SeedCurrentUserContext.cs is preserved for
-// test compatibility but is no longer wired into the production container.
+// lifetime of a single request.
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddScoped<ICurrentUserContext, JwtCurrentUserContext>();
 

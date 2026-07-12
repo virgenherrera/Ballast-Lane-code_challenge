@@ -10,8 +10,8 @@ import { AuthService } from '../auth/auth.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <div class="min-h-screen bg-gray-50">
-      <header class="bg-white border-b border-gray-200 px-4 sm:px-6 py-3 flex items-center justify-between">
-        <span class="text-lg font-semibold text-gray-900">TaskFlow</span>
+      <header class="bg-white border-b border-gray-200 px-4 sm:px-6 md:px-8 py-3 flex items-center justify-between">
+        <span class="text-lg md:text-xl font-semibold text-gray-900">TaskFlow</span>
 
         <div class="relative">
           <button
@@ -41,7 +41,9 @@ import { AuthService } from '../auth/auth.service';
         </div>
       </header>
 
-      <router-outlet />
+      <main class="md:px-4 lg:px-8">
+        <router-outlet />
+      </main>
     </div>
   `,
 })

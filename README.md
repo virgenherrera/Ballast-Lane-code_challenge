@@ -46,7 +46,7 @@ hardcoding versions. Updated as dependencies are added during implementation.
 | ---------- | ------- | ---- |
 | .NET | 10.0 (LTS) | Backend SDK and runtime |
 | ASP.NET Core | 10.0 | Web API framework |
-| PostgreSQL | 17.5 | Database engine (Docker image: `postgres:17.5`) |
+| PostgreSQL | 17 | Database engine (Docker image: `postgres:17-alpine`) |
 | Angular | 22.0.6 | Frontend SPA framework |
 | Node.js | 22.x (LTS) | Frontend build toolchain |
 | pnpm | 11.11.0 | Frontend package manager |
@@ -56,11 +56,11 @@ hardcoding versions. Updated as dependencies are added during implementation.
 
 | Package | Version | Role |
 | ------- | ------- | ---- |
-| Microsoft.EntityFrameworkCore | 10.0.9 *(Batch 2)* | ORM — LINQ-only data access (no raw SQL) |
+| Microsoft.EntityFrameworkCore | 10.0.4 | ORM — LINQ-only data access (no raw SQL) |
 | Npgsql.EntityFrameworkCore.PostgreSQL | 10.0.3 *(Batch 2)* | EF Core PostgreSQL provider |
 | Npgsql | 10.0.3 | PostgreSQL driver (used by EF Core provider) |
 | AspNetCore.HealthChecks.NpgSql | 9.0.0 | `/health` DB connectivity probe |
-| FluentValidation | — | Request DTO validation |
+| FluentValidation.DependencyInjectionExtensions | 11.12.0 | Request DTO validation |
 | Microsoft.AspNetCore.OpenApi | 10.0.9 | OpenAPI spec generation |
 
 ### Backend Test Libraries (NuGet)
@@ -79,7 +79,7 @@ hardcoding versions. Updated as dependencies are added during implementation.
 | ------- | ------- | ---- |
 | TypeScript | 6.0.3 | Type-safe frontend development |
 | Zod | 4.4.3 | API response validation (contract enforcement) |
-| Tailwind CSS | — | Utility-first CSS framework |
+| Tailwind CSS | 4.3.2 | Utility-first CSS framework |
 
 ### Frontend Test Libraries (npm)
 
@@ -389,6 +389,23 @@ package (`builder.Services.AddOpenApi()` / `app.MapOpenApi()` in
 > Note: the default port above assumes the API is run outside Docker with `dotnet run`
 > (Kestrel binds to `API_PORT` from the environment). Confirm the effective `API_PORT` in
 > your `.env` — see [Quick Start](#quick-start).
+
+## Running Backend Tests
+
+```bash
+# Unit tests (no Docker required)
+dotnet test tests/TaskFlow.Domain.Tests
+dotnet test tests/TaskFlow.Application.Tests
+
+# Infrastructure tests (requires Docker for Testcontainers)
+dotnet test tests/TaskFlow.Infrastructure.Tests
+
+# Integration tests (requires Docker for Testcontainers)
+dotnet test tests/TaskFlow.IntegrationTests
+
+# Run all tests
+dotnet test
+```
 
 ## Running E2E Tests
 
