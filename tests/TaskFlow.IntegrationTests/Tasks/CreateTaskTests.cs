@@ -27,7 +27,7 @@ public sealed class CreateTaskTests : IntegrationTestBase
     {
         var payload = new { title = "", description = (string?)null, dueDate = (DateTime?)null };
 
-        var response = await Client.PostAsJsonAsync(Endpoint, payload);
+        var response = await AuthenticatedClient.PostAsJsonAsync(Endpoint, payload);
 
         await AssertErrorResponse.HasValidationErrorAsync(
             response,
@@ -39,7 +39,7 @@ public sealed class CreateTaskTests : IntegrationTestBase
     {
         var payload = new { title = "   ", description = (string?)null, dueDate = (DateTime?)null };
 
-        var response = await Client.PostAsJsonAsync(Endpoint, payload);
+        var response = await AuthenticatedClient.PostAsJsonAsync(Endpoint, payload);
 
         await AssertErrorResponse.HasValidationErrorAsync(
             response,
@@ -56,7 +56,7 @@ public sealed class CreateTaskTests : IntegrationTestBase
             dueDate = (DateTime?)null,
         };
 
-        var response = await Client.PostAsJsonAsync(Endpoint, payload);
+        var response = await AuthenticatedClient.PostAsJsonAsync(Endpoint, payload);
 
         await AssertErrorResponse.HasValidationErrorAsync(
             response,
@@ -69,7 +69,7 @@ public sealed class CreateTaskTests : IntegrationTestBase
         var title = new string('a', 200);
         var payload = new { title, description = (string?)null, dueDate = (DateTime?)null };
 
-        var response = await Client.PostAsJsonAsync(Endpoint, payload);
+        var response = await AuthenticatedClient.PostAsJsonAsync(Endpoint, payload);
 
         Assert.Equal(HttpStatusCode.Created, response.StatusCode);
 
@@ -88,7 +88,7 @@ public sealed class CreateTaskTests : IntegrationTestBase
             dueDate = DateTime.UtcNow.AddDays(-1),
         };
 
-        var response = await Client.PostAsJsonAsync(Endpoint, payload);
+        var response = await AuthenticatedClient.PostAsJsonAsync(Endpoint, payload);
 
         await AssertErrorResponse.HasValidationErrorAsync(
             response,
@@ -107,7 +107,7 @@ public sealed class CreateTaskTests : IntegrationTestBase
             dueDate = DateTime.UtcNow,
         };
 
-        var response = await Client.PostAsJsonAsync(Endpoint, payload);
+        var response = await AuthenticatedClient.PostAsJsonAsync(Endpoint, payload);
 
         await AssertErrorResponse.HasValidationErrorAsync(
             response,
@@ -119,7 +119,7 @@ public sealed class CreateTaskTests : IntegrationTestBase
     {
         var payload = new { title = "Buy groceries" };
 
-        var response = await Client.PostAsJsonAsync(Endpoint, payload);
+        var response = await AuthenticatedClient.PostAsJsonAsync(Endpoint, payload);
 
         Assert.Equal(HttpStatusCode.Created, response.StatusCode);
 
@@ -137,7 +137,7 @@ public sealed class CreateTaskTests : IntegrationTestBase
         // as Pending.
         var payload = new { title = "Buy groceries", status = "Completed" };
 
-        var response = await Client.PostAsJsonAsync(Endpoint, payload);
+        var response = await AuthenticatedClient.PostAsJsonAsync(Endpoint, payload);
 
         Assert.Equal(HttpStatusCode.Created, response.StatusCode);
 
@@ -151,7 +151,7 @@ public sealed class CreateTaskTests : IntegrationTestBase
     {
         var payload = new { title = "Buy groceries" };
 
-        var response = await Client.PostAsJsonAsync(Endpoint, payload);
+        var response = await AuthenticatedClient.PostAsJsonAsync(Endpoint, payload);
 
         Assert.Equal(HttpStatusCode.Created, response.StatusCode);
 
@@ -165,7 +165,7 @@ public sealed class CreateTaskTests : IntegrationTestBase
     {
         var payload = new { title = "Buy groceries" };
 
-        var response = await Client.PostAsJsonAsync(Endpoint, payload);
+        var response = await AuthenticatedClient.PostAsJsonAsync(Endpoint, payload);
 
         Assert.Equal(HttpStatusCode.Created, response.StatusCode);
 
@@ -188,7 +188,7 @@ public sealed class CreateTaskTests : IntegrationTestBase
             dueDate = (DateTime?)null,
         };
 
-        var response = await Client.PostAsJsonAsync(Endpoint, payload);
+        var response = await AuthenticatedClient.PostAsJsonAsync(Endpoint, payload);
 
         var body = await AssertErrorResponse.HasValidationErrorAsync(response);
 
@@ -208,7 +208,7 @@ public sealed class CreateTaskTests : IntegrationTestBase
             title = "Buy groceries",
         };
 
-        var response = await Client.PostAsJsonAsync(Endpoint, payload);
+        var response = await AuthenticatedClient.PostAsJsonAsync(Endpoint, payload);
 
         Assert.Equal(HttpStatusCode.Created, response.StatusCode);
 
@@ -228,7 +228,7 @@ public sealed class CreateTaskTests : IntegrationTestBase
             someTotallyUnknownField = "should be ignored",
         };
 
-        var response = await Client.PostAsJsonAsync(Endpoint, payload);
+        var response = await AuthenticatedClient.PostAsJsonAsync(Endpoint, payload);
 
         Assert.Equal(HttpStatusCode.Created, response.StatusCode);
     }
@@ -244,7 +244,7 @@ public sealed class CreateTaskTests : IntegrationTestBase
             dueDate,
         };
 
-        var response = await Client.PostAsJsonAsync(Endpoint, payload);
+        var response = await AuthenticatedClient.PostAsJsonAsync(Endpoint, payload);
 
         Assert.Equal(HttpStatusCode.Created, response.StatusCode);
 

@@ -1,11 +1,14 @@
-import { expect, test } from '@playwright/test';
+import { expect, test } from '../../fixtures/auth.fixture.js';
 
 test.describe('Filter Tasks by Status', () => {
-  test('FilterTasksByStatus_FromUI_ShowsOnlyMatchingTasks', async ({ page, request }) => {
+  test('FilterTasksByStatus_FromUI_ShowsOnlyMatchingTasks', async ({
+    authenticatedPage: page,
+    authenticatedRequest,
+  }) => {
     // Arrange: create 3 tasks via API — Pending, In Progress, Completed
     const suffix = Date.now();
 
-    const pendingResponse = await request.post('/api/tasks', {
+    const pendingResponse = await authenticatedRequest.post('/api/tasks', {
       data: {
         title: `E2E filter pending ${suffix}`,
         dueDate: new Date(Date.now() + 86400000).toISOString(),
@@ -13,25 +16,25 @@ test.describe('Filter Tasks by Status', () => {
     });
     const pendingTask = await pendingResponse.json();
 
-    const inProgressResponse = await request.post('/api/tasks', {
+    const inProgressResponse = await authenticatedRequest.post('/api/tasks', {
       data: {
         title: `E2E filter in-progress ${suffix}`,
         dueDate: new Date(Date.now() + 86400000).toISOString(),
       },
     });
     const inProgressTask = await inProgressResponse.json();
-    await request.patch(`/api/tasks/${inProgressTask.id}`, {
+    await authenticatedRequest.patch(`/api/tasks/${inProgressTask.id}`, {
       data: { status: 'In Progress' },
     });
 
-    const completedResponse = await request.post('/api/tasks', {
+    const completedResponse = await authenticatedRequest.post('/api/tasks', {
       data: {
         title: `E2E filter completed ${suffix}`,
         dueDate: new Date(Date.now() + 86400000).toISOString(),
       },
     });
     const completedTask = await completedResponse.json();
-    await request.patch(`/api/tasks/${completedTask.id}`, {
+    await authenticatedRequest.patch(`/api/tasks/${completedTask.id}`, {
       data: { status: 'Completed' },
     });
 
@@ -55,11 +58,14 @@ test.describe('Filter Tasks by Status', () => {
     expect(page.url()).toMatch(/status=In(%20|\+)Progress/);
   });
 
-  test('FilterTasksByStatus_NoMatches_ShowsEmptyState', async ({ page, request }) => {
+  test('FilterTasksByStatus_NoMatches_ShowsEmptyState', async ({
+    authenticatedPage: page,
+    authenticatedRequest,
+  }) => {
     // Arrange: create 1 Pending task (title kept unique so it never collides
     // with a Completed task from another parallel worker).
     const pendingTitle = `E2E filter no-matches ${Date.now()}`;
-    const createResponse = await request.post('/api/tasks', {
+    const createResponse = await authenticatedRequest.post('/api/tasks', {
       data: {
         title: pendingTitle,
         dueDate: new Date(Date.now() + 86400000).toISOString(),

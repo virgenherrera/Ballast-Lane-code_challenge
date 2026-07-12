@@ -1,4 +1,5 @@
 using FluentValidation;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using TaskFlow.API.Contracts;
 using TaskFlow.Application.Common.Interfaces;
@@ -12,6 +13,7 @@ namespace TaskFlow.API.Controllers;
 
 [ApiController]
 [Route("api/tasks")]
+[Authorize]
 public class TasksController : ControllerBase
 {
     private readonly IValidator<CreateTaskCommand> _createTaskValidator;

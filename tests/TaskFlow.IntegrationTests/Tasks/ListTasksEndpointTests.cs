@@ -63,7 +63,7 @@ public sealed class ListTasksEndpointTests : IntegrationTestBase
 
     private async Task<(HttpStatusCode StatusCode, ListResponse? Body)> GetListAsync(string query = "")
     {
-        var response = await Client.GetAsync($"{Endpoint}{query}");
+        var response = await AuthenticatedClient.GetAsync($"{Endpoint}{query}");
         var body = response.IsSuccessStatusCode
             ? await response.Content.ReadFromJsonAsync<ListResponse>(CaseInsensitive)
             : null;
@@ -214,7 +214,7 @@ public sealed class ListTasksEndpointTests : IntegrationTestBase
     [Fact]
     public async Task GetList_WithInvalidStatusFilter_Returns400()
     {
-        var response = await Client.GetAsync($"{Endpoint}?status=Archived");
+        var response = await AuthenticatedClient.GetAsync($"{Endpoint}?status=Archived");
 
         await AssertErrorResponse.HasValidationErrorAsync(response);
     }
@@ -287,7 +287,7 @@ public sealed class ListTasksEndpointTests : IntegrationTestBase
     [InlineData("?page=-1")]
     public async Task GetList_WithPageLessThanOne_Returns400(string query)
     {
-        var response = await Client.GetAsync($"{Endpoint}{query}");
+        var response = await AuthenticatedClient.GetAsync($"{Endpoint}{query}");
 
         await AssertErrorResponse.HasValidationErrorAsync(response);
     }
@@ -297,7 +297,7 @@ public sealed class ListTasksEndpointTests : IntegrationTestBase
     [InlineData("?perPage=101")]
     public async Task GetList_WithPerPageOutOfRange_Returns400(string query)
     {
-        var response = await Client.GetAsync($"{Endpoint}{query}");
+        var response = await AuthenticatedClient.GetAsync($"{Endpoint}{query}");
 
         await AssertErrorResponse.HasValidationErrorAsync(response);
     }
@@ -313,7 +313,7 @@ public sealed class ListTasksEndpointTests : IntegrationTestBase
     [InlineData("?perPage=1.5")]
     public async Task GetList_WithNonIntegerParams_Returns400WithStandardShape(string queryString)
     {
-        var response = await Client.GetAsync($"{Endpoint}{queryString}");
+        var response = await AuthenticatedClient.GetAsync($"{Endpoint}{queryString}");
 
         await AssertErrorResponse.HasValidationErrorAsync(response);
     }

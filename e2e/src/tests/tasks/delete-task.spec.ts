@@ -1,9 +1,12 @@
-import { expect, test } from '@playwright/test';
+import { expect, test } from '../../fixtures/auth.fixture.js';
 
 test.describe('Delete Task', () => {
-  test('DeleteTask_FromUI_RemovesFromListAndConfirms', async ({ page, request }) => {
+  test('DeleteTask_FromUI_RemovesFromListAndConfirms', async ({
+    authenticatedPage: page,
+    authenticatedRequest,
+  }) => {
     // Arrange: seed a task via direct API call
-    const createResponse = await request.post('/api/tasks', {
+    const createResponse = await authenticatedRequest.post('/api/tasks', {
       data: {
         title: `E2E delete test ${Date.now()}`,
         dueDate: new Date(Date.now() + 86400000).toISOString(),
@@ -47,9 +50,12 @@ test.describe('Delete Task', () => {
     expect(consoleErrors).toEqual([]);
   });
 
-  test('DeleteTask_CancelConfirmation_TaskRemainsInList', async ({ page, request }) => {
+  test('DeleteTask_CancelConfirmation_TaskRemainsInList', async ({
+    authenticatedPage: page,
+    authenticatedRequest,
+  }) => {
     // Arrange: seed a task
-    const createResponse = await request.post('/api/tasks', {
+    const createResponse = await authenticatedRequest.post('/api/tasks', {
       data: {
         title: `E2E cancel delete ${Date.now()}`,
         dueDate: new Date(Date.now() + 86400000).toISOString(),

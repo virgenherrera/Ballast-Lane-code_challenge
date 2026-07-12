@@ -34,7 +34,7 @@ public sealed class GetTaskByIdEndpointTests : IntegrationTestBase
     {
         var payload = new { title, description, dueDate };
 
-        var response = await Client.PostAsJsonAsync(Endpoint, payload);
+        var response = await AuthenticatedClient.PostAsJsonAsync(Endpoint, payload);
         Assert.Equal(HttpStatusCode.Created, response.StatusCode);
 
         var body = await response.Content.ReadFromJsonAsync<TaskResponse>(CaseInsensitive);
@@ -61,7 +61,7 @@ public sealed class GetTaskByIdEndpointTests : IntegrationTestBase
     {
         var created = await CreateTaskAsync("Buy milk", "2% please", DateTime.UtcNow.AddDays(2));
 
-        var response = await Client.GetAsync($"{Endpoint}/{created.Id}");
+        var response = await AuthenticatedClient.GetAsync($"{Endpoint}/{created.Id}");
 
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
 
@@ -84,7 +84,7 @@ public sealed class GetTaskByIdEndpointTests : IntegrationTestBase
     {
         var nonExistentId = Guid.NewGuid();
 
-        var response = await Client.GetAsync($"{Endpoint}/{nonExistentId}");
+        var response = await AuthenticatedClient.GetAsync($"{Endpoint}/{nonExistentId}");
 
         Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
 
@@ -101,7 +101,7 @@ public sealed class GetTaskByIdEndpointTests : IntegrationTestBase
     {
         var otherOwnersTaskId = await SeedTaskDirectlyAsync(SeedIdentity.SeedOwnerId2);
 
-        var response = await Client.GetAsync($"{Endpoint}/{otherOwnersTaskId}");
+        var response = await AuthenticatedClient.GetAsync($"{Endpoint}/{otherOwnersTaskId}");
 
         Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
 
@@ -117,8 +117,8 @@ public sealed class GetTaskByIdEndpointTests : IntegrationTestBase
         var otherOwnersTaskId = await SeedTaskDirectlyAsync(SeedIdentity.SeedOwnerId2);
         var nonExistentId = Guid.NewGuid();
 
-        var crossOwnerResponse = await Client.GetAsync($"{Endpoint}/{otherOwnersTaskId}");
-        var notFoundResponse = await Client.GetAsync($"{Endpoint}/{nonExistentId}");
+        var crossOwnerResponse = await AuthenticatedClient.GetAsync($"{Endpoint}/{otherOwnersTaskId}");
+        var notFoundResponse = await AuthenticatedClient.GetAsync($"{Endpoint}/{nonExistentId}");
 
         var crossOwnerBody = await crossOwnerResponse.Content.ReadAsStringAsync();
         var notFoundBody = await notFoundResponse.Content.ReadAsStringAsync();
@@ -132,7 +132,7 @@ public sealed class GetTaskByIdEndpointTests : IntegrationTestBase
     [Fact]
     public async Task GetById_WithMalformedGuid_Returns400NotRoutingLevel404()
     {
-        var response = await Client.GetAsync($"{Endpoint}/not-a-guid");
+        var response = await AuthenticatedClient.GetAsync($"{Endpoint}/not-a-guid");
 
         Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
 
@@ -149,7 +149,7 @@ public sealed class GetTaskByIdEndpointTests : IntegrationTestBase
     {
         var created = await CreateTaskAsync("No description task");
 
-        var response = await Client.GetAsync($"{Endpoint}/{created.Id}");
+        var response = await AuthenticatedClient.GetAsync($"{Endpoint}/{created.Id}");
 
         var body = await response.Content.ReadFromJsonAsync<TaskResponse>(CaseInsensitive);
         Assert.Null(body!.Description);
@@ -162,12 +162,12 @@ public sealed class GetTaskByIdEndpointTests : IntegrationTestBase
     {
         var created = await CreateTaskAsync("Task in progress");
 
-        var patchResponse = await Client.PatchAsync(
+        var patchResponse = await AuthenticatedClient.PatchAsync(
             $"{Endpoint}/{created.Id}",
             JsonContent.Create(new { status = "In Progress" }));
         Assert.Equal(HttpStatusCode.OK, patchResponse.StatusCode);
 
-        var response = await Client.GetAsync($"{Endpoint}/{created.Id}");
+        var response = await AuthenticatedClient.GetAsync($"{Endpoint}/{created.Id}");
 
         var body = await response.Content.ReadFromJsonAsync<TaskResponse>(CaseInsensitive);
         Assert.Equal("In Progress", body!.Status);
@@ -180,10 +180,10 @@ public sealed class GetTaskByIdEndpointTests : IntegrationTestBase
     {
         var created = await CreateTaskAsync();
 
-        var deleteResponse = await Client.DeleteAsync($"{Endpoint}/{created.Id}");
+        var deleteResponse = await AuthenticatedClient.DeleteAsync($"{Endpoint}/{created.Id}");
         Assert.Equal(HttpStatusCode.NoContent, deleteResponse.StatusCode);
 
-        var response = await Client.GetAsync($"{Endpoint}/{created.Id}");
+        var response = await AuthenticatedClient.GetAsync($"{Endpoint}/{created.Id}");
 
         Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
     }
@@ -195,7 +195,7 @@ public sealed class GetTaskByIdEndpointTests : IntegrationTestBase
     {
         var otherOwnersTaskId = await SeedTaskDirectlyAsync(SeedIdentity.SeedOwnerId2, "Untouchable");
 
-        var response = await Client.GetAsync($"{Endpoint}/{otherOwnersTaskId}");
+        var response = await AuthenticatedClient.GetAsync($"{Endpoint}/{otherOwnersTaskId}");
         Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
 
         using var scope = Services.CreateScope();

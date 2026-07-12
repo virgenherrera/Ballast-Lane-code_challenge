@@ -9,6 +9,7 @@ COPY src/TaskFlow.Infrastructure/TaskFlow.Infrastructure.csproj src/TaskFlow.Inf
 COPY src/TaskFlow.API/TaskFlow.API.csproj src/TaskFlow.API/
 COPY tests/TaskFlow.Domain.Tests/TaskFlow.Domain.Tests.csproj tests/TaskFlow.Domain.Tests/
 COPY tests/TaskFlow.Application.Tests/TaskFlow.Application.Tests.csproj tests/TaskFlow.Application.Tests/
+COPY tests/TaskFlow.Infrastructure.Tests/TaskFlow.Infrastructure.Tests.csproj tests/TaskFlow.Infrastructure.Tests/
 COPY tests/TaskFlow.IntegrationTests/TaskFlow.IntegrationTests.csproj tests/TaskFlow.IntegrationTests/
 COPY tests/TaskFlow.E2E/TaskFlow.E2E.csproj tests/TaskFlow.E2E/
 

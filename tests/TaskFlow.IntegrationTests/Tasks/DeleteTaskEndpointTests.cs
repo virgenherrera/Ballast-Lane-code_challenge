@@ -33,7 +33,7 @@ public sealed class DeleteTaskEndpointTests : IntegrationTestBase
     {
         var payload = new { title, description, dueDate };
 
-        var response = await Client.PostAsJsonAsync(Endpoint, payload);
+        var response = await AuthenticatedClient.PostAsJsonAsync(Endpoint, payload);
         Assert.Equal(HttpStatusCode.Created, response.StatusCode);
 
         var body = await response.Content.ReadFromJsonAsync<TaskResponse>(CaseInsensitive);
@@ -78,7 +78,7 @@ public sealed class DeleteTaskEndpointTests : IntegrationTestBase
     {
         var created = await CreateTaskAsync();
 
-        var response = await Client.DeleteAsync($"{Endpoint}/{created.Id}");
+        var response = await AuthenticatedClient.DeleteAsync($"{Endpoint}/{created.Id}");
 
         Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);
 
@@ -96,7 +96,7 @@ public sealed class DeleteTaskEndpointTests : IntegrationTestBase
     {
         var nonExistentId = Guid.NewGuid();
 
-        var response = await Client.DeleteAsync($"{Endpoint}/{nonExistentId}");
+        var response = await AuthenticatedClient.DeleteAsync($"{Endpoint}/{nonExistentId}");
 
         Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
 
@@ -113,7 +113,7 @@ public sealed class DeleteTaskEndpointTests : IntegrationTestBase
     {
         var otherOwnersTaskId = await SeedTaskDirectlyAsync(SeedIdentity.SeedOwnerId2);
 
-        var response = await Client.DeleteAsync($"{Endpoint}/{otherOwnersTaskId}");
+        var response = await AuthenticatedClient.DeleteAsync($"{Endpoint}/{otherOwnersTaskId}");
 
         Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
 
@@ -136,10 +136,10 @@ public sealed class DeleteTaskEndpointTests : IntegrationTestBase
     {
         var created = await CreateTaskAsync();
 
-        var firstResponse = await Client.DeleteAsync($"{Endpoint}/{created.Id}");
+        var firstResponse = await AuthenticatedClient.DeleteAsync($"{Endpoint}/{created.Id}");
         Assert.Equal(HttpStatusCode.NoContent, firstResponse.StatusCode);
 
-        var secondResponse = await Client.DeleteAsync($"{Endpoint}/{created.Id}");
+        var secondResponse = await AuthenticatedClient.DeleteAsync($"{Endpoint}/{created.Id}");
         Assert.Equal(HttpStatusCode.NotFound, secondResponse.StatusCode);
 
         var body = await secondResponse.Content.ReadFromJsonAsync<JsonElement>();
@@ -154,7 +154,7 @@ public sealed class DeleteTaskEndpointTests : IntegrationTestBase
     {
         var created = await CreateTaskAsync();
 
-        var response = await Client.DeleteAsync($"{Endpoint}/{created.Id}");
+        var response = await AuthenticatedClient.DeleteAsync($"{Endpoint}/{created.Id}");
 
         Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);
         Assert.Null(response.Content.Headers.ContentType);

@@ -33,7 +33,7 @@ public sealed class UpdateTaskEndpointTests : IntegrationTestBase
     {
         var payload = new { title, description, dueDate };
 
-        var response = await Client.PostAsJsonAsync(Endpoint, payload);
+        var response = await AuthenticatedClient.PostAsJsonAsync(Endpoint, payload);
         Assert.Equal(HttpStatusCode.Created, response.StatusCode);
 
         var body = await response.Content.ReadFromJsonAsync<TaskResponse>(CaseInsensitive);
@@ -68,7 +68,7 @@ public sealed class UpdateTaskEndpointTests : IntegrationTestBase
     {
         var created = await CreateTaskAsync();
 
-        var response = await Client.PatchAsync(
+        var response = await AuthenticatedClient.PatchAsync(
             $"{Endpoint}/{created.Id}",
             PatchBody(new { title = "Buy groceries and milk" }));
 
@@ -100,13 +100,13 @@ public sealed class UpdateTaskEndpointTests : IntegrationTestBase
         // state-machine guard (free-form transitions per AC-007.2).
         if (inputStatus == "Pending")
         {
-            var toCompleted = await Client.PatchAsync(
+            var toCompleted = await AuthenticatedClient.PatchAsync(
                 $"{Endpoint}/{created.Id}",
                 PatchBody(new { status = "Completed" }));
             Assert.Equal(HttpStatusCode.OK, toCompleted.StatusCode);
         }
 
-        var response = await Client.PatchAsync(
+        var response = await AuthenticatedClient.PatchAsync(
             $"{Endpoint}/{created.Id}",
             PatchBody(new { status = inputStatus }));
 
@@ -125,7 +125,7 @@ public sealed class UpdateTaskEndpointTests : IntegrationTestBase
         var created = await CreateTaskAsync();
         var pastDate = DateTime.UtcNow.AddDays(-1);
 
-        var response = await Client.PatchAsync(
+        var response = await AuthenticatedClient.PatchAsync(
             $"{Endpoint}/{created.Id}",
             PatchBody(new { dueDate = pastDate }));
 
@@ -153,7 +153,7 @@ public sealed class UpdateTaskEndpointTests : IntegrationTestBase
             dueDate = DateTime.UtcNow.AddDays(-1),
         };
 
-        var response = await Client.PostAsJsonAsync(Endpoint, payload);
+        var response = await AuthenticatedClient.PostAsJsonAsync(Endpoint, payload);
 
         await AssertErrorResponse.HasValidationErrorAsync(
             response,
@@ -167,7 +167,7 @@ public sealed class UpdateTaskEndpointTests : IntegrationTestBase
     {
         var created = await CreateTaskAsync();
 
-        var response = await Client.PatchAsync(
+        var response = await AuthenticatedClient.PatchAsync(
             $"{Endpoint}/{created.Id}",
             PatchBody(new { status = "NotARealStatus" }));
 
@@ -183,7 +183,7 @@ public sealed class UpdateTaskEndpointTests : IntegrationTestBase
     {
         var otherOwnersTaskId = await SeedTaskDirectlyAsync(SeedIdentity.SeedOwnerId2);
 
-        var response = await Client.PatchAsync(
+        var response = await AuthenticatedClient.PatchAsync(
             $"{Endpoint}/{otherOwnersTaskId}",
             PatchBody(new { title = "Hostile takeover" }));
 
@@ -196,10 +196,10 @@ public sealed class UpdateTaskEndpointTests : IntegrationTestBase
         var otherOwnersTaskId = await SeedTaskDirectlyAsync(SeedIdentity.SeedOwnerId2);
         var patchPayload = new { title = "Doesn't matter" };
 
-        var nonExistentResponse = await Client.PatchAsync(
+        var nonExistentResponse = await AuthenticatedClient.PatchAsync(
             $"{Endpoint}/{Guid.NewGuid()}",
             PatchBody(patchPayload));
-        var mismatchResponse = await Client.PatchAsync(
+        var mismatchResponse = await AuthenticatedClient.PatchAsync(
             $"{Endpoint}/{otherOwnersTaskId}",
             PatchBody(patchPayload));
 
@@ -231,7 +231,7 @@ public sealed class UpdateTaskEndpointTests : IntegrationTestBase
     {
         var created = await CreateTaskAsync();
 
-        var response = await Client.PatchAsync(
+        var response = await AuthenticatedClient.PatchAsync(
             $"{Endpoint}/{created.Id}",
             PatchBody(new { title = "" }));
 
@@ -245,7 +245,7 @@ public sealed class UpdateTaskEndpointTests : IntegrationTestBase
     {
         var created = await CreateTaskAsync();
 
-        var response = await Client.PatchAsync(
+        var response = await AuthenticatedClient.PatchAsync(
             $"{Endpoint}/{created.Id}",
             PatchBody(new { title = "   " }));
 
@@ -261,7 +261,7 @@ public sealed class UpdateTaskEndpointTests : IntegrationTestBase
     {
         var created = await CreateTaskAsync();
 
-        var response = await Client.PatchAsync(
+        var response = await AuthenticatedClient.PatchAsync(
             $"{Endpoint}/{created.Id}",
             PatchBody(new { }));
 
@@ -281,7 +281,7 @@ public sealed class UpdateTaskEndpointTests : IntegrationTestBase
             description: "Original description",
             dueDate: dueDate);
 
-        var response = await Client.PatchAsync(
+        var response = await AuthenticatedClient.PatchAsync(
             $"{Endpoint}/{created.Id}",
             PatchBody(new { title = "New title only" }));
 
@@ -312,7 +312,7 @@ public sealed class UpdateTaskEndpointTests : IntegrationTestBase
     [InlineData("12345")]
     public async Task UpdateTask_WithMalformedGuidInRoute_Returns400(string malformedId)
     {
-        var response = await Client.PatchAsync(
+        var response = await AuthenticatedClient.PatchAsync(
             $"{Endpoint}/{malformedId}",
             PatchBody(new { title = "Doesn't matter" }));
 
@@ -340,7 +340,7 @@ public sealed class UpdateTaskEndpointTests : IntegrationTestBase
         // Guarantee a measurable timestamp delta regardless of clock resolution.
         await Task.Delay(TimeSpan.FromMilliseconds(50));
 
-        var response = await Client.PatchAsync(
+        var response = await AuthenticatedClient.PatchAsync(
             $"{Endpoint}/{created.Id}",
             PatchBody(new { status = "Completed" }));
 
@@ -359,7 +359,7 @@ public sealed class UpdateTaskEndpointTests : IntegrationTestBase
     {
         var created = await CreateTaskAsync();
 
-        var response = await Client.PatchAsync(
+        var response = await AuthenticatedClient.PatchAsync(
             $"{Endpoint}/{created.Id}",
             PatchBody(new { title = "Updated title", status = "In Progress" }));
 

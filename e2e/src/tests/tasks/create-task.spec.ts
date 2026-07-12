@@ -1,7 +1,7 @@
-import { expect, test } from '@playwright/test';
+import { expect, test } from '../../fixtures/auth.fixture.js';
 
 test.describe('Create Task', () => {
-  test('CreateTask_FromUI_AppearsInTaskList', async ({ page }) => {
+  test('CreateTask_FromUI_AppearsInTaskList', async ({ authenticatedPage: page }) => {
     const uniqueTitle = `E2E Task ${Date.now()}`;
 
     await page.goto('/tasks/create');
@@ -16,7 +16,9 @@ test.describe('Create Task', () => {
     await expect(page.getByText(uniqueTitle)).toBeVisible();
   });
 
-  test('CreateTask_WithEmptyTitle_ShowsValidationErrorInUI', async ({ page }) => {
+  test('CreateTask_WithEmptyTitle_ShowsValidationErrorInUI', async ({
+    authenticatedPage: page,
+  }) => {
     await page.goto('/tasks/create');
 
     let requestFired = false;
@@ -39,7 +41,9 @@ test.describe('Create Task', () => {
     expect(requestFired).toBe(false);
   });
 
-  test('CreateTask_WithPastDueDate_ShowsValidationErrorInUI', async ({ page }) => {
+  test('CreateTask_WithPastDueDate_ShowsValidationErrorInUI', async ({
+    authenticatedPage: page,
+  }) => {
     await page.goto('/tasks/create');
 
     await page.locator('#title').fill('Task with past due date');
