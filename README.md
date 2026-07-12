@@ -23,9 +23,22 @@ docker compose up
 
 ## Demo Credentials
 
-| Email | Password | Notes |
-| ----- | -------- | ----- |
-| `demo@taskflow.dev` | `Demo1234!` | Pre-seeded account with sample tasks |
+> **Current implementation status**: real JWT-based identity (`GET /api/auth/me`, `[Authorize]`
+> on `/api/tasks/*`) is scheduled for Batch 5 (see [EP02 Engineering Addenda — Batch
+> Plan](docs/epics/EP02-engineering-addenda.md#12-batch-plan)) and is not wired into
+> `Program.cs` yet. Until then, `/api/tasks/*` endpoints run under a hardcoded seed identity
+> (`SeedCurrentUserContext`) instead of a token-derived one. There is no pre-seeded login
+> account — register a user via `POST /api/auth/register` to obtain real credentials. See
+> [Authentication](#authentication) below for the full flow and current gaps.
+
+| Seed value | Value | Notes |
+| ---------- | ----- | ----- |
+| Seed owner ID | `01961234-5678-7abc-def0-123456789abc` | `SeedIdentity.SeedOwnerId` — the fixed owner used by `SeedCurrentUserContext` for all `/api/tasks/*` requests today |
+| Second seed owner ID | `02961234-5678-7abc-def0-123456789abc` | `SeedIdentity.SeedOwnerId2` — used only by integration tests to prove ownership isolation |
+
+These are not login credentials — they are placeholder identity values baked into the API
+until real JWT-derived ownership ships. See
+[`src/TaskFlow.Infrastructure/Identity/SeedIdentity.cs`](src/TaskFlow.Infrastructure/Identity/SeedIdentity.cs).
 
 ## Version Manifest
 
@@ -161,14 +174,230 @@ the full GenAI process documentation, including prompts, outputs, and validation
 | GET | `/health` | Public | Liveness + DB connectivity check |
 | POST | `/api/auth/register` | Public | Register a new user |
 | POST | `/api/auth/login` | Public | Log in, receive JWT |
-| GET | `/api/auth/me` | Bearer | Current user profile |
-| POST | `/api/tasks` | Bearer | Create a task |
-| GET | `/api/tasks` | Bearer | List tasks (paginated, optional `?status=` filter) |
-| GET | `/api/tasks/{id}` | Bearer | View task detail |
-| PATCH | `/api/tasks/{id}` | Bearer | Update a task |
-| DELETE | `/api/tasks/{id}` | Bearer | Delete a task |
+| GET | `/api/auth/me` | Bearer | Current user profile *(planned — Batch 5, not yet implemented)* |
+| POST | `/api/tasks` | Bearer *(planned)* | Create a task |
+| GET | `/api/tasks` | Bearer *(planned)* | List tasks (paginated, optional `?status=` filter) |
+| GET | `/api/tasks/{id}` | Bearer *(planned)* | View task detail |
+| PATCH | `/api/tasks/{id}` | Bearer *(planned)* | Update a task |
+| DELETE | `/api/tasks/{id}` | Bearer *(planned)* | Delete a task |
 
 Full contract: [docs/architecture/api-contract.md](docs/architecture/api-contract.md)
+
+## Authentication
+
+TaskFlow uses stateless JWT bearer authentication. Full technical decisions live in
+[EP02 Engineering Addenda](docs/epics/EP02-engineering-addenda.md); this section covers the
+practical flow.
+
+> **Implementation status**: `POST /api/auth/register` and `POST /api/auth/login` are
+> implemented and issue real JWTs. `GET /api/auth/me` and JWT-enforced `[Authorize]` on
+> `/api/tasks/*` are **not yet wired into `Program.cs`** — `/api/tasks/*` currently runs
+> under a hardcoded seed identity (see [Demo Credentials](#demo-credentials)). This gap is
+> scheduled for Batch 5 per the [EP02 batch plan](docs/epics/EP02-engineering-addenda.md#12-batch-plan).
+
+### Flow: register → login → use the token
+
+```mermaid
+sequenceDiagram
+    autonumber
+    actor Client
+    participant API
+
+    Client->>API: POST /api/auth/register
+    API-->>Client: 201 Created (user profile)
+
+    Client->>API: POST /api/auth/login
+    API-->>Client: 200 OK (accessToken, expiresIn: 900)
+
+    Client->>API: GET /api/auth/me (Authorization: Bearer token)
+    API-->>Client: 200 OK (current user)
+```
+
+1. **Register** an account with `POST /api/auth/register`.
+2. **Log in** with `POST /api/auth/login` to receive a short-lived JWT.
+3. **Use the token** on every protected request via the `Authorization` header.
+4. **Re-login** once the token expires (15 minutes) — there is no refresh token.
+
+### `POST /api/auth/register`
+
+**Request**:
+
+```json
+{
+  "email": "jane@example.com",
+  "name": "Jane Doe",
+  "password": "Str0ng!Pass"
+}
+```
+
+**Response — `201 Created`**:
+
+```json
+{
+  "id": "01961234-89ab-7cde-f012-3456789abcde",
+  "email": "jane@example.com",
+  "name": "Jane Doe",
+  "createdAt": "2026-07-11T12:00:00Z"
+}
+```
+
+**curl**:
+
+```bash
+curl -X POST http://localhost:${API_PORT}/api/auth/register \
+  -H "Content-Type: application/json" \
+  -d '{"email":"jane@example.com","name":"Jane Doe","password":"Str0ng!Pass"}'
+```
+
+**Validation rules**: see [Password Policy](#password-policy) and [Email Rules](#email-rules)
+below. Errors: `400` (missing/invalid field, weak password), `409` (email already registered).
+
+### `POST /api/auth/login`
+
+**Request**:
+
+```json
+{
+  "email": "jane@example.com",
+  "password": "Str0ng!Pass"
+}
+```
+
+**Response — `200 OK`**:
+
+```json
+{
+  "accessToken": "eyJhbGciOiJIUzI1NiIs...",
+  "tokenType": "Bearer",
+  "expiresIn": 900,
+  "user": {
+    "id": "01961234-89ab-7cde-f012-3456789abcde",
+    "email": "jane@example.com",
+    "name": "Jane Doe"
+  }
+}
+```
+
+**curl**:
+
+```bash
+curl -X POST http://localhost:${API_PORT}/api/auth/login \
+  -H "Content-Type: application/json" \
+  -d '{"email":"jane@example.com","password":"Str0ng!Pass"}'
+```
+
+Errors: `400` (missing field), `401` (invalid email or password — same generic message for
+both cases, to prevent user enumeration), `429` (rate limited, see below).
+
+### `GET /api/auth/me` *(planned — not yet implemented)*
+
+Once wired, this endpoint returns the authenticated user's profile and requires a Bearer
+token. Response shape mirrors the register response:
+
+```json
+{
+  "id": "01961234-89ab-7cde-f012-3456789abcde",
+  "email": "jane@example.com",
+  "name": "Jane Doe",
+  "createdAt": "2026-07-11T12:00:00Z"
+}
+```
+
+**curl** (once implemented):
+
+```bash
+curl http://localhost:${API_PORT}/api/auth/me \
+  -H "Authorization: Bearer <accessToken>"
+```
+
+Errors: `401` (missing, invalid, or expired token).
+
+### Token usage
+
+Include the JWT from the login response on every protected request:
+
+```text
+Authorization: Bearer <accessToken>
+```
+
+### Token expiry
+
+| Parameter | Value |
+| --------- | ----- |
+| Expiry | 15 minutes |
+| Refresh token | None — out of scope. Re-login when the token expires |
+| Algorithm | HS256 |
+| Claims | `sub` (user ID, UUID v7), `email`, `name` |
+
+### Password Policy
+
+| Rule | Value |
+| ---- | ----- |
+| Minimum length | 8 characters |
+| Maximum length | 72 characters |
+| Uppercase required | At least 1 |
+| Digit required | At least 1 |
+| Special character required | At least 1 |
+
+Passwords are hashed with BCrypt (work factor 12 in production, work factor 4 in integration
+tests for speed). Enforced by FluentValidation on the register request.
+
+### Email Rules
+
+| Rule | Behavior |
+| ---- | -------- |
+| Case | Lowercase only |
+| Uppercase input | Rejected with `400 Bad Request` |
+| Uniqueness | Case-insensitive unique index (PostgreSQL `LOWER()`) |
+
+### Rate Limiting
+
+`POST /api/auth/login` is limited to **5 requests per minute per IP** (fixed window).
+Exceeding the limit returns `429 Too Many Requests` with a `Retry-After` header. This does
+not apply to `/api/auth/register` or `/api/tasks/*`.
+
+### Error Responses
+
+Every error, on every endpoint, uses the same shape:
+
+```json
+{
+  "status": 400,
+  "error": "VALIDATION_ERROR",
+  "message": "One or more fields are invalid.",
+  "details": [
+    { "field": "email", "issue": "Email must not contain uppercase characters." }
+  ]
+}
+```
+
+| Status | Meaning | Example cause |
+| ------ | ------- | -------------- |
+| 400 | `VALIDATION_ERROR` | Missing/invalid field, weak password, uppercase email |
+| 401 | `UNAUTHORIZED` | Invalid login credentials, or missing/invalid/expired token |
+| 409 | `CONFLICT` | Email already registered |
+| 429 | `TOO_MANY_REQUESTS` | Login rate limit exceeded (`Retry-After` header included) |
+
+`details` is omitted or empty for non-field errors (401, 409, 429); populated per invalid
+field for `VALIDATION_ERROR`. Full contract:
+[docs/architecture/api-contract.md § 2.3](docs/architecture/api-contract.md#23-standard-error-shape).
+
+## API Documentation (OpenAPI / Swagger)
+
+The API generates an OpenAPI document via the built-in
+[`Microsoft.AspNetCore.OpenApi`](https://learn.microsoft.com/aspnet/core/fundamentals/openapi)
+package (`builder.Services.AddOpenApi()` / `app.MapOpenApi()` in
+[`Program.cs`](src/TaskFlow.API/Program.cs)) — **not** Swashbuckle/Swagger UI.
+
+| Artifact | Location | Notes |
+| -------- | -------- | ----- |
+| OpenAPI JSON spec | `http://localhost:${API_PORT}/openapi/v1.json` | Only mapped when `ASPNETCORE_ENVIRONMENT=Development` (`app.Environment.IsDevelopment()` guard in `Program.cs`) |
+| Interactive Swagger UI | **Not configured** | No `AddSwaggerGen`/`UseSwaggerUI` (Swashbuckle) is registered. Only the raw JSON document is exposed — there is no browsable UI at `/swagger` today. Recommended addition: `Swashbuckle.AspNetCore` (or `Scalar.AspNetCore` for a lighter UI on top of the existing `AddOpenApi()` document) if an interactive explorer is needed |
+| OpenAPI snapshots | [`docs/architecture/openapi-snapshots/`](docs/architecture/openapi-snapshots/) | Hand-curated example **response bodies** (not full OpenAPI documents) captured per endpoint for documentation/regression reference, e.g. [`create-task-201.json`](docs/architecture/openapi-snapshots/create-task-201.json). Add one file per notable request/response example as new endpoints ship |
+
+> Note: the default port above assumes the API is run outside Docker with `dotnet run`
+> (Kestrel binds to `API_PORT` from the environment). Confirm the effective `API_PORT` in
+> your `.env` — see [Quick Start](#quick-start).
 
 ## Running E2E Tests
 

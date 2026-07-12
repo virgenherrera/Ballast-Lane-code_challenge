@@ -1,12 +1,15 @@
-import { expect, test } from '@playwright/test';
+import { expect, test } from '../../fixtures/auth.fixture.js';
 
 test.describe('View Task Detail', () => {
-  test('ViewTaskDetail_FromList_ShowsFullTaskInfo', async ({ page, request }) => {
+  test('ViewTaskDetail_FromList_ShowsFullTaskInfo', async ({
+    authenticatedPage: page,
+    authenticatedRequest,
+  }) => {
     // Arrange: create 1 task via API with title + description + dueDate
     const uniqueTitle = `E2E detail view ${Date.now()}`;
     const dueDate = new Date(Date.now() + 86400000).toISOString();
 
-    const createResponse = await request.post('/api/tasks', {
+    const createResponse = await authenticatedRequest.post('/api/tasks', {
       data: {
         title: uniqueTitle,
         description: 'E2E detail description',

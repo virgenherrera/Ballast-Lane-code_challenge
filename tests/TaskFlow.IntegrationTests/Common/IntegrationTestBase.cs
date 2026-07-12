@@ -1,5 +1,7 @@
+using System.Net.Http.Headers;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using TaskFlow.Infrastructure.Identity;
 using TaskFlow.Infrastructure.Persistence;
 
 namespace TaskFlow.IntegrationTests.Common;
@@ -15,7 +17,17 @@ public abstract class IntegrationTestBase : IAsyncLifetime
 {
     private readonly TaskFlowWebApplicationFactory _factory = new();
 
+    /// <summary>Unauthenticated client — no Authorization header. Required for
+    /// 401 tests (missing/expired/tampered token) and any pre-auth endpoint
+    /// (e.g. /api/auth/register, /api/auth/login, /health). Do NOT remove:
+    /// AuthenticatedClient below does not replace this.</summary>
     protected HttpClient Client { get; private set; } = null!;
+
+    /// <summary>Client pre-configured with a valid Bearer token for
+    /// <see cref="SeedIdentity.SeedOwnerId"/>. Use for all happy-path
+    /// requests to [Authorize]-protected endpoints (e.g. /api/tasks) now
+    /// that EP02-B5-01 enforces JWT auth on TasksController.</summary>
+    protected HttpClient AuthenticatedClient { get; private set; } = null!;
 
     /// <summary>
     /// Exposes the factory's DI container so tests can create a scoped
@@ -25,15 +37,30 @@ public abstract class IntegrationTestBase : IAsyncLifetime
     /// </summary>
     protected IServiceProvider Services => _factory.Services;
 
+    /// <summary>
+    /// Exposes the underlying factory so tests can mint custom tokens (e.g.
+    /// for a non-default owner, or deliberately expired/tampered) via
+    /// <see cref="TaskFlowWebApplicationFactory.GenerateTestToken"/> and its
+    /// sibling helpers, rather than only ever using the fixed
+    /// <see cref="AuthenticatedClient"/> principal.
+    /// </summary>
+    protected TaskFlowWebApplicationFactory Factory => _factory;
+
     public async Task InitializeAsync()
     {
         await _factory.InitializeAsync();
         Client = _factory.CreateClient();
+
+        AuthenticatedClient = _factory.CreateClient();
+        var token = _factory.GenerateTestToken(SeedIdentity.SeedOwnerId);
+        AuthenticatedClient.DefaultRequestHeaders.Authorization =
+            new AuthenticationHeaderValue("Bearer", token);
     }
 
     public async Task DisposeAsync()
     {
         Client.Dispose();
+        AuthenticatedClient.Dispose();
         await _factory.DisposeAsync();
     }
 

@@ -1,14 +1,17 @@
-import { expect, test } from '@playwright/test';
+import { expect, test } from '../../fixtures/auth.fixture.js';
 
 test.describe('List Tasks Pagination', () => {
-  test('ListTasks_NavigatePages_UpdatesListAndPagingControls', async ({ page, request }) => {
+  test('ListTasks_NavigatePages_UpdatesListAndPagingControls', async ({
+    authenticatedPage: page,
+    authenticatedRequest,
+  }) => {
     // Arrange: create 25 tasks via API (> DefaultPerPage of 20)
     const suffix = Date.now();
     const seedCount = 25;
 
     for (let i = 0; i < seedCount; i += 1) {
       // eslint-disable-next-line no-await-in-loop
-      await request.post('/api/tasks', {
+      await authenticatedRequest.post('/api/tasks', {
         data: {
           title: `E2E pagination ${suffix} #${i}`,
           dueDate: new Date(Date.now() + 86400000).toISOString(),

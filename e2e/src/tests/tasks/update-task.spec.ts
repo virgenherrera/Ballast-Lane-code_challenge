@@ -1,9 +1,12 @@
-import { expect, test } from '@playwright/test';
+import { expect, test } from '../../fixtures/auth.fixture.js';
 
 test.describe('Update Task', () => {
-  test('UpdateTask_ChangeStatusFromUI_ReflectsInListImmediately', async ({ page, request }) => {
+  test('UpdateTask_ChangeStatusFromUI_ReflectsInListImmediately', async ({
+    authenticatedPage: page,
+    authenticatedRequest,
+  }) => {
     // Arrange: seed a task via direct API call
-    const createResponse = await request.post('/api/tasks', {
+    const createResponse = await authenticatedRequest.post('/api/tasks', {
       data: {
         title: 'E2E status change test',
         dueDate: new Date(Date.now() + 86400000).toISOString(),
