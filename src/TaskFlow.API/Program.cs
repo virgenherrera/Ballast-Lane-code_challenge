@@ -217,6 +217,19 @@ builder.Services.AddAuthorization();
 
 var app = builder.Build();
 
+// --- Auto-migration + demo data seeding -----------------------------------
+// Runs once at startup, before the app begins serving requests. Required for
+// the Docker Compose flow, where the container boots against a fresh
+// PostgreSQL volume with no schema applied yet. DbSeeder is idempotent — it
+// no-ops on every restart after the first successful seed.
+using (var migrationScope = app.Services.CreateScope())
+{
+    var dbContext = migrationScope.ServiceProvider.GetRequiredService<AppDbContext>();
+    await dbContext.Database.MigrateAsync();
+}
+
+await DbSeeder.SeedAsync(app.Services);
+
 // Captured once at startup and reused — never recomputed per request.
 var liveSince = DateTimeOffset.UtcNow;
 

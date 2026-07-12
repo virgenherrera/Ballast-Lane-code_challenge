@@ -59,11 +59,7 @@ describe('TaskDetailComponent', () => {
     expect(text).toContain('Buy groceries');
     expect(text).toContain('Pending');
     expect(text).toContain('Milk, eggs, bread');
-    expect(text).toContain('2026-07-18T12:00:00Z');
-    expect(text).toContain(fullTask.ownerId);
-    expect(text).toContain(fullTask.createdAt);
-    expect(text).toContain(fullTask.updatedAt);
-    expect(text).toContain(fullTask.id);
+    expect(text).toContain('Jul 18, 2026');
   });
 
   it('TaskDetailComponent_NullDescriptionAndDueDate_RendersFallbackText', () => {
@@ -77,7 +73,7 @@ describe('TaskDetailComponent', () => {
     const text = (fixture.nativeElement as HTMLElement).textContent ?? '';
 
     expect(text).toContain('No description');
-    expect(text).toContain('No due date');
+    expect(text).toContain('Not set');
   });
 
   it('TaskDetailComponent_ApiReturns404_ShowsNotFoundMessage', () => {

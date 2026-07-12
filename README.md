@@ -23,22 +23,17 @@ docker compose up
 
 ## Demo Credentials
 
-> **Current implementation status**: real JWT-based identity (`GET /api/auth/me`, `[Authorize]`
-> on `/api/tasks/*`) is scheduled for Batch 5 (see [EP02 Engineering Addenda — Batch
-> Plan](docs/epics/EP02-engineering-addenda.md#12-batch-plan)) and is not wired into
-> `Program.cs` yet. Until then, `/api/tasks/*` endpoints run under a hardcoded seed identity
-> (`SeedCurrentUserContext`) instead of a token-derived one. There is no pre-seeded login
-> account — register a user via `POST /api/auth/register` to obtain real credentials. See
-> [Authentication](#authentication) below for the full flow and current gaps.
+A demo account is seeded automatically on first startup.
 
-| Seed value | Value | Notes |
-| ---------- | ----- | ----- |
-| Seed owner ID | `01961234-5678-7abc-def0-123456789abc` | `SeedIdentity.SeedOwnerId` — the fixed owner used by `SeedCurrentUserContext` for all `/api/tasks/*` requests today |
-| Second seed owner ID | `02961234-5678-7abc-def0-123456789abc` | `SeedIdentity.SeedOwnerId2` — used only by integration tests to prove ownership isolation |
+| Field | Value |
+| ----- | ----- |
+| Email | `demo@taskflow.dev` |
+| Password | `Demo123!` |
 
-These are not login credentials — they are placeholder identity values baked into the API
-until real JWT-derived ownership ships. See
-[`src/TaskFlow.Infrastructure/Identity/SeedIdentity.cs`](src/TaskFlow.Infrastructure/Identity/SeedIdentity.cs).
+The demo account includes sample tasks across all three statuses (Pending, In Progress,
+Completed) so the evaluator can explore the full feature set immediately.
+
+> To start fresh, register a new account via the UI or `POST /api/auth/register`.
 
 ## Version Manifest
 
@@ -140,8 +135,6 @@ Detailed user stories and acceptance criteria: [docs/INDEX.md](docs/INDEX.md)
 
 ## Thought Process
 
-<!-- TODO: Fill during/after implementation -->
-
 ### Approach
 
 1. **Discovery first** — decomposed the challenge into epics and user stories before writing
@@ -174,12 +167,12 @@ the full GenAI process documentation, including prompts, outputs, and validation
 | GET | `/health` | Public | Liveness + DB connectivity check |
 | POST | `/api/auth/register` | Public | Register a new user |
 | POST | `/api/auth/login` | Public | Log in, receive JWT |
-| GET | `/api/auth/me` | Bearer | Current user profile *(planned — Batch 5, not yet implemented)* |
-| POST | `/api/tasks` | Bearer *(planned)* | Create a task |
-| GET | `/api/tasks` | Bearer *(planned)* | List tasks (paginated, optional `?status=` filter) |
-| GET | `/api/tasks/{id}` | Bearer *(planned)* | View task detail |
-| PATCH | `/api/tasks/{id}` | Bearer *(planned)* | Update a task |
-| DELETE | `/api/tasks/{id}` | Bearer *(planned)* | Delete a task |
+| GET | `/api/auth/me` | Bearer | Current user profile |
+| POST | `/api/tasks` | Bearer | Create a task |
+| GET | `/api/tasks` | Bearer | List tasks (paginated, optional `?status=` filter) |
+| GET | `/api/tasks/{id}` | Bearer | View task detail |
+| PATCH | `/api/tasks/{id}` | Bearer | Update a task |
+| DELETE | `/api/tasks/{id}` | Bearer | Delete a task |
 
 Full contract: [docs/architecture/api-contract.md](docs/architecture/api-contract.md)
 
@@ -189,11 +182,9 @@ TaskFlow uses stateless JWT bearer authentication. Full technical decisions live
 [EP02 Engineering Addenda](docs/epics/EP02-engineering-addenda.md); this section covers the
 practical flow.
 
-> **Implementation status**: `POST /api/auth/register` and `POST /api/auth/login` are
-> implemented and issue real JWTs. `GET /api/auth/me` and JWT-enforced `[Authorize]` on
-> `/api/tasks/*` are **not yet wired into `Program.cs`** — `/api/tasks/*` currently runs
-> under a hardcoded seed identity (see [Demo Credentials](#demo-credentials)). This gap is
-> scheduled for Batch 5 per the [EP02 batch plan](docs/epics/EP02-engineering-addenda.md#12-batch-plan).
+> All authentication endpoints are implemented and JWT-enforced `[Authorize]` protects
+> all `/api/tasks/*` endpoints. See [Demo Credentials](#demo-credentials) for a pre-seeded
+> login account.
 
 ### Flow: register → login → use the token
 
@@ -289,10 +280,10 @@ curl -X POST http://localhost:${API_PORT}/api/auth/login \
 Errors: `400` (missing field), `401` (invalid email or password — same generic message for
 both cases, to prevent user enumeration), `429` (rate limited, see below).
 
-### `GET /api/auth/me` *(planned — not yet implemented)*
+### `GET /api/auth/me`
 
-Once wired, this endpoint returns the authenticated user's profile and requires a Bearer
-token. Response shape mirrors the register response:
+Returns the authenticated user's profile. Requires a Bearer token. Response shape mirrors the
+register response:
 
 ```json
 {
@@ -303,7 +294,7 @@ token. Response shape mirrors the register response:
 }
 ```
 
-**curl** (once implemented):
+**curl**:
 
 ```bash
 curl http://localhost:${API_PORT}/api/auth/me \

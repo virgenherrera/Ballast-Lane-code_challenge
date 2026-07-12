@@ -6,6 +6,14 @@
 
 Document the full process of using a Generative AI coding tool to scaffold or implement the task management API. This is not a feature for end users — it is a deliverable for the interview panel demonstrating AI fluency.
 
+**Tool**: Claude Code CLI (Claude Opus model). **Methodology**: vertical-slice development —
+each user story was planned in a `docs(...)` commit and implemented in a paired `feat(...)`
+commit, with TDD (integration tests written first, against real PostgreSQL via Testcontainers)
+as the primary validation gate for every AI-generated change. See
+[US-010](../user-stories/US-010-prompt-documentation.md) for prompt examples and
+[US-011](../user-stories/US-011-ai-output-validation.md) for the validation report with
+concrete before/after corrections.
+
 ## Business Value
 
 Demonstrates the candidate's ability to leverage AI tools effectively: knowing what to ask, how to validate output, and when to correct or improve suggestions.
@@ -29,8 +37,8 @@ flowchart TD
 
 ## Deliverables
 
-- [ ] [**US-010** — Prompt Documentation](../user-stories/US-010-prompt-documentation.md) `Must Have`
-- [ ] [**US-011** — AI Output Validation Report](../user-stories/US-011-ai-output-validation.md) `Must Have`
+- [x] [**US-010** — Prompt Documentation](../user-stories/US-010-prompt-documentation.md) `Must Have`
+- [x] [**US-011** — AI Output Validation Report](../user-stories/US-011-ai-output-validation.md) `Must Have`
 
 ## Acceptance Boundaries
 
