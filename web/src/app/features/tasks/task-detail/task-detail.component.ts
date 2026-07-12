@@ -105,6 +105,9 @@ export class TaskDetailComponent {
       next: () => {
         void this.router.navigate(['/tasks']);
       },
+      error: () => {
+        window.alert('Failed to delete task. Please try again.');
+      },
     });
   }
 }
