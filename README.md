@@ -416,14 +416,18 @@ Requires the Docker stack running and Playwright browsers installed.
 docker compose up -d
 
 # 2. Install Playwright browsers (one-time)
-cd e2e && npx playwright install chromium
+cd e2e && pnpm exec playwright install chromium
 
-# 3. Run tests
-WEB_PORT=4200 API_PORT=3000 npx playwright test
+# 3. Run tests (headless — reads ports from .env automatically)
+pnpm test:e2e
+
+# 4. Run with browser visible (headed mode)
+pnpm test:e2e:headed
 ```
 
-Environment variables `WEB_PORT` and `API_PORT` are required (no defaults — Zod validation
-enforces this). See [e2e/README.md](e2e/README.md) for details.
+Port configuration is read automatically from the project root `.env` file via `dotenv`.
+No manual env var prefix needed.
+See [e2e/README.md](e2e/README.md) for details.
 
 ## License
 

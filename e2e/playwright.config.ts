@@ -1,5 +1,10 @@
+import { resolve } from 'node:path';
+
+import { config } from 'dotenv';
 import { defineConfig, devices } from '@playwright/test';
 import { z } from 'zod';
+
+config({ path: resolve(import.meta.dirname, '..', '.env') });
 
 const env = z
   .object({

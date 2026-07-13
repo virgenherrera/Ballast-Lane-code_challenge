@@ -1,9 +1,10 @@
-import { expect, test } from '../../fixtures/auth.fixture.js';
+import { expect, test } from '../../fixtures/tasks.fixture.js';
 
 test.describe('List Tasks Pagination', () => {
   test('ListTasks_NavigatePages_UpdatesListAndPagingControls', async ({
     authenticatedPage: page,
     authenticatedRequest,
+    taskListPage,
   }) => {
     // Arrange: create 25 tasks via API (> DefaultPerPage of 20)
     const suffix = Date.now();
@@ -20,20 +21,20 @@ test.describe('List Tasks Pagination', () => {
     }
 
     // Act: navigate to /tasks
-    await page.goto('/tasks');
-    await page.waitForSelector('[data-testid="task-list"]');
+    await taskListPage.goto();
+    await taskListPage.waitForTaskList();
 
     // Assert page 1: task-list-item count == 20; page-prev disabled; page-next enabled
-    await expect(page.getByTestId('task-list-item')).toHaveCount(20);
-    await expect(page.getByTestId('page-prev')).toBeDisabled();
-    await expect(page.getByTestId('page-next')).toBeEnabled();
+    await expect(taskListPage.taskListItems).toHaveCount(20);
+    await expect(taskListPage.pagePrev).toBeDisabled();
+    await expect(taskListPage.pageNext).toBeEnabled();
 
     // Act: click page-next
     await Promise.all([
       page.waitForResponse(
         (res) => res.request().method() === 'GET' && res.url().includes('/api/tasks?'),
       ),
-      page.getByTestId('page-next').click(),
+      taskListPage.pageNext.click(),
     ]);
 
     // Assert page 2: at least one item is present; page-prev enabled; URL page=2.
@@ -41,8 +42,8 @@ test.describe('List Tasks Pagination', () => {
     // workers share the same SeedOwnerId and may create additional tasks
     // concurrently, making the total (and therefore page 2's exact size and
     // whether a page 3 exists) non-deterministic.
-    await expect(page.getByTestId('task-list-item').first()).toBeVisible();
-    await expect(page.getByTestId('page-prev')).toBeEnabled();
+    await expect(taskListPage.taskListItems.first()).toBeVisible();
+    await expect(taskListPage.pagePrev).toBeEnabled();
     expect(page.url()).toMatch(/[?&]page=2\b/);
 
     // Act: click page-prev
@@ -50,11 +51,11 @@ test.describe('List Tasks Pagination', () => {
       page.waitForResponse(
         (res) => res.request().method() === 'GET' && res.url().includes('/api/tasks?'),
       ),
-      page.getByTestId('page-prev').click(),
+      taskListPage.pagePrev.click(),
     ]);
 
     // Assert page 1 again: task-list-item count == 20; page-prev disabled
-    await expect(page.getByTestId('task-list-item')).toHaveCount(20);
-    await expect(page.getByTestId('page-prev')).toBeDisabled();
+    await expect(taskListPage.taskListItems).toHaveCount(20);
+    await expect(taskListPage.pagePrev).toBeDisabled();
   });
 });

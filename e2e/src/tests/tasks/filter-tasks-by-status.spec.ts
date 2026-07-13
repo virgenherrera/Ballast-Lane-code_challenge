@@ -1,9 +1,10 @@
-import { expect, test } from '../../fixtures/auth.fixture.js';
+import { expect, test } from '../../fixtures/tasks.fixture.js';
 
 test.describe('Filter Tasks by Status', () => {
   test('FilterTasksByStatus_FromUI_ShowsOnlyMatchingTasks', async ({
     authenticatedPage: page,
     authenticatedRequest,
+    taskListPage,
   }) => {
     // Arrange: create 3 tasks via API — Pending, In Progress, Completed
     const suffix = Date.now();
@@ -39,14 +40,14 @@ test.describe('Filter Tasks by Status', () => {
     });
 
     // Act: navigate to /tasks, select "In Progress" from status filter dropdown
-    await page.goto('/tasks');
-    await page.waitForSelector('[data-testid="task-list"]');
+    await taskListPage.goto();
+    await taskListPage.waitForTaskList();
 
     await Promise.all([
       page.waitForResponse(
         (res) => res.request().method() === 'GET' && res.url().includes('/api/tasks?'),
       ),
-      page.selectOption('[data-testid="status-filter"]', 'In Progress'),
+      taskListPage.selectStatusFilter('In Progress'),
     ]);
 
     // Assert: only the In Progress task is visible; others are NOT visible
@@ -61,6 +62,7 @@ test.describe('Filter Tasks by Status', () => {
   test('FilterTasksByStatus_NoMatches_ShowsEmptyState', async ({
     authenticatedPage: page,
     authenticatedRequest,
+    taskListPage,
   }) => {
     // Arrange: create 1 Pending task (title kept unique so it never collides
     // with a Completed task from another parallel worker).
@@ -74,14 +76,14 @@ test.describe('Filter Tasks by Status', () => {
     await createResponse.json();
 
     // Act: navigate to /tasks, select "Completed" from filter
-    await page.goto('/tasks');
-    await page.waitForSelector('[data-testid="task-list"]');
+    await taskListPage.goto();
+    await taskListPage.waitForTaskList();
 
     const [response] = await Promise.all([
       page.waitForResponse(
         (res) => res.request().method() === 'GET' && res.url().includes('/api/tasks?'),
       ),
-      page.selectOption('[data-testid="status-filter"]', 'Completed'),
+      taskListPage.selectStatusFilter('Completed'),
     ]);
 
     // Tests run fullyParallel with a shared SeedOwnerId, so other workers may
@@ -95,13 +97,13 @@ test.describe('Filter Tasks by Status', () => {
     await expect(page.getByText(pendingTitle)).not.toBeVisible();
 
     if (body.items.length === 0) {
-      await expect(page.getByTestId('empty-state')).toBeVisible();
-      await expect(page.getByTestId('task-list-item')).toHaveCount(0);
+      await expect(taskListPage.emptyState).toBeVisible();
+      await expect(taskListPage.taskListItems).toHaveCount(0);
     } else {
-      const count = await page.getByTestId('task-list-item').count();
+      const count = await taskListPage.taskListItems.count();
       expect(count).toBeGreaterThan(0);
     }
 
-    await expect(page.getByTestId('task-list')).toBeVisible();
+    await expect(taskListPage.taskList).toBeVisible();
   });
 });

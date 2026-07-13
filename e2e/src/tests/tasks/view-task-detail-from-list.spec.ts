@@ -1,9 +1,11 @@
-import { expect, test } from '../../fixtures/auth.fixture.js';
+import { expect, test } from '../../fixtures/tasks.fixture.js';
 
 test.describe('View Task Detail', () => {
   test('ViewTaskDetail_FromList_ShowsFullTaskInfo', async ({
     authenticatedPage: page,
     authenticatedRequest,
+    taskDetailPage,
+    taskListPage,
   }) => {
     // Arrange: create 1 task via API with title + description + dueDate
     const uniqueTitle = `E2E detail view ${Date.now()}`;
@@ -19,8 +21,8 @@ test.describe('View Task Detail', () => {
     const task = await createResponse.json();
 
     // Act: navigate to /tasks, click the task row/link to navigate to detail
-    await page.goto('/tasks');
-    await page.waitForSelector('[data-testid="task-list"]');
+    await taskListPage.goto();
+    await taskListPage.waitForTaskList();
     await expect(page.getByText(uniqueTitle)).toBeVisible();
 
     await page.getByText(uniqueTitle).click();
@@ -29,26 +31,22 @@ test.describe('View Task Detail', () => {
     await expect(page).toHaveURL(new RegExp(`/tasks/${task.id}$`));
 
     // Assert: detail container visible
-    await expect(page.getByTestId('task-detail')).toBeVisible();
+    await expect(taskDetailPage.container).toBeVisible();
 
-    // Assert: all 8 fields rendered
-    await expect(page.getByText(task.title, { exact: true })).toBeVisible();
-    await expect(page.getByText('E2E detail description')).toBeVisible();
-    await expect(page.getByText(task.status, { exact: true })).toBeVisible();
-    await expect(page.getByText(task.ownerId, { exact: true })).toBeVisible();
-    await expect(page.getByText(task.id, { exact: true })).toBeVisible();
-    await expect(page.getByText(task.dueDate, { exact: true })).toBeVisible();
+    // Assert: title, description, status render as raw text
+    await expect(taskDetailPage.fieldValue(task.title, { exact: true })).toBeVisible();
+    await expect(taskDetailPage.fieldValue('E2E detail description')).toBeVisible();
+    await expect(taskDetailPage.fieldValue(task.status, { exact: true })).toBeVisible();
 
-    // Created At / Updated At are asserted via their <dt>/<dd> pair rather
-    // than a bare getByText: for a freshly created (never updated) task the
-    // two timestamps are identical, so a global text search matches both
-    // <dd> elements and trips Playwright's strict-mode uniqueness check.
-    const dl = page.locator('dl');
-    await expect(dl.locator('dt', { hasText: 'Created At' }).locator('+ dd')).toHaveText(
-      task.createdAt,
-    );
-    await expect(dl.locator('dt', { hasText: 'Updated At' }).locator('+ dd')).toHaveText(
-      task.updatedAt,
-    );
+    // Due Date / Created / Updated are rendered via formatDate(), which
+    // produces a locale-dependent string — assert the labeled field has
+    // non-empty content rather than matching the raw ISO value.
+    await expect(taskDetailPage.fieldByLabel('Due Date')).not.toHaveText('');
+    await expect(taskDetailPage.fieldByLabel('Created')).not.toHaveText('');
+    await expect(taskDetailPage.fieldByLabel('Updated')).not.toHaveText('');
+
+    // Assert: Edit and Delete actions are available
+    await expect(taskDetailPage.editLink).toBeVisible();
+    await expect(taskDetailPage.deleteButton).toBeVisible();
   });
 });

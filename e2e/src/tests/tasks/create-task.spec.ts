@@ -1,25 +1,30 @@
-import { expect, test } from '../../fixtures/auth.fixture.js';
+import { expect, test } from '../../fixtures/tasks.fixture.js';
 
 test.describe('Create Task', () => {
-  test('CreateTask_FromUI_AppearsInTaskList', async ({ authenticatedPage: page }) => {
+  test('CreateTask_FromUI_AppearsInTaskList', async ({
+    authenticatedPage: page,
+    createTaskPage,
+    taskListPage,
+  }) => {
     const uniqueTitle = `E2E Task ${Date.now()}`;
 
-    await page.goto('/tasks/create');
-    await page.locator('#title').fill(uniqueTitle);
+    await createTaskPage.goto();
+    await createTaskPage.fillTitle(uniqueTitle);
 
-    await page.getByRole('button', { name: 'Create Task' }).click();
+    await createTaskPage.submit();
 
-    await expect(page.getByText('Task created successfully.')).toBeVisible();
+    await expect(createTaskPage.successMessage).toBeVisible();
 
-    await page.goto('/tasks');
-    await expect(page.getByTestId('task-list')).toBeVisible();
+    await taskListPage.goto();
+    await expect(taskListPage.taskList).toBeVisible();
     await expect(page.getByText(uniqueTitle)).toBeVisible();
   });
 
   test('CreateTask_WithEmptyTitle_ShowsValidationErrorInUI', async ({
     authenticatedPage: page,
+    createTaskPage,
   }) => {
-    await page.goto('/tasks/create');
+    await createTaskPage.goto();
 
     let requestFired = false;
     page.on('request', (request) => {
@@ -33,27 +38,25 @@ test.describe('Create Task', () => {
     // mark it touched and surface the inline error — a real user hits the
     // same disabled-button wall, which is an even stronger client-side
     // guarantee than a rejected click.
-    await page.locator('#title').click();
-    await page.locator('#title').blur();
+    await createTaskPage.titleInput.click();
+    await createTaskPage.titleInput.blur();
 
-    await expect(page.getByText('Title is required')).toBeVisible();
-    await expect(page.getByRole('button', { name: 'Create Task' })).toBeDisabled();
+    await expect(createTaskPage.errorMessage('Title is required')).toBeVisible();
+    await expect(createTaskPage.submitButton).toBeDisabled();
     expect(requestFired).toBe(false);
   });
 
-  test('CreateTask_WithPastDueDate_ShowsValidationErrorInUI', async ({
-    authenticatedPage: page,
-  }) => {
-    await page.goto('/tasks/create');
+  test('CreateTask_WithPastDueDate_ShowsValidationErrorInUI', async ({ createTaskPage }) => {
+    await createTaskPage.goto();
 
-    await page.locator('#title').fill('Task with past due date');
+    await createTaskPage.fillTitle('Task with past due date');
 
     const pastDate = new Date(Date.now() - 24 * 60 * 60 * 1000);
     const pastDateValue = pastDate.toISOString().slice(0, 16);
-    await page.locator('#dueDate').fill(pastDateValue);
-    await page.locator('#dueDate').blur();
+    await createTaskPage.fillDueDate(pastDateValue);
+    await createTaskPage.dueDateInput.blur();
 
-    await expect(page.getByText('Due date must be in the future')).toBeVisible();
-    await expect(page.getByRole('button', { name: 'Create Task' })).toBeDisabled();
+    await expect(createTaskPage.errorMessage('Due date must be in the future')).toBeVisible();
+    await expect(createTaskPage.submitButton).toBeDisabled();
   });
 });

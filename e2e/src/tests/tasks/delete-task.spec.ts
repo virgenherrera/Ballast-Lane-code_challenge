@@ -1,9 +1,10 @@
-import { expect, test } from '../../fixtures/auth.fixture.js';
+import { expect, test } from '../../fixtures/tasks.fixture.js';
 
 test.describe('Delete Task', () => {
   test('DeleteTask_FromUI_RemovesFromListAndConfirms', async ({
     authenticatedPage: page,
     authenticatedRequest,
+    taskListPage,
   }) => {
     // Arrange: seed a task via direct API call
     const createResponse = await authenticatedRequest.post('/api/tasks', {
@@ -15,8 +16,8 @@ test.describe('Delete Task', () => {
     const task = await createResponse.json();
 
     // Navigate to task list and wait for task to appear
-    await page.goto('/tasks');
-    await page.waitForSelector(`[data-testid="delete-btn-${task.id}"]`);
+    await taskListPage.goto();
+    await taskListPage.waitForDeleteButton(task.id);
 
     // Capture console errors
     const consoleErrors: string[] = [];
@@ -34,7 +35,7 @@ test.describe('Delete Task', () => {
       page.waitForResponse(
         (res) => res.request().method() === 'DELETE' && res.url().includes(`/api/tasks/${task.id}`),
       ),
-      page.click(`[data-testid="delete-btn-${task.id}"]`),
+      taskListPage.deleteButtonFor(task.id).click(),
     ]);
 
     // Assert 1: DELETE returned 204
@@ -53,6 +54,7 @@ test.describe('Delete Task', () => {
   test('DeleteTask_CancelConfirmation_TaskRemainsInList', async ({
     authenticatedPage: page,
     authenticatedRequest,
+    taskListPage,
   }) => {
     // Arrange: seed a task
     const createResponse = await authenticatedRequest.post('/api/tasks', {
@@ -63,12 +65,12 @@ test.describe('Delete Task', () => {
     });
     const task = await createResponse.json();
 
-    await page.goto('/tasks');
-    await page.waitForSelector(`[data-testid="delete-btn-${task.id}"]`);
+    await taskListPage.goto();
+    await taskListPage.waitForDeleteButton(task.id);
 
     // Act: dismiss the confirmation dialog, then click delete
     page.on('dialog', (dialog) => dialog.dismiss());
-    await page.click(`[data-testid="delete-btn-${task.id}"]`);
+    await taskListPage.deleteButtonFor(task.id).click();
 
     // Assert: task still visible
     await expect(page.getByText(task.title)).toBeVisible();
