@@ -24,7 +24,7 @@ Implement `TaskItemConfiguration` (EF Core fluent config with `ValueGeneratedNev
 - [ ] `dotnet build src/TaskFlow.Application/` exits 0
 - [ ] `ITaskRepository` interface exists at `src/TaskFlow.Application/Common/Interfaces/ITaskRepository.cs`
 - [ ] Docker is running: `docker ps` succeeds
-- [ ] Microsoft.EntityFrameworkCore 10.0.9, Microsoft.EntityFrameworkCore.Design 10.0.9, Npgsql.EntityFrameworkCore.PostgreSQL 10.0.3 resolvable on NuGet
+- [ ] Microsoft.EntityFrameworkCore 10.0.4, Microsoft.EntityFrameworkCore.Design 10.0.4, Npgsql.EntityFrameworkCore.PostgreSQL 10.0.3 resolvable on NuGet
 - [ ] Testcontainers.PostgreSql (pin exact 4.x version compatible with .NET 10 at implementation time) resolvable on NuGet
 - [ ] **DECISION (frozen)**: Column naming = snake_case via explicit `HasColumnName()` per property (no EFCore.NamingConventions package — keeps dependency count minimal)
 - [ ] **DECISION (frozen)**: TaskStatus stored as `smallint` via `HasConversion<int>()` (smaller footprint, faster indexing; no external raw-SQL consumers in Delivery 1)
@@ -112,7 +112,7 @@ dotnet ef migrations add AddTasksTable --project src/TaskFlow.Infrastructure --s
 - Implement `SeedCurrentUserContext` or any `ICurrentUserContext` — that is EP01-B1-03b
 - Build the WebApplicationFactory/Testcontainers shared harness for other stories — a local, task-specific Testcontainers usage is sufficient here; EP01-B1-04a builds the shared harness
 - Change `ValueGeneratedNever()` to `ValueGeneratedOnAdd()` — this is the exact MEDIUM risk the story warns against
-- Use `postgres:latest` — pin `postgres:17.5` in the Testcontainers fixture
+- Use `postgres:latest` — pin `postgres:17-alpine` in the Testcontainers fixture
 - Add EFCore.NamingConventions package — explicit `HasColumnName()` is the chosen approach per frozen decision
 - Wire DI registration in Program.cs — that belongs to EP01-B1-04a
 
@@ -129,12 +129,12 @@ dotnet ef migrations add AddTasksTable --project src/TaskFlow.Infrastructure --s
 | Letting EF Guid-PK convention apply ValueGeneratedOnAdd | EF silently regenerates the Domain-constructed UUID v7    | Explicit `.ValueGeneratedNever()` + test     |
 | Generating migration before documenting decisions    | Creates an irreversible schema commit                      | Write DECISION comments first, then generate |
 | Testing persistence only via future API integration tests | No isolated failure signal for schema bugs            | Write `TaskRepositoryTests.cs` here directly |
-| Using `postgres:latest` in Testcontainers            | Non-reproducible CI runs                                  | Pin `postgres:17.5`                          |
+| Using `postgres:latest` in Testcontainers            | Non-reproducible CI runs                                  | Pin `postgres:17-alpine`                          |
 
 ## 9. Rollback Guidance
 
 1. Read the error output — identify which gate failed (G1-G5)
-2. If G1 fails: check EF Core/Npgsql package version compatibility (EF Core 10.0.9 + Npgsql 10.0.3)
+2. If G1 fails: check EF Core/Npgsql package version compatibility (EF Core 10.0.4 + Npgsql 10.0.3)
 3. If G2 (`PreservesClientGeneratedId`) fails: check `ValueGeneratedNever()` is set — most likely root cause
 4. If G3 (migration) fails: check connection string and Docker container; do NOT delete and regenerate blindly — read the EF CLI error first
 5. If G4 fails: remove any InMemory/SQLite reference — PostgreSQL only
@@ -158,7 +158,7 @@ dotnet ef migrations add AddTasksTable --project src/TaskFlow.Infrastructure --s
 
 ### TASKFLOW-BUILD-PIPELINE
 - PostgreSQL is the ONLY database engine — no InMemory/SQLite
-- Docker Compose: postgres:17.5, taskflow-api, taskflow-web
+- Docker Compose: postgres:17-alpine, taskflow-api, taskflow-web
 
 ## 11. Status Protocol
 

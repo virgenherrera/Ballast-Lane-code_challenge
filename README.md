@@ -73,7 +73,7 @@ hardcoding versions. Updated as dependencies are added during implementation.
 | Respawn | — | Database reset between integration tests |
 | Microsoft.AspNetCore.Mvc.Testing | built-in | `WebApplicationFactory` for API tests |
 
-### Frontend Libraries (npm)
+### Frontend Libraries (pnpm)
 
 | Package | Version | Role |
 | ------- | ------- | ---- |
@@ -81,7 +81,7 @@ hardcoding versions. Updated as dependencies are added during implementation.
 | Zod | 4.4.3 | API response validation (contract enforcement) |
 | Tailwind CSS | 4.3.2 | Utility-first CSS framework |
 
-### Frontend Test Libraries (npm)
+### Frontend Test Libraries (pnpm)
 
 | Package | Version | Role |
 | ------- | ------- | ---- |

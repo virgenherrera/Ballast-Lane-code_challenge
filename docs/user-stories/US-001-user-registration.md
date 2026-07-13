@@ -12,72 +12,72 @@ As a **visitor**, I want to **register an account** so that **I can access the t
 
 ## Definition of Ready (DOR)
 
-- [ ] Password policy confirmed: min 8 chars, max 72 (BCrypt truncation limit), 1 uppercase, 1 digit, 1 special char. Exact special-character set enumerated and documented.
-- [ ] Email casing rule resolved: Email VO REJECTS uppercase at construction time (throws DomainException) per Decision #4. No silent normalization. RegisterUserValidator also enforces as defense-in-depth.
-- [ ] "Confirmation received" in AC-001.1 clarified: HTTP 201 response body only. No email/notification sending in Batch 1 scope.
-- [ ] Name field constraints defined: min 1 non-whitespace char after trim, max 100 chars, leading/trailing whitespace trimmed. Unicode permitted.
-- [ ] RegisterUserResult DTO shape frozen: {Id: Guid (UUID v7), Email: string, Name: string, CreatedAt: DateTime (ISO-8601)}.
-- [ ] 409 Conflict error message approved: generic wording that does not reveal whether conflict is exact or case-insensitive match.
-- [ ] Field-level error format confirmed against Standard Error Shape. PropertyName matches DTO property name exactly (Email, Name, Password).
-- [ ] UUID v7 generation strategy confirmed: Guid.CreateVersion7() available in .NET 10.
-- [ ] IUserRepository interface signatures frozen with CancellationToken on all async methods.
-- [ ] IPasswordHasher.Hash(string) -> PasswordHash confirmed as pure method with no side effects.
-- [ ] Handler orchestration order confirmed: validate -> ExistsAsync -> Hash -> construct entity -> AddAsync.
-- [ ] Duplicate-email check is advisory (TOCTOU gap acknowledged); final integrity via DB unique index in Batch 2.
-- [ ] Registration does NOT issue an access token (no auto-login).
-- [ ] FluentValidation CascadeMode.Continue confirmed for all validators.
+- [x] Password policy confirmed: min 8 chars, max 72 (BCrypt truncation limit), 1 uppercase, 1 digit, 1 special char. Exact special-character set enumerated and documented.
+- [x] Email casing rule resolved: Email VO REJECTS uppercase at construction time (throws DomainException) per Decision #4. No silent normalization. RegisterUserValidator also enforces as defense-in-depth.
+- [x] "Confirmation received" in AC-001.1 clarified: HTTP 201 response body only. No email/notification sending in Batch 1 scope.
+- [x] Name field constraints defined: min 1 non-whitespace char after trim, max 100 chars, leading/trailing whitespace trimmed. Unicode permitted.
+- [x] RegisterUserResult DTO shape frozen: {Id: Guid (UUID v7), Email: string, Name: string, CreatedAt: DateTime (ISO-8601)}.
+- [x] 409 Conflict error message approved: generic wording that does not reveal whether conflict is exact or case-insensitive match.
+- [x] Field-level error format confirmed against Standard Error Shape. PropertyName matches DTO property name exactly (Email, Name, Password).
+- [x] UUID v7 generation strategy confirmed: Guid.CreateVersion7() available in .NET 10.
+- [x] IUserRepository interface signatures frozen with CancellationToken on all async methods.
+- [x] IPasswordHasher.Hash(string) -> PasswordHash confirmed as pure method with no side effects.
+- [x] Handler orchestration order confirmed: validate -> ExistsAsync -> Hash -> construct entity -> AddAsync.
+- [x] Duplicate-email check is advisory (TOCTOU gap acknowledged); final integrity via DB unique index in Batch 2.
+- [x] Registration does NOT issue an access token (no auto-login).
+- [x] FluentValidation CascadeMode.Continue confirmed for all validators.
 
 ## Definition of Done (DOD)
 
-- [ ] AC-001.1 through AC-001.7 verified with passing unit tests in TaskFlow.Application.Tests and TaskFlow.Domain.Tests.
-- [ ] User.cs compiles without any reference to Infrastructure, EF Core, BCrypt, or System.IdentityModel namespaces.
-- [ ] Email VO rejects uppercase input at construction (throws DomainException). Dedicated unit test confirms rejection.
-- [ ] Email VO rejects invalid formats at construction with domain exception, independent of FluentValidation.
-- [ ] PasswordHash VO is immutable, does not expose raw value via ToString().
-- [ ] RegisterUserHandler depends solely on IUserRepository, IPasswordHasher (Domain interfaces). Zero concrete references.
-- [ ] RegisterUserValidator implements 5 password rules (min 8, max 72, uppercase, digit, special) as independent rules with distinct ErrorCode.
-- [ ] RegisterUserValidator does NOT short-circuit: all field violations reported together.
-- [ ] DuplicateEmailException inherits DomainException, carries no HTTP status codes.
-- [ ] RegisterUserResult contains exactly {Id, Email, Name, CreatedAt}. No password or hash field.
-- [ ] Error responses identify EACH field independently. Field names match DTO properties exactly.
-- [ ] No plaintext password in any log, exception message, or test assertion output.
-- [ ] Code review confirms no Infrastructure or API namespace references in Domain/Application.
-- [ ] All tests use NSubstitute mocks. No real database or BCrypt.
-- [ ] Name: whitespace-only rejected, leading/trailing trimmed, >100 chars rejected.
+- [x] AC-001.1 through AC-001.7 verified with passing unit tests in TaskFlow.Application.Tests and TaskFlow.Domain.Tests.
+- [x] User.cs compiles without any reference to Infrastructure, EF Core, BCrypt, or System.IdentityModel namespaces.
+- [x] Email VO rejects uppercase input at construction (throws DomainException). Dedicated unit test confirms rejection.
+- [x] Email VO rejects invalid formats at construction with domain exception, independent of FluentValidation.
+- [x] PasswordHash VO is immutable, does not expose raw value via ToString().
+- [x] RegisterUserHandler depends solely on IUserRepository, IPasswordHasher (Domain interfaces). Zero concrete references.
+- [x] RegisterUserValidator implements 5 password rules (min 8, max 72, uppercase, digit, special) as independent rules with distinct ErrorCode.
+- [x] RegisterUserValidator does NOT short-circuit: all field violations reported together.
+- [x] DuplicateEmailException inherits DomainException, carries no HTTP status codes.
+- [x] RegisterUserResult contains exactly {Id, Email, Name, CreatedAt}. No password or hash field.
+- [x] Error responses identify EACH field independently. Field names match DTO properties exactly.
+- [x] No plaintext password in any log, exception message, or test assertion output.
+- [x] Code review confirms no Infrastructure or API namespace references in Domain/Application.
+- [x] All tests use NSubstitute mocks. No real database or BCrypt.
+- [x] Name: whitespace-only rejected, leading/trailing trimmed, >100 chars rejected.
 
 ## Acceptance Criteria
 
-- [ ] **AC-001.1: Successful registration**
+- [x] **AC-001.1: Successful registration**
   - **Given** a visitor submits a unique lowercase email, valid name (1-100 chars, trimmed), and password meeting all strength rules (8-72 chars, 1 uppercase, 1 digit, 1 special)
   - **When** RegisterUserHandler.Handle(RegisterUserCommand) executes
   - **Then** IUserRepository.AddAsync is called once with a User whose Id is UUID v7, PasswordHash != plain password, and RegisterUserResult is returned with {Id, Email, Name, CreatedAt}
 
-- [ ] **AC-001.2: Duplicate email rejection**
+- [x] **AC-001.2: Duplicate email rejection**
   - **Given** IUserRepository.ExistsAsync returns true for the given email
   - **When** RegisterUserHandler executes
   - **Then** DuplicateEmailException is thrown BEFORE IPasswordHasher.Hash or IUserRepository.AddAsync are invoked
 
-- [ ] **AC-001.3: Password strength validation**
+- [x] **AC-001.3: Password strength validation**
   - **Given** a password that fails one or more strength rules (min 8, max 72, 1 uppercase, 1 digit, 1 special)
   - **When** RegisterUserValidator validates the RegisterUserCommand
   - **Then** validation fails with one ValidationFailure per broken rule, each with distinct PropertyName ('Password') and ErrorCode
 
-- [ ] **AC-001.4: Required field validation**
+- [x] **AC-001.4: Required field validation**
   - **Given** email, name, or password is null, empty, or whitespace-only
   - **When** RegisterUserValidator validates the RegisterUserCommand
   - **Then** each missing field produces its own ValidationFailure with correct PropertyName. All violations reported together, not fail-fast.
 
-- [ ] **AC-001.5: Email format validation**
+- [x] **AC-001.5: Email format validation**
   - **Given** an email with invalid format (missing @, missing domain, missing TLD, spaces in local part)
   - **When** the Email VO is constructed
   - **Then** a domain exception is thrown rejecting the invalid format (defense-in-depth, independent of FluentValidation)
 
-- [ ] **AC-001.6: Email uppercase rejection**
+- [x] **AC-001.6: Email uppercase rejection**
   - **Given** an email containing any uppercase characters
   - **When** the Email VO is constructed or RegisterUserValidator runs
   - **Then** the request is rejected per Decision #4 (reject, not normalize). Both Domain VO and Application validator enforce as defense-in-depth.
 
-- [ ] **AC-001.7: Name field validation**
+- [x] **AC-001.7: Name field validation**
   - **Given** a name that is only whitespace after trim, or exceeds 100 characters
   - **When** RegisterUserValidator validates the RegisterUserCommand
   - **Then** whitespace-only and over-length names are rejected. Valid names with surrounding whitespace are trimmed before persistence.

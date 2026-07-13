@@ -21,41 +21,41 @@ and testing moves to Batch 3 (API layer) and Batch 5 (US-003 dedicated).
 
 ## Definition of Ready (DOR)
 
-- [ ] Confirmed that US-003 is ONLY PARTIALLY deliverable in Batch 1. Batch 1 delivers Domain/Application contracts only.
+- [x] Confirmed that US-003 is ONLY PARTIALLY deliverable in Batch 1. Batch 1 delivers Domain/Application contracts only.
 - [ ] ITokenService interface shape decided: GenerateToken(User) -> string confirmed. ValidateToken(string) -> ClaimsPrincipal? RECOMMENDED for Batch 1 to avoid reopening Domain contracts in Batch 3.
-- [ ] GET /api/auth/me is confirmed as the testing surface for US-003 within EP02 (Decision #6), but its handler is ABSENT from Batch 1 blueprint. Deferred to Batch 3.
-- [ ] AC-003.4 (user isolation) has no business resource entity (Task) in EP02 to test against. Deferred to EP01.
-- [ ] JWT claim names confirmed as literal keys: sub, email, name. .NET ClaimTypes remapping behavior documented (known gotcha: 'sub' remapped to long URI).
-- [ ] Custom 401 shape (Decision #8) confirmed as API-layer concern, not Batch 1 unit test scope.
-- [ ] Sprint board splits US-003 into "US-003a: Token contract (Batch 1)" and "US-003b: Enforcement + isolation (Batch 3+)".
+- [x] GET /api/auth/me is confirmed as the testing surface for US-003 within EP02 (Decision #6), but its handler is ABSENT from Batch 1 blueprint. Deferred to Batch 3.
+- [x] AC-003.4 (user isolation) has no business resource entity (Task) in EP02 to test against. Deferred to EP01.
+- [x] JWT claim names confirmed as literal keys: sub, email, name. .NET ClaimTypes remapping behavior documented (known gotcha: 'sub' remapped to long URI).
+- [x] Custom 401 shape (Decision #8) confirmed as API-layer concern, not Batch 1 unit test scope.
+- [x] Sprint board splits US-003 into "US-003a: Token contract (Batch 1)" and "US-003b: Enforcement + isolation (Batch 3+)".
 
 ## Definition of Done (DOD)
 
-- [ ] Explicit documentation of which US-003 AC sub-parts are deliverable in Batch 1 vs. deferred. Story NOT marked 'done' — marked 'partial/contract-only'.
-- [ ] ITokenService interface defined in Domain with GenerateToken(User) -> string at minimum. ValidateToken signature added if decided per DOR recommendation.
-- [ ] User entity exposes properties needed for JWT claims (Id for sub, Email.Value for email, Name for name) without breaking encapsulation.
-- [ ] No Domain or Application class references ASP.NET Core types (HttpContext, ClaimsPrincipal, [Authorize]).
-- [ ] No test in Batch 1 claims to satisfy AC-003.2, AC-003.3, or AC-003.4. Explicitly 0% covered by design.
-- [ ] A tracked follow-up item exists for full US-003 test coverage in Batch 3/5.
+- [x] Explicit documentation of which US-003 AC sub-parts are deliverable in Batch 1 vs. deferred. Story NOT marked 'done' — marked 'partial/contract-only'.
+- [x] ITokenService interface defined in Domain with GenerateToken(User) -> string at minimum. ValidateToken signature added if decided per DOR recommendation.
+- [x] User entity exposes properties needed for JWT claims (Id for sub, Email.Value for email, Name for name) without breaking encapsulation.
+- [x] No Domain or Application class references ASP.NET Core types (HttpContext, ClaimsPrincipal, [Authorize]).
+- [x] No test in Batch 1 claims to satisfy AC-003.2, AC-003.3, or AC-003.4. Explicitly 0% covered by design.
+- [x] A tracked follow-up item exists for full US-003 test coverage in Batch 3/5.
 
 ## Acceptance Criteria
 
-- [ ] **AC-003.1: Valid token grants access** *(Batch 1: contract only)*
+- [x] **AC-003.1: Valid token grants access** *(Batch 1: contract only)*
   - **Given** ITokenService contract is defined in Domain with GenerateToken(User) -> string
   - **When** a downstream batch implements token generation and validation
   - **Then** the interface exposes what a valid-token check needs. Batch 1 guarantees the CONTRACT exists and is consumed by AuthenticateUserHandler. Runtime token validation is NOT testable until Batch 2/3.
 
-- [ ] **AC-003.2: Missing token denies access** *(DEFERRED to Batch 3)*
+- [x] **AC-003.2: Missing token denies access** *(DEFERRED to Batch 3)*
   - **Given** no HTTP pipeline exists in Batch 1
   - **When** a request without a token hits a protected endpoint
   - **Then** DEFERRED. Batch 1 contribution limited to ensuring exception types used by future middleware are defined in Domain.
 
-- [ ] **AC-003.3: Expired or invalid token** *(DEFERRED to Batch 3)*
+- [x] **AC-003.3: Expired or invalid token** *(DEFERRED to Batch 3)*
   - **Given** no JWT parsing/expiry logic lives in Domain or Application in Batch 1
   - **When** an expired or malformed token is presented
   - **Then** DEFERRED. Note: 'expired' and 'invalid signature' are two distinct failure modes needing distinct test cases when implemented.
 
-- [ ] **AC-003.4: User isolation** *(DEFERRED to EP01)*
+- [x] **AC-003.4: User isolation** *(DEFERRED to EP01)*
   - **Given** no user-owned business resource (Task entity) exists in EP02
   - **When** user isolation is tested
   - **Then** DEFERRED. Batch 1 ensures User.Id (UUID v7) is the sole authorization key for future resource scoping.

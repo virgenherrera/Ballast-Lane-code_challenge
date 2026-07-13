@@ -210,7 +210,7 @@ Run each check and document pass/fail. If a check FAILS, fix the issue as part o
 
 ### TASKFLOW-BUILD-PIPELINE
 - PostgreSQL is the ONLY database engine — no InMemory/SQLite
-- Docker Compose: postgres:17.5, taskflow-api, taskflow-web
+- Docker Compose: postgres:17-alpine, taskflow-api, taskflow-web
 
 ### TASKFLOW-SECURITY
 - JWT secret minimum 32 characters — validated at startup

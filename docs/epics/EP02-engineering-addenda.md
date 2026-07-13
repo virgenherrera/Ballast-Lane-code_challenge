@@ -142,7 +142,7 @@ Custom middleware maps JWT authentication failures to:
 
 | Parameter | Value |
 | --------- | ----- |
-| ORM | Entity Framework Core 10.0.9 |
+| ORM | Entity Framework Core 10.0.4 |
 | PostgreSQL provider | Npgsql.EntityFrameworkCore.PostgreSQL 10.0.3 |
 | Query mechanism | LINQ only — all operations via `IQueryable<T>` |
 | Raw SQL | Forbidden (`FromSqlRaw`, `ExecuteSqlRaw`, ADO.NET, `NpgsqlCommand`) |
@@ -164,7 +164,7 @@ Startup DB validation uses `DbContext.Database.CanConnectAsync()` — not raw
 | ----- | ----- | ------------ |
 | 0 | Infra bootstrap | .NET solution (8 projects), docker-compose db, .env.example, health endpoint, appsettings wiring, project references |
 | 1 | Domain + Application | User entity, Email/PasswordHash VOs, IUserRepository, ITokenService, IPasswordHasher, RegisterUserUseCase, AuthenticateUserUseCase, FluentValidation validators, unit tests |
-| 2 | Infrastructure | EF Core 10.0.9 + Npgsql.EFCore.PG 10.0.3 setup, TaskFlowDbContext, User entity config, UserRepository (LINQ only), initial migration (Users table), JwtTokenService, BcryptPasswordHasher |
+| 2 | Infrastructure | EF Core 10.0.4 + Npgsql.EFCore.PG 10.0.3 setup, TaskFlowDbContext, User entity config, UserRepository (LINQ only), initial migration (Users table), JwtTokenService, BcryptPasswordHasher |
 | 3 | API — US-001 | AuthController (register), exception middleware, env-var validation, integration tests for register |
 | 4 | API — US-002 | AuthController (login), dummy-hash timing protection, rate limiting, integration tests for login |
 | 5 | API — US-003 | JWT auth middleware, `GET /api/auth/me`, custom 401 shape, ownership claim extraction, integration tests |

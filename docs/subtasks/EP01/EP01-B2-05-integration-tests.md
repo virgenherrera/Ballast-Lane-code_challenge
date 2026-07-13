@@ -34,7 +34,7 @@ If any pre-condition fails, report BLOCKED.
 | File | Lines | Why |
 |------|-------|-----|
 | `tests/TaskFlow.IntegrationTests/TaskFlow.IntegrationTests.csproj` | 1-27 (full) | Verify existing packages (Testcontainers.PostgreSql already present) |
-| `tests/TaskFlow.IntegrationTests/Persistence/TaskRepositoryTests.cs` | 1-70 (full) | Existing Testcontainers pattern — confirms postgres:17.5 usage |
+| `tests/TaskFlow.IntegrationTests/Persistence/TaskRepositoryTests.cs` | 1-70 (full) | Existing Testcontainers pattern — confirms postgres:17-alpine usage |
 | `src/TaskFlow.API/Program.cs` | full (post B2-04) | Understand DI/middleware registration to override in test factory |
 | `src/TaskFlow.API/Controllers/TasksController.cs` | full (post B2-04) | Endpoint under test |
 | `src/TaskFlow.API/Contracts/Tasks/UpdateTaskRequest.cs` | full (post B2-04) | Request shape |
@@ -88,7 +88,7 @@ namespace TaskFlow.IntegrationTests.Common;
 
 public sealed class TaskFlowWebApplicationFactory : WebApplicationFactory<Program>, IAsyncLifetime
 {
-    private readonly PostgreSqlContainer _postgres = new PostgreSqlBuilder("postgres:17.5")
+    private readonly PostgreSqlContainer _postgres = new PostgreSqlBuilder("postgres:17-alpine")
         .WithDatabase("taskflow_test")
         .WithUsername("postgres")
         .WithPassword("postgres")
@@ -188,7 +188,7 @@ public static class AssertErrorResponse
 
 | Anti-Pattern | Why It Fails | Do Instead |
 |---|---|---|
-| Using InMemory/SQLite provider | Masks PostgreSQL-specific behavior (e.g., UUID handling, case sensitivity) | Testcontainers with `postgres:17.5` |
+| Using InMemory/SQLite provider | Masks PostgreSQL-specific behavior (e.g., UUID handling, case sensitivity) | Testcontainers with `postgres:17-alpine` |
 | Two independent "returns 404" assertions for AC-007.5 | Doesn't prove response bodies are byte-identical | Deserialize both, assert structural equality |
 | Testing `UpdateTask_WithPastDueDate_Returns200` in isolation from Create | Shared validator regression could make both wrongly accept past dates | Companion test in same file proving Create still rejects |
 | Hardcoded literal GUID for non-existent-id | Risk of collision with seeded data as fixtures grow | `Guid.NewGuid()` fresh per test |
@@ -197,7 +197,7 @@ public static class AssertErrorResponse
 ## 9. Rollback Guidance
 
 1. If G1 fails: likely missing `Microsoft.AspNetCore.Mvc.Testing` package — add to `.csproj`
-2. If G2 fails with connection errors: verify Testcontainers is starting and `postgres:17.5` image is available (Docker must be running)
+2. If G2 fails with connection errors: verify Testcontainers is starting and `postgres:17-alpine` image is available (Docker must be running)
 3. If G3 fails: check the equality assertion compares full deserialized objects, not just status codes
 4. If G5 regression: identify which pre-existing test broke — likely the `TaskRepositoryTests` if DbContext registration changed
 5. **3-FAILURE CIRCUIT BREAKER**: If the same gate fails 3 times, STOP and report FAILED.
@@ -218,7 +218,7 @@ public static class AssertErrorResponse
 
 ### TASKFLOW-BUILD-PIPELINE
 - PostgreSQL is the ONLY database engine — no InMemory/SQLite
-- Docker Compose: postgres:17.5, taskflow-api, taskflow-web
+- Docker Compose: postgres:17-alpine, taskflow-api, taskflow-web
 
 ## 11. Status Protocol
 

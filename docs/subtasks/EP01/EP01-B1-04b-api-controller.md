@@ -166,7 +166,7 @@ All `*_Returns400` tests MUST use `AssertErrorResponse` helper to exact-match th
 
 ### TASKFLOW-BUILD-PIPELINE
 - PostgreSQL is the ONLY database engine — no InMemory/SQLite
-- Docker Compose: postgres:17.5, taskflow-api, taskflow-web
+- Docker Compose: postgres:17-alpine, taskflow-api, taskflow-web
 
 ## 11. Status Protocol
 

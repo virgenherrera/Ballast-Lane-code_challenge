@@ -124,7 +124,7 @@ public async Task<bool> DeleteAsync(Guid id, Guid ownerId, CancellationToken ct)
 
 ### TASKFLOW-BUILD-PIPELINE
 - PostgreSQL is the ONLY database engine — no EF Core InMemory, no SQLite
-- Docker Compose: postgres:17.5, taskflow-api, taskflow-web
+- Docker Compose: postgres:17-alpine, taskflow-api, taskflow-web
 - All dependency versions pinned
 
 ## 11. Status Protocol

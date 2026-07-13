@@ -43,7 +43,7 @@ Read ONLY these files. Do not explore beyond this list.
 
 | File Path | Contents |
 | --- | --- |
-| `docker-compose.yml` | Single `db` service, `postgres:17.5`, healthcheck, named volume |
+| `docker-compose.yml` | Single `db` service, `postgres:17-alpine`, healthcheck, named volume |
 | `.env.example` | Placeholder values for every env var listed below (committed) |
 | `.env` | Real dev values for local use (gitignored — do not commit) |
 
@@ -60,7 +60,7 @@ Read ONLY these files. Do not explore beyond this list.
 ```yaml
 services:
   db:
-    image: postgres:17.5
+    image: postgres:17-alpine
     container_name: taskflow-db
     environment:
       POSTGRES_USER: ${DB_USER}
@@ -135,7 +135,7 @@ Generate the `JWT_SECRET` value with a secure random generator (e.g.
 - Add `taskflow-api` or `taskflow-web` services to `docker-compose.yml` — those arrive in
   later batches once the API and frontend have Dockerfiles
 - Write any Dockerfile — Batch 0 only needs the PostgreSQL container, sourced directly from
-  the pinned `postgres:17.5` image
+  the pinned `postgres:17-alpine` image
 - Expose the DB port to the host without going through the `DB_PORT` env var
 - Hardcode credentials directly in `docker-compose.yml` — every secret-bearing value must come
   from `.env` via `${VAR}` interpolation
@@ -152,7 +152,7 @@ Generate the `JWT_SECRET` value with a secure random generator (e.g.
 
 | Anti-Pattern | Why It Fails | Do Instead |
 | --- | --- | --- |
-| `image: postgres:latest` | Breaks reproducibility — the image can change under you between runs | Pin `image: postgres:17.5` exactly, matching the README Version Manifest |
+| `image: postgres:latest` | Breaks reproducibility — the image can change under you between runs | Pin `image: postgres:17-alpine` exactly, matching the README Version Manifest |
 | `POSTGRES_PASSWORD: TaskFlow2026!` hardcoded in `docker-compose.yml` | Leaks the credential into version control and couples compose file to one environment | Use `${DB_PASSWORD}` interpolated from `.env` |
 | Omitting the healthcheck | Downstream services (API, migrations) can start racing an unready DB | Add a `pg_isready`-based healthcheck with retries |
 | Committing `.env` | Leaks dev secrets (even placeholder-strength ones) into git history | Only commit `.env.example`; confirm `.env` is gitignored |
@@ -182,7 +182,7 @@ default behavior or training-data conventions.
 - Stage 0 (setUp) requires: env vars validated, `docker compose up -d db` succeeds, DB
   connection verified with retry (3x, 2s interval)
 - Docker Compose topology target (full project, not this batch): 3 containers
-  (`postgres:17.5`, `taskflow-api`, `taskflow-web`) — all from pinned images. Batch 0 delivers
+  (`postgres:17-alpine`, `taskflow-api`, `taskflow-web`) — all from pinned images. Batch 0 delivers
   only the `db` container
 - Env vars come from `.env` file, validated at startup — fail-fast with named error on missing
   vars

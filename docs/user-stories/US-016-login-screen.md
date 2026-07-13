@@ -13,25 +13,25 @@ As a **visitor**, I want to **register a new account or log in with existing cre
 
 ## Acceptance Criteria
 
-- [ ] **AC-016.1: Successful login redirects to dashboard**
+- [x] **AC-016.1: Successful login redirects to dashboard**
   - **Given** a visitor on the Login page with a registered email and correct password
   - **When** they submit the login form
   - **Then** the app calls `POST /api/auth/login`, stores the returned access token, and redirects
     to the Task List page
 
-- [ ] **AC-016.2: Failed login shows an inline error**
+- [x] **AC-016.2: Failed login shows an inline error**
   - **Given** a visitor on the Login page with an unregistered email or wrong password
   - **When** they submit the login form
   - **Then** the app displays the generic error message returned by the API (e.g. "Invalid email or
     password.") without navigating away from the Login page
 
-- [ ] **AC-016.3: Registration with client-side validation**
+- [x] **AC-016.3: Registration with client-side validation**
   - **Given** a visitor on the Register page
   - **When** they submit the form with an invalid email, a weak password, or a missing name
   - **Then** the form shows field-level validation errors before any request is sent to
     `POST /api/auth/register`
 
-- [ ] **AC-016.4: Successful registration**
+- [x] **AC-016.4: Successful registration**
   - **Given** a visitor on the Register page with a unique email, valid name, and strong password
   - **When** they submit the form
   - **Then** the app calls `POST /api/auth/register`, and on success either logs the user in

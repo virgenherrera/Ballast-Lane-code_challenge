@@ -43,12 +43,12 @@ flowchart TD
 
 ## User Stories
 
-- [ ] [**US-004** — Create Task](../user-stories/US-004-create-task.md) `Must Have`
-- [ ] [**US-005** — List Tasks](../user-stories/US-005-list-tasks.md) `Must Have`
-- [ ] [**US-006** — View Task Detail](../user-stories/US-006-view-task-detail.md) `Must Have`
-- [ ] [**US-007** — Update Task](../user-stories/US-007-update-task.md) `Must Have`
-- [ ] [**US-008** — Delete Task](../user-stories/US-008-delete-task.md) `Must Have`
-- [ ] [**US-009** — Filter Tasks by Status](../user-stories/US-009-filter-tasks-by-status.md) `Should Have`
+- [x] [**US-004** — Create Task](../user-stories/US-004-create-task.md) `Must Have`
+- [x] [**US-005** — List Tasks](../user-stories/US-005-list-tasks.md) `Must Have`
+- [x] [**US-006** — View Task Detail](../user-stories/US-006-view-task-detail.md) `Must Have`
+- [x] [**US-007** — Update Task](../user-stories/US-007-update-task.md) `Must Have`
+- [x] [**US-008** — Delete Task](../user-stories/US-008-delete-task.md) `Must Have`
+- [x] [**US-009** — Filter Tasks by Status](../user-stories/US-009-filter-tasks-by-status.md) `Should Have`
 
 ## Acceptance Boundaries
 

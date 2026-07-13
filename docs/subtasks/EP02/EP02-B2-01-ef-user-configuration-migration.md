@@ -211,7 +211,7 @@ migrationBuilder.Sql("DROP INDEX IF EXISTS \"IX_users_email_lower\";");
 | Letting EF's Guid-PK convention apply `ValueGeneratedOnAdd` | EF silently regenerates the Domain-constructed UUID v7 | Explicit `.ValueGeneratedNever()` |
 | Storing `Email`/`PasswordHash` as owned entity types (`OwnsOne`) | Adds an unnecessary extra table/complex-type mapping for a single-value VO | Use `HasConversion` to a plain string column |
 | Generating the migration before editing `Configure()` | Migration snapshot won't reflect the final column/index shape | Write `UserConfiguration.cs` completely first, then generate |
-| Using `postgres:latest` anywhere in local testing | Non-reproducible runs | Pin `postgres:17.5` (already the pinned image in `docker-compose.yml`) |
+| Using `postgres:latest` anywhere in local testing | Non-reproducible runs | Pin `postgres:17-alpine` (already the pinned image in `docker-compose.yml`) |
 
 ## 9. Rollback Guidance
 
@@ -221,7 +221,7 @@ migrationBuilder.Sql("DROP INDEX IF EXISTS \"IX_users_email_lower\";");
    without a public factory will not compile inside the conversion lambda
 3. If G2 (migration apply) fails: check the connection string env vars
    (`DB_HOST`/`DB_PORT`/`DB_USER`/`DB_PASSWORD`/`DB_NAME` — NOT a single `DATABASE_URL`,
-   see Compact Rules) and that Docker's `postgres:17.5` container is reachable
+   see Compact Rules) and that Docker's `postgres:17-alpine` container is reachable
 4. If G3 (unique index) fails: confirm the raw `migrationBuilder.Sql(...)` line was added
    to `Up()` — the C#-level `HasIndex` alone will NOT produce case-insensitive behavior
 5. If G4 fails: remove any InMemory/SQLite reference
@@ -250,7 +250,7 @@ migrationBuilder.Sql("DROP INDEX IF EXISTS \"IX_users_email_lower\";");
 ### TASKFLOW-BUILD-PIPELINE
 
 - PostgreSQL is the ONLY database engine — no InMemory/SQLite
-- Docker Compose: `postgres:17.5`, `taskflow-api`, `taskflow-web`
+- Docker Compose: `postgres:17-alpine`, `taskflow-api`, `taskflow-web`
 - Env vars are discrete (`DB_HOST`, `DB_PORT`, `DB_USER`, `DB_PASSWORD`, `DB_NAME`), never a
   single `DATABASE_URL` connection string — this project's `EnvVarValidator` and
   `Program.cs` build the Npgsql connection string from these five variables

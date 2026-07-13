@@ -22,17 +22,17 @@ of my device**.
     horizontal scrolling or overlapping content — satisfying the challenge's "responsive and
     user-friendly" requirement
 
-- [ ] **AC-019.2: Navigation between views**
+- [x] **AC-019.2: Navigation between views**
   - **Given** an authenticated user anywhere in the app
   - **When** they use the header/nav to move between Task List and Task Form
   - **Then** the Layout component's router outlet renders the target page without a full page reload
 
-- [ ] **AC-019.3: Logout clears auth state**
+- [x] **AC-019.3: Logout clears auth state**
   - **Given** an authenticated user
   - **When** they select "Log out" from the nav
   - **Then** the app clears the stored JWT and Auth State, and redirects to the Login page
 
-- [ ] **AC-019.4: Protected routes redirect to login**
+- [x] **AC-019.4: Protected routes redirect to login**
   - **Given** a visitor with no valid token (or an expired token)
   - **When** they navigate directly to a protected route (Task List or Task Form URL)
   - **Then** the Auth Guard intercepts navigation and redirects to the Login page before any

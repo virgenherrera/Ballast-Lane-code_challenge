@@ -45,7 +45,7 @@ If any pre-condition fails, report BLOCKED.
 
 | File Path                                                                   | Contents |
 | --------------------------------------------------------------------------- | -------- |
-| `tests/TaskFlow.IntegrationTests/Common/TaskFlowWebApplicationFactory.cs`   | WebApplicationFactory<Program> subclass: spins up Testcontainers.PostgreSql (postgres:17.5), overrides DB connection string, runs migrations on startup |
+| `tests/TaskFlow.IntegrationTests/Common/TaskFlowWebApplicationFactory.cs`   | WebApplicationFactory<Program> subclass: spins up Testcontainers.PostgreSql (postgres:17-alpine), overrides DB connection string, runs migrations on startup |
 | `tests/TaskFlow.IntegrationTests/Common/IntegrationTestBase.cs`             | Base class with IAsyncLifetime, exposes HttpClient, database reset between tests |
 | `tests/TaskFlow.IntegrationTests/HarnessSmokeTests.cs`                      | 1 smoke test hitting GET /health to prove the harness works |
 
@@ -74,7 +74,7 @@ builder.Services.AddSingleton<ICurrentUserContext, SeedCurrentUserContext>();
 public class TaskFlowWebApplicationFactory : WebApplicationFactory<Program>, IAsyncLifetime
 {
     private readonly PostgreSqlContainer _postgres = new PostgreSqlBuilder()
-        .WithImage("postgres:17.5")
+        .WithImage("postgres:17-alpine")
         .Build();
     // Override ConfigureWebHost to replace connection string
     // Apply migrations in InitializeAsync
@@ -113,7 +113,7 @@ public class TaskFlowWebApplicationFactory : WebApplicationFactory<Program>, IAs
 | ------------------------------------------------ | ---------------------------------------------------- | ----------------------------------------- |
 | Setting CascadeMode per-validator "just to be safe" | Duplicated config masks whether the global default works | Set exactly once in Program.cs         |
 | Writing CreateTask tests here                    | Conflates harness reliability with feature correctness | Defer all CreateTask assertions to 04b    |
-| Using `postgres:latest`                          | Non-reproducible across CI runs                       | Pin `postgres:17.5`                       |
+| Using `postgres:latest`                          | Non-reproducible across CI runs                       | Pin `postgres:17-alpine`                       |
 | Registering ICurrentUserContext as Scoped        | SeedCurrentUserContext is stateless, no per-request state in Delivery 1 | Register as Singleton |
 
 ## 9. Rollback Guidance
@@ -143,7 +143,7 @@ public class TaskFlowWebApplicationFactory : WebApplicationFactory<Program>, IAs
 
 ### TASKFLOW-BUILD-PIPELINE
 - PostgreSQL is the ONLY database engine — no InMemory/SQLite
-- Docker Compose: postgres:17.5, taskflow-api, taskflow-web
+- Docker Compose: postgres:17-alpine, taskflow-api, taskflow-web
 
 ## 11. Status Protocol
 

@@ -178,7 +178,7 @@ HTTP — mirror `TaskRepositoryTests` structure exactly):
 | Comparing `Email` via `.Value == emailString` manually in C# before querying | Bypasses EF Core translation, forces full table load into memory | Let EF Core translate the VO equality via the `HasConversion` mapping from `EP02-B2-01` |
 | Using `AsNoTracking()` on `AddAsync`/mutation paths | Breaks change tracking needed for `SaveChangesAsync` | Reserve `AsNoTracking()` for read-only queries only (see `TaskRepository.ListAsync` for the pattern) |
 | Writing a brand-new WebApplicationFactory subclass for this test | Duplicates `TaskFlowWebApplicationFactory`/`TaskRepositoryTests` patterns unnecessarily | Follow `TaskRepositoryTests`'s local, lightweight `IAsyncLifetime` + `CreateDbContext()` pattern |
-| Using `postgres:latest` in the Testcontainers fixture | Non-reproducible CI runs | Pin `postgres:17.5` |
+| Using `postgres:latest` in the Testcontainers fixture | Non-reproducible CI runs | Pin `postgres:17-alpine` |
 
 ## 9. Rollback Guidance
 
@@ -218,7 +218,7 @@ HTTP — mirror `TaskRepositoryTests` structure exactly):
 ### TASKFLOW-BUILD-PIPELINE
 
 - PostgreSQL is the ONLY database engine — no InMemory/SQLite
-- Docker Compose: `postgres:17.5`, `taskflow-api`, `taskflow-web`
+- Docker Compose: `postgres:17-alpine`, `taskflow-api`, `taskflow-web`
 - Query mechanism: LINQ only via `IQueryable<T>` — raw SQL (`FromSqlRaw`, `ExecuteSqlRaw`,
   `NpgsqlCommand`) is forbidden (Decision #11)
 

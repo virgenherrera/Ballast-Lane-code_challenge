@@ -31,7 +31,7 @@ flowchart TD
     end
 
     subgraph Infrastructure["Infrastructure — TaskFlow.Infrastructure"]
-        I1["EF Core 10.0.9 — DbContext & Repositories (LINQ only)"]
+        I1["EF Core 10.0.4 — DbContext & Repositories (LINQ only)"]
         I2["JWT Auth — Token Generation & Validation"]
         I3["External Services"]
     end

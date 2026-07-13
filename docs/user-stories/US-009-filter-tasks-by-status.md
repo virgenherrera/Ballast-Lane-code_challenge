@@ -12,57 +12,57 @@ As an **authenticated user**, I want to **filter my tasks by status** so that **
 
 ## Definition of Ready
 
-- [ ] US-005 list endpoint is implemented and stable (this story extends it with a status filter query parameter, not a separate endpoint)
-- [ ] Valid status enum values confirmed as exact strings: 'Pending', 'In Progress', 'Completed' (case-sensitive exact match; lowercase 'pending' or 'PENDING' must return 400)
-- [ ] 400 error response for invalid status confirmed per api-contract.md Section 7: details:[{field:'status', issue:"Must be one of: 'Pending', 'In Progress', 'Completed'."}]
-- [ ] US-006 detail endpoint is implemented (required for ViewTaskDetail_FromList e2e test)
-- [ ] FluentValidation CascadeMode.Continue confirmed: invalid status AND invalid page in the same request return details entries for both fields
-- [ ] Confirmed this story does NOT introduce a new endpoint -- it adds a query parameter to the existing GET /api/tasks from US-005, reusing ListTasksQuery/ListTasksQueryHandler
+- [x] US-005 list endpoint is implemented and stable (this story extends it with a status filter query parameter, not a separate endpoint)
+- [x] Valid status enum values confirmed as exact strings: 'Pending', 'In Progress', 'Completed' (case-sensitive exact match; lowercase 'pending' or 'PENDING' must return 400)
+- [x] 400 error response for invalid status confirmed per api-contract.md Section 7: details:[{field:'status', issue:"Must be one of: 'Pending', 'In Progress', 'Completed'."}]
+- [x] US-006 detail endpoint is implemented (required for ViewTaskDetail_FromList e2e test)
+- [x] FluentValidation CascadeMode.Continue confirmed: invalid status AND invalid page in the same request return details entries for both fields
+- [x] Confirmed this story does NOT introduce a new endpoint -- it adds a query parameter to the existing GET /api/tasks from US-005, reusing ListTasksQuery/ListTasksQueryHandler
 - [ ] Frontend Angular task list page UX confirmed: filter control is a select/dropdown with options All, Pending, In Progress, Completed; 'All' maps to omitted status param
-- [ ] Filter state reflected in and restored from route query params for deep-link/bookmark support
+- [x] Filter state reflected in and restored from route query params for deep-link/bookmark support
 
 ## Acceptance Criteria
 
-- [ ] **AC-009.1: Filter by single status returns only matching own tasks**
+- [x] **AC-009.1: Filter by single status returns only matching own tasks**
   - **Given** tasks exist in Pending, In Progress, and Completed statuses for the owner
   - **When** filtering by status=Pending
   - **Then** only tasks with status exactly 'Pending' owned by the caller are returned
 
-- [ ] **AC-009.2: Filter with no matches returns empty items, not error**
+- [x] **AC-009.2: Filter with no matches returns empty items, not error**
   - **Given** no tasks match the requested status filter for the current owner
   - **When** requesting the filtered list
   - **Then** returns HTTP 200 with items: [] and paging.total: 0, not an error
 
-- [ ] **AC-009.3: Invalid status value returns 400**
+- [x] **AC-009.3: Invalid status value returns 400**
   - **Given** an invalid status string (not one of Pending, In Progress, Completed) including case mismatches ('pending', 'PENDING'), trailing/leading whitespace ('Pending '), or unknown values ('Done')
   - **When** requesting the filtered list
   - **Then** returns HTTP 400 with details:[{field:'status', issue:"Must be one of: 'Pending', 'In Progress', 'Completed'."}]
 
-- [ ] **AC-009.4: No filter returns all statuses**
+- [x] **AC-009.4: No filter returns all statuses**
   - **Given** no status query param is supplied
   - **When** requesting the list
   - **Then** all tasks are returned regardless of status, identical behavior to US-005 AC-005.1
 
-- [ ] **AC-009.5: Filter preserved across paging navigation**
+- [x] **AC-009.5: Filter preserved across paging navigation**
   - **Given** a status filter is active and the user navigates to a next/prev page via paging links
   - **When** following paging.next or paging.prev
   - **Then** the resulting list still reflects the active filter; paging.total reflects only the count of tasks matching the filter
 
-- [ ] **AC-009.6: Filter restored from deep-linked URL on load**
+- [x] **AC-009.6: Filter restored from deep-linked URL on load**
   - **Given** a user loads a URL with a status query param already set (e.g., deep link or bookmark)
   - **When** TaskListComponent initializes
   - **Then** the filter control reflects that status on load and the initial request includes the status param
 
 ## Definition of Done
 
-- [ ] ListTasksQueryValidator extended with status enum validation rule (FluentValidation, CascadeMode.Continue) returning 400 with valid enum values in details
-- [ ] Status filter applied at the repository LINQ level (WHERE clause) before pagination, not in-memory post-filter; paging.total reflects post-filter count
-- [ ] Invalid status values rejected at validation layer before reaching Application/Domain
+- [x] ListTasksQueryValidator extended with status enum validation rule (FluentValidation, CascadeMode.Continue) returning 400 with valid enum values in details
+- [x] Status filter applied at the repository LINQ level (WHERE clause) before pagination, not in-memory post-filter; paging.total reflects post-filter count
+- [x] Invalid status values rejected at validation layer before reaching Application/Domain
 - [ ] Frontend Angular TaskStatusFilterComponent wired to TaskListComponent; selecting a filter re-requests with status param and resets to page 1
-- [ ] Filter state preserved in URL query params; deep links restore filter on load
-- [ ] Empty state distinguishes filtered-empty ('No tasks with this status') from unfiltered-empty ('No tasks yet')
-- [ ] All 4 existing backend tests pass plus new filter validation tests
-- [ ] All 4 e2e tests pass against running full stack (API + Angular) -- not mocked
+- [x] Filter state preserved in URL query params; deep links restore filter on load
+- [x] Empty state distinguishes filtered-empty ('No tasks with this status') from unfiltered-empty ('No tasks yet')
+- [x] All 4 existing backend tests pass plus new filter validation tests
+- [x] All 4 e2e tests pass against running full stack (API + Angular) -- not mocked
 - [ ] Swagger/OpenAPI updated to document the status enum values for the query param
 - [ ] Code reviewed and merged to feature branch
 

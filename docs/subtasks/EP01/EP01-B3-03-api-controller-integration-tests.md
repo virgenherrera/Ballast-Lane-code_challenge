@@ -202,7 +202,7 @@ public async Task DeleteTask_SuccessResponse_HasEmptyBodyAndNoContentType()
 - New features require corresponding tests FIRST (TDD: Red/Green/Refactor)
 - Breaking an existing test is a blocking issue
 - Tests map directly to user story acceptance criteria
-- PostgreSQL via Testcontainers (postgres:17.5) — never InMemory/SQLite
+- PostgreSQL via Testcontainers (postgres:17-alpine) — never InMemory/SQLite
 
 ### TASKFLOW-ANTI-DRIFT
 - Every decision must trace back to a requirement or AC
@@ -212,7 +212,7 @@ public async Task DeleteTask_SuccessResponse_HasEmptyBodyAndNoContentType()
 
 ### TASKFLOW-BUILD-PIPELINE
 - PostgreSQL is the ONLY database engine — no EF Core InMemory, no SQLite
-- Docker Compose: postgres:17.5, taskflow-api, taskflow-web
+- Docker Compose: postgres:17-alpine, taskflow-api, taskflow-web
 - Docker credential workaround: scratch DOCKER_CONFIG with credsStore omitted
 
 ## 11. Status Protocol

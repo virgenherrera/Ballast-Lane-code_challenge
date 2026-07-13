@@ -23,7 +23,7 @@ The Compose stack orchestrates exactly 3 containers: `postgres` (database), `tas
 %% Docker Compose topology — 3 containers, all from pinned images
 flowchart TD
     subgraph compose["docker compose up"]
-        PG[("postgres:17.5\nPostgreSQL")]
+        PG[("postgres:17-alpine\nPostgreSQL")]
         API["taskflow-api\n(.NET 10 runtime)\nMulti-stage build"]
         WEB["taskflow-web\n(nginx + Angular static)"]
     end
@@ -38,7 +38,7 @@ flowchart TD
 
 | Container | Base Image | Purpose |
 | --------- | ---------- | ------- |
-| `postgres` | `postgres:17.5` (pinned) | Database — healthcheck via `pg_isready` |
+| `postgres` | `postgres:17-alpine` (pinned) | Database — healthcheck via `pg_isready` |
 | `taskflow-api` | Multi-stage: .NET SDK → ASP.NET runtime (.NET 10) | Backend API — validates env vars, connects to `postgres` |
 | `taskflow-web` | Multi-stage: Node → nginx | Frontend — serves Angular static build, proxies `/api/*` to `taskflow-api` |
 
@@ -49,7 +49,7 @@ flowchart TD
 sequenceDiagram
     autonumber
     participant Compose as docker compose up
-    participant PG as postgres:17.5
+    participant PG as postgres:17-alpine
     participant API as taskflow-api
     participant WEB as taskflow-web
 
@@ -67,42 +67,42 @@ sequenceDiagram
 
 ## Acceptance Criteria
 
-- [ ] **AC-013.1: Single command starts everything**
+- [x] **AC-013.1: Single command starts everything**
   - **Given** a clean clone of the repository with only Docker installed
   - **When** the evaluator runs `docker compose up`
   - **Then** the backend API, frontend, and PostgreSQL database services all start without any
     additional manual setup step
 
-- [ ] **AC-013.2: Backend API is reachable**
+- [x] **AC-013.2: Backend API is reachable**
   - **Given** the Compose stack is running
   - **When** the evaluator sends a request to the documented backend port
   - **Then** the API responds successfully
 
-- [ ] **AC-013.3: Frontend is reachable**
+- [x] **AC-013.3: Frontend is reachable**
   - **Given** the Compose stack is running
   - **When** the evaluator opens the documented frontend port in a browser
   - **Then** the Angular application loads and can communicate with the backend API
 
-- [ ] **AC-013.4: Health checks confirm readiness**
+- [x] **AC-013.4: Health checks confirm readiness**
   - **Given** the Compose stack has just started
   - **When** dependent services (e.g., `taskflow-api` depending on `postgres`, `taskflow-web`
     depending on `taskflow-api`) start up
   - **Then** Docker Compose health checks confirm each service is ready before dependent services
     are considered started
 
-- [ ] **AC-013.5: Full teardown**
+- [x] **AC-013.5: Full teardown**
   - **Given** the Compose stack is running
   - **When** the evaluator runs `docker compose down`
   - **Then** all containers, networks, and (unless volumes are explicitly preserved) associated
     resources are removed cleanly
 
-- [ ] **AC-013.6: Environment variable fail-fast validation**
+- [x] **AC-013.6: Environment variable fail-fast validation**
   - **Given** the `taskflow-api` container starting up
   - **When** it reads environment variables from `.env`
   - **Then** it validates all required vars are present and non-empty, and crashes immediately
     with the missing var name if any are absent
 
-- [ ] **AC-013.7: Nginx serves the Angular SPA fallback route**
+- [x] **AC-013.7: Nginx serves the Angular SPA fallback route**
   - **Given** the `taskflow-web` nginx configuration
   - **When** the evaluator refreshes the browser on a deep Angular client-side route (e.g.
     `/tasks/42`)

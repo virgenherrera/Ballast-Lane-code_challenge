@@ -94,7 +94,7 @@ flowchart LR
 
 ## Decision 3: ORM / Data Access
 
-- [x] Entity Framework Core 10.0.9
+- [x] Entity Framework Core 10.0.4
 - [ ] Dapper
 - [ ] ADO.NET (raw)
 
@@ -102,9 +102,9 @@ flowchart LR
 
 | Package | Version | Role |
 | ------- | ------- | ---- |
-| `Microsoft.EntityFrameworkCore` | 10.0.9 | ORM core |
+| `Microsoft.EntityFrameworkCore` | 10.0.4 | ORM core |
 | `Npgsql.EntityFrameworkCore.PostgreSQL` | 10.0.3 | PostgreSQL provider |
-| `Microsoft.EntityFrameworkCore.Design` | 10.0.9 | Migrations CLI tooling |
+| `Microsoft.EntityFrameworkCore.Design` | 10.0.4 | Migrations CLI tooling |
 
 **Why**: EF Core is the standard data-access technology for ASP.NET and fits Clean Architecture
 naturally: the infrastructure layer implements repository interfaces defined in the domain, and EF
@@ -148,7 +148,7 @@ swapped independently, and a mechanism that is the de facto standard for SPA-to-
 - [ ] React
 
 **Why**: The candidate has deeper hands-on expertise in Angular. The CLI scaffolds a
-production-ready project with routing, SCSS, and a clean module structure out of the box. Adding
+production-ready project with routing, Tailwind CSS, and a clean module structure out of the box. Adding
 Vitest, Tailwind, ESLint, Prettier, and pnpm on top of the scaffold produces a fully-wired setup
 that removes an entire category of tooling risk under a fixed deadline and lets effort go toward
 the actual CRUD features and Clean Architecture on the backend, which is what the exercise
@@ -213,7 +213,7 @@ SDK/Node version" failures entirely and matches how the system would realistical
 %% Docker Compose service topology
 flowchart TD
     subgraph compose["docker compose up"]
-        PG[("postgres:17.5\nPostgreSQL")]
+        PG[("postgres:17-alpine\nPostgreSQL")]
         API["taskflow-api\n(.NET 10 runtime)"]
         WEB["taskflow-web\n(nginx + Angular static)"]
     end
@@ -231,7 +231,7 @@ flowchart TD
 
 | Container | Base Image | Role |
 | --------- | ---------- | ---- |
-| `postgres` | `postgres:17.5` (exact tag, pinned) | Database — migrations run on startup, seed data loaded |
+| `postgres` | `postgres:17-alpine` (exact tag, pinned) | Database — migrations run on startup, seed data loaded |
 | `taskflow-api` | Multi-stage: SDK build → ASP.NET runtime | Backend API — connects to `postgres` via env vars |
 | `taskflow-web` | Multi-stage: Node build → nginx | Frontend — serves Angular static build, proxies `/api/*` to `taskflow-api` |
 
@@ -255,6 +255,21 @@ against.
 deliberate, manual action instead of happening silently on next install. We gain full reproducibility
 and eliminate an entire failure class where a floating version resolves to a newer, incompatible
 release right before or during evaluation.
+
+**Supply-chain security context (npm/pnpm)**: Caret ranges (`^`) in `package.json` allow automatic
+minor/patch upgrades — which is exactly how several high-profile npm supply-chain attacks propagated:
+
+| Incident | Year | Impact |
+|----------|------|--------|
+| **event-stream** | 2018 | Maintainer transferred ownership; new owner injected a cryptocurrency-stealing payload in a patch release. `^` users received the malicious version automatically. |
+| **ua-parser-js** | 2021 | Compromised npm account published cryptominer/password-stealer in three patch versions (0.7.29, 0.8.0, 1.0.0). 7M+ weekly downloads affected. |
+| **colors + faker** | 2022 | Maintainer deliberately sabotaged both packages with infinite-loop code in new minor versions. Any project with `^` pulled the corrupted releases on next install. |
+| **node-ipc** | 2022 | Maintainer added geopolitically-motivated destructive code (file overwriting) in a minor version. Propagated via `^` to downstream dependents including Vue CLI. |
+
+Exact pinning (`"tailwindcss": "4.3.2"` not `"^4.3.2"`) ensures that `pnpm install` resolves the
+exact audited version, regardless of what has been published upstream since the lockfile was
+generated. Combined with `pnpm-lock.yaml` integrity hashes, this eliminates the attack surface
+where a compromised patch release auto-propagates into the dependency tree.
 
 ## Contract Validation
 
@@ -359,7 +374,7 @@ side can silently drift from the documented contract without a test failing.
 |---------------------|-------------------------------------|--------------------------------------------------------------|
 | .NET version        | .NET 10 (latest LTS)                | Matches verified installed SDK                               |
 | Database            | PostgreSQL (Docker)                 | Same engine everywhere — full fidelity, no mismatch          |
-| ORM                 | Entity Framework Core 10.0.9        | Clean Architecture fit + migrations-as-seeding               |
+| ORM                 | Entity Framework Core 10.0.4        | Clean Architecture fit + migrations-as-seeding               |
 | DB provider         | Npgsql.EntityFrameworkCore.PostgreSQL 10.0.3 | EF Core ↔ PostgreSQL bridge                          |
 | Query mechanism     | LINQ only (no raw SQL)              | All data ops via IQueryable — change tracking, testability   |
 | Auth                | JWT Bearer                          | Stateless SPA/API separation                                 |

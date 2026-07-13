@@ -171,7 +171,7 @@ test.describe('List Tasks Pagination', () => {
 - ALL tests must pass before any commit
 - E2E tests run against the full stack (API + Angular), not mocked
 - Tests map directly to user story acceptance criteria
-- PostgreSQL via Docker Compose (postgres:17.5)
+- PostgreSQL via Docker Compose (postgres:17-alpine)
 
 ### TASKFLOW-ANTI-DRIFT
 - Every decision must trace back to a requirement or AC
@@ -180,7 +180,7 @@ test.describe('List Tasks Pagination', () => {
 - Only the 4 named test cases are in scope — no speculative tests for unimplemented features
 
 ### TASKFLOW-BUILD-PIPELINE
-- Docker Compose: postgres:17.5, taskflow-api, taskflow-web
+- Docker Compose: postgres:17-alpine, taskflow-api, taskflow-web
 - Docker credential workaround: scratch DOCKER_CONFIG with credsStore omitted
 - E2E runner: Playwright via pnpm in the `e2e/` directory
 

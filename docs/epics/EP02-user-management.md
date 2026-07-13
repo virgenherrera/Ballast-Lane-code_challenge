@@ -44,9 +44,9 @@ sequenceDiagram
 
 ## User Stories
 
-- [ ] [**US-001** — User Registration](../user-stories/US-001-user-registration.md) `Must Have`
-- [ ] [**US-002** — User Login](../user-stories/US-002-user-login.md) `Must Have`
-- [ ] [**US-003** — Protected Access](../user-stories/US-003-protected-access.md) `Must Have`
+- [x] [**US-001** — User Registration](../user-stories/US-001-user-registration.md) `Must Have`
+- [x] [**US-002** — User Login](../user-stories/US-002-user-login.md) `Must Have`
+- [x] [**US-003** — Protected Access](../user-stories/US-003-protected-access.md) `Must Have`
 
 ## Acceptance Boundaries
 

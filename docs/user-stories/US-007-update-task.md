@@ -12,73 +12,73 @@ As an **authenticated user**, I want to **update an existing task** so that **I 
 
 ## Definition of Ready
 
-- [ ] US-004 (Create Task) is implemented and merged -- Update Task depends on existing task entity, repository interfaces, and persistence logic.
-- [ ] Task entity schema confirmed: id (UUID v7), ownerId (UUID v7), title (string), description (string, nullable), status (enum: Pending | In Progress | Completed), dueDate (DateTime?, nullable), createdAt (DateTime), updatedAt (DateTime).
-- [ ] Hardcoded/seed ownerId strategy for Delivery 1 confirmed and documented -- AC-007.5 (404 for another user's task) is testable via a second seeded ownerId without auth.
-- [ ] Status enum values (Pending, In Progress, Completed) finalized and match Create Task story exactly -- no drift between US-004 and US-007.
-- [ ] Error shape contract confirmed: { status, error, message, details: [{ field, issue }] } -- applies to both 400 and 404 responses, implemented as shared middleware/filter.
-- [ ] Business decision confirmed and documented: past due dates are explicitly ALLOWED on update (differs from Create Task validation which rejects past dates per AC-004.4).
-- [ ] PATCH partial-update semantics agreed: request body fields are optional; a field's ABSENCE means 'do not touch', not 'set to null/default'. For Delivery 1, explicit null for description/dueDate is treated the same as omission (not a clear operation) -- explicit-null-clears-field deferred to a follow-up.
-- [ ] API contract (PATCH /api/tasks/{id}, request/response DTOs) documented in docs/architecture/api-contract.md section 4.4.
-- [ ] FluentValidation CascadeMode.Continue convention confirmed for partial-update validators (collect all field errors, not fail-fast).
-- [ ] Test data builder/seed for 'another user's task' fixture available or creatable in IntegrationTests project (needed for AC-007.5).
+- [x] US-004 (Create Task) is implemented and merged -- Update Task depends on existing task entity, repository interfaces, and persistence logic.
+- [x] Task entity schema confirmed: id (UUID v7), ownerId (UUID v7), title (string), description (string, nullable), status (enum: Pending | In Progress | Completed), dueDate (DateTime?, nullable), createdAt (DateTime), updatedAt (DateTime).
+- [x] Hardcoded/seed ownerId strategy for Delivery 1 confirmed and documented -- AC-007.5 (404 for another user's task) is testable via a second seeded ownerId without auth.
+- [x] Status enum values (Pending, In Progress, Completed) finalized and match Create Task story exactly -- no drift between US-004 and US-007.
+- [x] Error shape contract confirmed: { status, error, message, details: [{ field, issue }] } -- applies to both 400 and 404 responses, implemented as shared middleware/filter.
+- [x] Business decision confirmed and documented: past due dates are explicitly ALLOWED on update (differs from Create Task validation which rejects past dates per AC-004.4).
+- [x] PATCH partial-update semantics agreed: request body fields are optional; a field's ABSENCE means 'do not touch', not 'set to null/default'. For Delivery 1, explicit null for description/dueDate is treated the same as omission (not a clear operation) -- explicit-null-clears-field deferred to a follow-up.
+- [x] API contract (PATCH /api/tasks/{id}, request/response DTOs) documented in docs/architecture/api-contract.md section 4.4.
+- [x] FluentValidation CascadeMode.Continue convention confirmed for partial-update validators (collect all field errors, not fail-fast).
+- [x] Test data builder/seed for 'another user's task' fixture available or creatable in IntegrationTests project (needed for AC-007.5).
 
 ## Acceptance Criteria
 
-- [ ] **AC-007.1: Update title**
+- [x] **AC-007.1: Update title**
   - **Given** an existing task owned by the requesting (seed) user
   - **When** the title field is included in the PATCH payload with a new non-empty value
   - **Then** the task's title is updated, the response returns 200 with the full task object reflecting the new title, and updatedAt is refreshed to the current UTC time
 
-- [ ] **AC-007.2: Update status (free-form transition)**
+- [x] **AC-007.2: Update status (free-form transition)**
   - **Given** an existing task owned by the requesting user and a valid status value (Pending, In Progress, or Completed)
   - **When** the status field is changed via PATCH, regardless of the current status (free-form transition, no state machine restriction)
   - **Then** the task's status is updated, the response returns 200 with the new status and updatedAt refreshed
 
-- [ ] **AC-007.3: Update description and/or dueDate (past date allowed)**
+- [x] **AC-007.3: Update description and/or dueDate (past date allowed)**
   - **Given** an existing task owned by the requesting user with description and/or dueDate included in the PATCH payload
   - **When** they are changed (including dueDate set to a past date, which is explicitly allowed on update unlike create)
   - **Then** the fields are updated, the response returns 200 with the new values and updatedAt refreshed; fields not included in the request remain unchanged
 
-- [ ] **AC-007.4: Invalid status enum value rejected**
+- [x] **AC-007.4: Invalid status enum value rejected**
   - **Given** a status value not in the enum (e.g. 'Done', 'Archived', empty string, numeric, or malformed casing)
   - **When** it is submitted via PATCH
   - **Then** the request is rejected with 400 and the details array includes field 'status' with an issue message listing the accepted enum values (Pending, In Progress, Completed)
 
-- [ ] **AC-007.5: 404 for another user's task or non-existent task**
+- [x] **AC-007.5: 404 for another user's task or non-existent task**
   - **Given** a task owned by a different (seed) user, OR a task ID that does not exist at all (well-formed UUID)
   - **When** any PATCH is attempted against that task's id
   - **Then** a 404 is returned with the standard error shape -- the response body is structurally identical between both cases so no ownership information is disclosed
 
-- [ ] **AC-007.6: Empty or whitespace-only title rejected**
+- [x] **AC-007.6: Empty or whitespace-only title rejected**
   - **Given** the title field is included in the PATCH payload but is empty string or whitespace-only
   - **When** PATCH is submitted
   - **Then** the request is rejected with 400 and details includes field 'title' with a non-empty validation issue
 
-- [ ] **AC-007.7: Empty payload rejected**
+- [x] **AC-007.7: Empty payload rejected**
   - **Given** a PATCH payload contains no updatable fields at all (empty body {}, or body with only unrecognized fields)
   - **When** the request is submitted
   - **Then** the request is rejected with 400 indicating at least one field is required -- a no-op update is not a valid mutation
 
-- [ ] **AC-007.8: Malformed task id rejected with 400**
+- [x] **AC-007.8: Malformed task id rejected with 400**
   - **Given** a task id in the route that is syntactically invalid (not a parseable UUID/GUID)
   - **When** PATCH is submitted to that id
   - **Then** a 400 (not 404) is returned indicating the id format is invalid, distinguishing malformed input from a valid-but-missing resource
 
 ## Definition of Done
 
-- [ ] All ACs (AC-007.1 through AC-007.8) pass with automated tests at the appropriate layer (Domain unit, Application unit, Integration, E2E).
-- [ ] PATCH /api/tasks/{id} implemented supporting true partial update semantics -- omitted fields are left untouched.
-- [ ] Response 200 returns the full task object reflecting only the changed fields, with updatedAt refreshed to current UTC time.
-- [ ] 400 responses list valid enum values for status in the details array when an invalid status is submitted.
-- [ ] 404 returned for both non-existent task IDs and tasks owned by another seed user -- response body is structurally identical between the two cases (no information leak).
-- [ ] FluentValidation validator configured with CascadeMode.Continue so multiple simultaneous validation failures return all errors in a single 400 response.
-- [ ] Domain entity exposes explicit update methods enforcing invariants -- Application layer never sets entity properties directly.
-- [ ] Ownership check reuses the exact same helper/specification used by prior task stories (US-005 Get, US-006 View Detail, US-008 Delete) -- single source of truth for 404-on-mismatch.
-- [ ] updatedAt set server-side (UtcNow) inside entity method or handler, never accepted from request payload.
-- [ ] Domain layer has zero new external package references introduced by this story.
-- [ ] E2E test UpdateTask_ChangeStatusFromUI_ReflectsInListImmediately passes against the running Angular + API stack.
-- [ ] No regression in US-004/US-005/US-006/US-008 (Create/List/Get/Delete) test suites.
+- [x] All ACs (AC-007.1 through AC-007.8) pass with automated tests at the appropriate layer (Domain unit, Application unit, Integration, E2E).
+- [x] PATCH /api/tasks/{id} implemented supporting true partial update semantics -- omitted fields are left untouched.
+- [x] Response 200 returns the full task object reflecting only the changed fields, with updatedAt refreshed to current UTC time.
+- [x] 400 responses list valid enum values for status in the details array when an invalid status is submitted.
+- [x] 404 returned for both non-existent task IDs and tasks owned by another seed user -- response body is structurally identical between the two cases (no information leak).
+- [x] FluentValidation validator configured with CascadeMode.Continue so multiple simultaneous validation failures return all errors in a single 400 response.
+- [x] Domain entity exposes explicit update methods enforcing invariants -- Application layer never sets entity properties directly.
+- [x] Ownership check reuses the exact same helper/specification used by prior task stories (US-005 Get, US-006 View Detail, US-008 Delete) -- single source of truth for 404-on-mismatch.
+- [x] updatedAt set server-side (UtcNow) inside entity method or handler, never accepted from request payload.
+- [x] Domain layer has zero new external package references introduced by this story.
+- [x] E2E test UpdateTask_ChangeStatusFromUI_ReflectsInListImmediately passes against the running Angular + API stack.
+- [x] No regression in US-004/US-005/US-006/US-008 (Create/List/Get/Delete) test suites.
 - [ ] Code reviewed and merged to feature/EP01-task-management with green CI (unit + integration + e2e).
 
 ## Deliverables

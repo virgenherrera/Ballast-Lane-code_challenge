@@ -24,7 +24,7 @@ ESLint, and Prettier (see
 [Tech Stack — Decision 5](../architecture/tech-stack.md#decision-5-frontend-framework)):
 
 ```bash
-pnpm dlx @angular/cli new taskflow-web --style=scss --routing --ssr=false
+pnpm dlx @angular/cli new taskflow-web --style=css --routing --ssr=false
 ```
 
 ## Frontend Structure
@@ -93,10 +93,10 @@ sequenceDiagram
 
 ## User Stories
 
-- [ ] [**US-016** — Login & Registration Screen](../user-stories/US-016-login-screen.md) `Must Have`
-- [ ] [**US-017** — Task List View (Dashboard)](../user-stories/US-017-task-list-view.md) `Must Have`
-- [ ] [**US-018** — Task Form (Create/Edit)](../user-stories/US-018-task-form.md) `Must Have`
-- [ ] [**US-019** — Responsive Layout & Navigation](../user-stories/US-019-responsive-layout.md) `Must Have`
+- [x] [**US-016** — Login & Registration Screen](../user-stories/US-016-login-screen.md) `Must Have`
+- [x] [**US-017** — Task List View (Dashboard)](../user-stories/US-017-task-list-view.md) `Must Have`
+- [x] [**US-018** — Task Form (Create/Edit)](../user-stories/US-018-task-form.md) `Must Have`
+- [x] [**US-019** — Responsive Layout & Navigation](../user-stories/US-019-responsive-layout.md) `Must Have`
 
 ## Acceptance Boundaries
 

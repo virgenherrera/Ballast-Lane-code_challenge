@@ -12,47 +12,47 @@ As a **registered user**, I want to **log in with my credentials** so that **I c
 
 ## Definition of Ready (DOR)
 
-- [ ] Generic error message text finalized and identical for both 'user not found' and 'wrong password' cases. Exact string approved by PO. Must be a named constant, not inline strings.
-- [ ] AuthenticateUserResult DTO shape frozen: accessToken (string), tokenType ("Bearer"), expiresIn (900), user summary {id, email, name}.
-- [ ] Timing-attack mitigation (Decision #7): AuthenticateUserHandler MUST call IPasswordHasher.Verify even when user not found, using a dummy/constant PasswordHash. Application-layer responsibility.
-- [ ] JWT claim set frozen: sub (UUID v7), email, name. No additional claims in Batch 1.
-- [ ] expiresIn source of truth: 900 seconds (15 min per Decision #2). Named constant, not hardcoded in multiple places.
-- [ ] Rate limiting (5/min/IP) confirmed as Batch 3+/API middleware scope. Handler carries no rate-limit logic.
-- [ ] Email casing at login: consistent with registration — reject uppercase per Decision #4.
-- [ ] AuthenticateUserValidator checks presence only (email, password not empty). Does NOT validate password strength.
-- [ ] IPasswordHasher.Verify(string, PasswordHash) -> bool signature frozen and compatible with both real-user and dummy-hash paths.
+- [x] Generic error message text finalized and identical for both 'user not found' and 'wrong password' cases. Exact string approved by PO. Must be a named constant, not inline strings.
+- [x] AuthenticateUserResult DTO shape frozen: accessToken (string), tokenType ("Bearer"), expiresIn (900), user summary {id, email, name}.
+- [x] Timing-attack mitigation (Decision #7): AuthenticateUserHandler MUST call IPasswordHasher.Verify even when user not found, using a dummy/constant PasswordHash. Application-layer responsibility.
+- [x] JWT claim set frozen: sub (UUID v7), email, name. No additional claims in Batch 1.
+- [x] expiresIn source of truth: 900 seconds (15 min per Decision #2). Named constant, not hardcoded in multiple places.
+- [x] Rate limiting (5/min/IP) confirmed as Batch 3+/API middleware scope. Handler carries no rate-limit logic.
+- [x] Email casing at login: consistent with registration — reject uppercase per Decision #4.
+- [x] AuthenticateUserValidator checks presence only (email, password not empty). Does NOT validate password strength.
+- [x] IPasswordHasher.Verify(string, PasswordHash) -> bool signature frozen and compatible with both real-user and dummy-hash paths.
 
 ## Definition of Done (DOD)
 
-- [ ] AC-002.1 through AC-002.4 verified with passing unit tests in TaskFlow.Application.Tests.
-- [ ] AuthenticateUserHandler depends solely on IUserRepository, IPasswordHasher, ITokenService (Domain interfaces). Zero concrete references.
-- [ ] Test exists proving IPasswordHasher.Verify is called even when GetByEmailAsync returns null (timing-attack mitigation). Verified via mock.Verify(Times.Once).
-- [ ] Test exists proving both failure paths (user not found, wrong password) throw the SAME InvalidCredentialsException type with IDENTICAL message string. Cross-test assertion for exact equality.
-- [ ] InvalidCredentialsException inherits DomainException, carries no HTTP status codes, message does not contain 'email', 'password', or 'user'.
-- [ ] AuthenticateUserValidator validates presence only. Does NOT validate password strength for login. Dedicated test confirms weak password passes login validation.
-- [ ] No test or code path allows distinguishing 'email not found' from 'wrong password' via exception message, type, or timing.
-- [ ] ITokenService.GenerateToken is NEVER called on any failure path. Verified via mock.Verify(Times.Never).
-- [ ] AuthenticateUserResult shape confirmed via unit test. No credential-derived field exposed.
-- [ ] All tests use NSubstitute mocks. No real BCrypt or JWT.
+- [x] AC-002.1 through AC-002.4 verified with passing unit tests in TaskFlow.Application.Tests.
+- [x] AuthenticateUserHandler depends solely on IUserRepository, IPasswordHasher, ITokenService (Domain interfaces). Zero concrete references.
+- [x] Test exists proving IPasswordHasher.Verify is called even when GetByEmailAsync returns null (timing-attack mitigation). Verified via mock.Verify(Times.Once).
+- [x] Test exists proving both failure paths (user not found, wrong password) throw the SAME InvalidCredentialsException type with IDENTICAL message string. Cross-test assertion for exact equality.
+- [x] InvalidCredentialsException inherits DomainException, carries no HTTP status codes, message does not contain 'email', 'password', or 'user'.
+- [x] AuthenticateUserValidator validates presence only. Does NOT validate password strength for login. Dedicated test confirms weak password passes login validation.
+- [x] No test or code path allows distinguishing 'email not found' from 'wrong password' via exception message, type, or timing.
+- [x] ITokenService.GenerateToken is NEVER called on any failure path. Verified via mock.Verify(Times.Never).
+- [x] AuthenticateUserResult shape confirmed via unit test. No credential-derived field exposed.
+- [x] All tests use NSubstitute mocks. No real BCrypt or JWT.
 
 ## Acceptance Criteria
 
-- [ ] **AC-002.1: Successful login**
+- [x] **AC-002.1: Successful login**
   - **Given** a registered user submits their correct lowercase email and correct password
   - **When** AuthenticateUserHandler.Handle(AuthenticateUserCommand) executes
   - **Then** ITokenService.GenerateToken is called with the authenticated User. AuthenticateUserResult contains the token and user summary {id, email, name}. expiresIn derived from configured constant (900s).
 
-- [ ] **AC-002.2: Invalid credentials**
+- [x] **AC-002.2: Invalid credentials**
   - **Given** a user submits a non-existent email OR an existing email with wrong password
   - **When** AuthenticateUserHandler executes
   - **Then** InvalidCredentialsException is thrown with IDENTICAL message in both cases. Handler invokes IPasswordHasher.Verify even when user not found (dummy hash, Decision #7). ITokenService.GenerateToken is never called.
 
-- [ ] **AC-002.3: Required fields**
+- [x] **AC-002.3: Required fields**
   - **Given** email or password is null, empty, or whitespace-only
   - **When** AuthenticateUserValidator validates the AuthenticateUserCommand
   - **Then** validation fails with details[] entries per missing field (PropertyName == 'Email' or 'Password'), BEFORE any repository or hasher call. Both fields reported if both missing.
 
-- [ ] **AC-002.4: Timing-attack mitigation**
+- [x] **AC-002.4: Timing-attack mitigation**
   - **Given** GetByEmailAsync returns null (email not found)
   - **When** AuthenticateUserHandler executes
   - **Then** IPasswordHasher.Verify is still invoked exactly once against a dummy/constant PasswordHash before throwing InvalidCredentialsException. Verifiable via mock.Verify(Times.Once).

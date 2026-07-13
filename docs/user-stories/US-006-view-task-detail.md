@@ -14,32 +14,32 @@ As an **authenticated user**, I want to **view the full details of a specific ta
 
 - [ ] Full response field list confirmed per api-contract.md Section 4.3: id, title, description (nullable), status, dueDate (nullable), ownerId, createdAt, updatedAt
 - [ ] TaskDetailDto field set confirmed as distinct from TaskListItemDto (8 fields vs 4 fields)
-- [ ] 404-not-403 policy for cross-owner access confirmed as deliberate anti-enumeration design per api-contract.md: 'callers cannot distinguish does not exist from not yours'
+- [x] 404-not-403 policy for cross-owner access confirmed as deliberate anti-enumeration design per api-contract.md: 'callers cannot distinguish does not exist from not yours'
 - [ ] Implementation strategy confirmed: single combined query WHERE Id = @id AND OwnerId = @ownerId returning null for both not-found and not-owned cases (no two-step lookup)
 - [ ] ITaskRepository.GetByIdForOwnerAsync(Guid id, Guid ownerId, CancellationToken ct) signature agreed
-- [ ] Malformed GUID route parameter handling decided: return 400 with details:[{field:'id', issue:'must be a valid GUID'}] -- distinct from 404 for well-formed-but-missing IDs
+- [x] Malformed GUID route parameter handling decided: return 400 with details:[{field:'id', issue:'must be a valid GUID'}] -- distinct from 404 for well-formed-but-missing IDs
 - [ ] Seed data includes at least one task with description=null and dueDate=null, plus one with both set, for null-handling test coverage
-- [ ] Seed data includes at least one task per distinct ownerId for cross-owner 404 test
-- [ ] createdAt/updatedAt format confirmed as UTC ISO 8601 timestamps; description serializes as JSON null (not empty string) when unset
+- [x] Seed data includes at least one task per distinct ownerId for cross-owner 404 test
+- [x] createdAt/updatedAt format confirmed as UTC ISO 8601 timestamps; description serializes as JSON null (not empty string) when unset
 
 ## Acceptance Criteria
 
-- [ ] **AC-006.1: Full detail returned for owned task**
+- [x] **AC-006.1: Full detail returned for owned task**
   - **Given** a task owned by the seeded caller exists
   - **When** requesting GET /api/tasks/{id} with that task's id
   - **Then** returns HTTP 200 with id, title, description, status, dueDate, ownerId, createdAt, updatedAt -- description and dueDate render as JSON null when unset, never omitted
 
-- [ ] **AC-006.2: Non-existent id returns 404**
+- [x] **AC-006.2: Non-existent id returns 404**
   - **Given** a syntactically valid GUID that does not correspond to any existing task
   - **When** requesting GET /api/tasks/{id}
   - **Then** returns HTTP 404 with standard error shape; message does not reveal whether the id ever existed
 
-- [ ] **AC-006.3: Cross-owner access returns 404, not 403**
+- [x] **AC-006.3: Cross-owner access returns 404, not 403**
   - **Given** a task exists but is owned by a different seeded user
   - **When** requesting GET /api/tasks/{id} as the non-owning caller
   - **Then** returns HTTP 404 (not 403) with error body identical in shape to AC-006.2, preventing existence enumeration
 
-- [ ] **AC-006.4: Malformed GUID route parameter returns 400**
+- [x] **AC-006.4: Malformed GUID route parameter returns 400**
   - **Given** the {id} route parameter is not a syntactically valid GUID (e.g., 'abc123', '123', empty string)
   - **When** requesting GET /api/tasks/{id}
   - **Then** returns HTTP 400 with details:[{field:'id', issue:'must be a valid GUID'}] -- never 500, no stack trace
@@ -56,15 +56,15 @@ As an **authenticated user**, I want to **view the full details of a specific ta
 
 ## Definition of Done
 
-- [ ] GetTaskByIdQueryHandler implemented and unit tested against NSubstitute-mocked ITaskRepository
+- [x] GetTaskByIdQueryHandler implemented and unit tested against NSubstitute-mocked ITaskRepository
 - [ ] TaskRepository.GetByIdForOwnerAsync implemented as single LINQ predicate Where(t => t.Id == id && t.OwnerId == ownerId) and integration-tested against real PostgreSQL
 - [ ] GET /api/tasks/{id} returns full TaskDetailDto shape on success (8 fields)
-- [ ] Non-existent id and another-owner's id both return 404 with identical response shape -- no distinguishing signal between the two cases (verified by response-body-equality assertion)
-- [ ] Malformed GUID route parameter returns 400 with field-level details for 'id' -- never 500, no stack trace
-- [ ] description and dueDate serialize as JSON null when unset, never as empty string and never omitted from the response
-- [ ] NotFoundException mapped to 404 via ExceptionHandlingMiddleware with standard error shape
-- [ ] Swagger/OpenAPI updated for GET /api/tasks/{id}
-- [ ] No InMemory/SQLite provider used in tests
+- [x] Non-existent id and another-owner's id both return 404 with identical response shape -- no distinguishing signal between the two cases (verified by response-body-equality assertion)
+- [x] Malformed GUID route parameter returns 400 with field-level details for 'id' -- never 500, no stack trace
+- [x] description and dueDate serialize as JSON null when unset, never as empty string and never omitted from the response
+- [x] NotFoundException mapped to 404 via ExceptionHandlingMiddleware with standard error shape
+- [x] Swagger/OpenAPI updated for GET /api/tasks/{id}
+- [x] No InMemory/SQLite provider used in tests
 - [ ] Code reviewed and merged to feature branch
 
 ## Deliverables

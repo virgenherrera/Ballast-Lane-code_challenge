@@ -209,7 +209,7 @@ public async Task Login_TokenExpiresIn900Seconds()
 - Verify the JWT signature cryptographically — claim/expiry inspection only requires
   base64url-decoding the payload segment, not full signature validation (signature
   validation is Batch 5's JWT middleware concern)
-- Add a new Testcontainers image or change `postgres:17.5` — pinned version
+- Add a new Testcontainers image or change `postgres:17-alpine` — pinned version
 - Implement account lockout or exponential backoff logic — only the fixed 5/min/IP window
   is tested per Decision #9's Batch 4 scope
 
@@ -255,7 +255,7 @@ public async Task Login_TokenExpiresIn900Seconds()
 - ALL tests must pass before any commit
 - Breaking an existing test is a blocking issue — fix before proceeding
 - Tests map directly to user story acceptance criteria
-- PostgreSQL via Testcontainers (postgres:17.5) — never InMemory/SQLite
+- PostgreSQL via Testcontainers (postgres:17-alpine) — never InMemory/SQLite
 
 ### TASKFLOW-ANTI-DRIFT
 
@@ -266,7 +266,7 @@ public async Task Login_TokenExpiresIn900Seconds()
 ### TASKFLOW-BUILD-PIPELINE
 
 - PostgreSQL is the ONLY database engine — no InMemory/SQLite
-- Docker Compose: postgres:17.5, taskflow-api, taskflow-web
+- Docker Compose: postgres:17-alpine, taskflow-api, taskflow-web
 - Docker credential workaround: scratch `DOCKER_CONFIG` with `credsStore` omitted
 
 ## 11. Status Protocol

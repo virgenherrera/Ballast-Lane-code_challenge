@@ -264,7 +264,7 @@ public sealed class TaskNotFoundExceptionHandler : IExceptionHandler
 
 ### TASKFLOW-BUILD-PIPELINE
 - PostgreSQL is the ONLY database engine — no InMemory/SQLite
-- Docker Compose: postgres:17.5, taskflow-api, taskflow-web
+- Docker Compose: postgres:17-alpine, taskflow-api, taskflow-web
 
 ## 11. Status Protocol
 

@@ -20,19 +20,19 @@ form** so that **I can keep my task list accurate and up to date**.
   - **Then** the app calls `POST /api/tasks` and, on success, navigates back to the Task List page
     with the new task visible
 
-- [ ] **AC-018.2: Edit an existing task, pre-populated**
+- [x] **AC-018.2: Edit an existing task, pre-populated**
   - **Given** an authenticated user opening the Task Form in "edit" mode for an existing task
   - **When** the page loads
   - **Then** the app calls `GET /api/tasks/{id}` and pre-fills the form fields (title, description,
     status, dueDate) with the returned values
 
-- [ ] **AC-018.3: Title validation**
+- [x] **AC-018.3: Title validation**
   - **Given** an authenticated user on the Task Form (create or edit)
   - **When** they submit the form with an empty title
   - **Then** the form blocks submission client-side and shows a "title is required" message without
     calling the API
 
-- [ ] **AC-018.4: Status change on edit**
+- [x] **AC-018.4: Status change on edit**
   - **Given** an authenticated user editing an existing task
   - **When** they change the status field (Pending, In Progress, Completed) and submit
   - **Then** the app calls `PATCH /api/tasks/{id}` with the updated status and the task list

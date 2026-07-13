@@ -26,7 +26,7 @@ minimal friction: no local SDK, no local Node, no local database.
 %% Docker Compose topology — 3 containers, all from pinned images
 flowchart TD
     subgraph compose["docker compose up"]
-        PG[("postgres:17.5\nPostgreSQL")]
+        PG[("postgres:17-alpine\nPostgreSQL")]
         API["taskflow-api\n(.NET 10 runtime)\nMulti-stage build"]
         WEB["taskflow-web\n(nginx)\nAngular static build"]
     end
@@ -41,7 +41,7 @@ flowchart TD
 
 | Container | Base Image | Purpose |
 | --------- | ---------- | ------- |
-| `postgres` | `postgres:17.5` (pinned) | Database — healthcheck via `pg_isready`, migrations on startup |
+| `postgres` | `postgres:17-alpine` (pinned) | Database — healthcheck via `pg_isready`, migrations on startup |
 | `taskflow-api` | Multi-stage: .NET SDK → ASP.NET runtime | Backend API — validates env vars, connects to `postgres` |
 | `taskflow-web` | Multi-stage: Node → nginx | Frontend — serves Angular static, proxies `/api/*` to `taskflow-api` |
 
@@ -64,7 +64,7 @@ flowchart TD
 
     RUNTIME --> COMPOSE["Docker Compose"]
     NGINX --> COMPOSE
-    PG[("postgres:17.5")] --> COMPOSE
+    PG[("postgres:17-alpine")] --> COMPOSE
     COMPOSE --> READY([System Ready])
 
     style TEST fill:#22c55e,color:#fff

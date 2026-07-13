@@ -12,56 +12,56 @@ As an **authenticated user**, I want to **delete a task** so that **I can remove
 
 ## Definition of Ready
 
-- [ ] Task entity with OwnerId (UUID v7) exists from prior CRUD stories (US-004..US-007) and is populated via Guid.CreateVersion7() at insert time.
+- [x] Task entity with OwnerId (UUID v7) exists from prior CRUD stories (US-004..US-007) and is populated via Guid.CreateVersion7() at insert time.
 - [ ] ITaskRepository port exists in Domain layer with async lookup patterns established by prior stories.
-- [ ] Hardcoded/seeded current-user GUID mechanism for Delivery 1 (no JWT) is defined and consistent across all Task CRUD stories. Seed data includes at least two distinct ownerId values (UUID v7) so cross-owner scenarios (AC-008.3) are testable.
-- [ ] Standard error response shape { status, error, message, details: [] } is finalized and already used by at least one prior 404 path (GET/PATCH endpoints) for consistency.
-- [ ] API contract for DELETE /api/tasks/{id} confirmed in docs/architecture/api-contract.md section 4.5: 204 No Content on success (empty body), 404 on all failure modes.
-- [ ] Decision confirmed: hard delete only -- no soft-delete column (isDeleted/deletedAt), no audit/history table, no trash/recovery mechanism for this story.
-- [ ] PostgreSQL Testcontainers integration test harness is available and running (no InMemory/SQLite substitutes).
-- [ ] Prior CRUD stories (US-004..US-007) are merged so repository patterns, ownership-filtering query shape, and CQRS folder conventions are established and reusable.
+- [x] Hardcoded/seeded current-user GUID mechanism for Delivery 1 (no JWT) is defined and consistent across all Task CRUD stories. Seed data includes at least two distinct ownerId values (UUID v7) so cross-owner scenarios (AC-008.3) are testable.
+- [x] Standard error response shape { status, error, message, details: [] } is finalized and already used by at least one prior 404 path (GET/PATCH endpoints) for consistency.
+- [x] API contract for DELETE /api/tasks/{id} confirmed in docs/architecture/api-contract.md section 4.5: 204 No Content on success (empty body), 404 on all failure modes.
+- [x] Decision confirmed: hard delete only -- no soft-delete column (isDeleted/deletedAt), no audit/history table, no trash/recovery mechanism for this story.
+- [x] PostgreSQL Testcontainers integration test harness is available and running (no InMemory/SQLite substitutes).
+- [x] Prior CRUD stories (US-004..US-007) are merged so repository patterns, ownership-filtering query shape, and CQRS folder conventions are established and reusable.
 
 ## Acceptance Criteria
 
-- [ ] **AC-008.1: Owned task is permanently deleted**
+- [x] **AC-008.1: Owned task is permanently deleted**
   - **Given** an existing task owned by the current user (ownerId matches the hardcoded/seeded Delivery 1 caller context)
   - **When** DELETE /api/tasks/{id} is called with that task's id
   - **Then** the task is permanently removed from the database (hard delete) and the API returns 204 No Content with an empty body
 
-- [ ] **AC-008.2: Non-existent task returns 404**
+- [x] **AC-008.2: Non-existent task returns 404**
   - **Given** a syntactically valid UUID that does not correspond to any existing task
   - **When** DELETE /api/tasks/{id} is called with that id
   - **Then** the API returns 404 with the standard error shape { status, error, message, details: [] } and no database records are modified
 
-- [ ] **AC-008.3: Task owned by another user returns 404**
+- [x] **AC-008.3: Task owned by another user returns 404**
   - **Given** a task exists but belongs to a different ownerId than the current caller context (hardcoded/seeded in Delivery 1)
   - **When** DELETE /api/tasks/{id} is called with that task's id
   - **Then** the API returns 404 (never 403) with the standard error shape -- existence of another user's task must not be disclosed
 
-- [ ] **AC-008.4: Repeated delete is idempotent**
+- [x] **AC-008.4: Repeated delete is idempotent**
   - **Given** a task that was already deleted by a prior successful DELETE call
   - **When** DELETE /api/tasks/{id} is called again with the same id
   - **Then** the API returns 404 with the standard error shape (not 500) and no unhandled exception is logged -- delete is idempotent from the client's perspective
 
-- [ ] **AC-008.5: Success response has empty body and no Content-Type**
+- [x] **AC-008.5: Success response has empty body and no Content-Type**
   - **Given** a successful deletion of an owned task
   - **When** the 204 response is returned to the client
   - **Then** the response has status 204, an empty body (no JSON payload), and no Content-Type: application/json header -- Content-Length is 0 or absent
 
 ## Definition of Done
 
-- [ ] DELETE /api/tasks/{id} endpoint implemented end-to-end (API -> Application command handler -> Infrastructure repository -> PostgreSQL) returning 204 No Content with empty body on success.
-- [ ] All 5 ACs (AC-008.1 through AC-008.5) have corresponding automated tests passing.
-- [ ] Unit tests (Application layer) use mocked ITaskRepository -- zero real DB access in this layer.
-- [ ] Integration tests run against real PostgreSQL via Testcontainers, asserting actual row removal via a follow-up query.
-- [ ] E2E test DeleteTask_FromUI_RemovesFromListAndConfirms passes against the running full stack (Angular UI + API).
-- [ ] All failure paths (not-found, not-owned, already-deleted) return 404 with the standard error shape { status, error, message, details: [] } -- never 500, never an unhandled exception.
-- [ ] No soft-delete artifact leaked: no deletedAt/isDeleted field in entity, schema, or response contract.
-- [ ] Domain project (TaskFlow.Domain) has zero new external package references introduced by this story.
-- [ ] Clean Architecture boundary compliance verified: Application layer contains no EF Core types; Domain layer contains no Infrastructure types.
-- [ ] Ownership check uses (Id + OwnerId) composite predicate at the repository level so Delivery 3 JWT wiring only swaps the ownerId source, not the query shape.
-- [ ] No regression in existing Create/List/Get/Update task endpoints or their tests.
-- [ ] Angular UI: delete action wired with a confirmation step (user must confirm before DELETE call fires); on 204 the task is removed from the list without a full page reload.
+- [x] DELETE /api/tasks/{id} endpoint implemented end-to-end (API -> Application command handler -> Infrastructure repository -> PostgreSQL) returning 204 No Content with empty body on success.
+- [x] All 5 ACs (AC-008.1 through AC-008.5) have corresponding automated tests passing.
+- [x] Unit tests (Application layer) use mocked ITaskRepository -- zero real DB access in this layer.
+- [x] Integration tests run against real PostgreSQL via Testcontainers, asserting actual row removal via a follow-up query.
+- [x] E2E test DeleteTask_FromUI_RemovesFromListAndConfirms passes against the running full stack (Angular UI + API).
+- [x] All failure paths (not-found, not-owned, already-deleted) return 404 with the standard error shape { status, error, message, details: [] } -- never 500, never an unhandled exception.
+- [x] No soft-delete artifact leaked: no deletedAt/isDeleted field in entity, schema, or response contract.
+- [x] Domain project (TaskFlow.Domain) has zero new external package references introduced by this story.
+- [x] Clean Architecture boundary compliance verified: Application layer contains no EF Core types; Domain layer contains no Infrastructure types.
+- [x] Ownership check uses (Id + OwnerId) composite predicate at the repository level so Delivery 3 JWT wiring only swaps the ownerId source, not the query shape.
+- [x] No regression in existing Create/List/Get/Update task endpoints or their tests.
+- [x] Angular UI: delete action wired with a confirmation step (user must confirm before DELETE call fires); on 204 the task is removed from the list without a full page reload.
 
 ## Deliverables
 

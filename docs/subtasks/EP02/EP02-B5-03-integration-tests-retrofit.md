@@ -230,7 +230,7 @@ Keep `Client` (unauthenticated) for the new 401 tests in `TaskAuthorizationTests
 
 ### TASKFLOW-BUILD-PIPELINE
 - PostgreSQL is the ONLY database engine — no InMemory/SQLite
-- Docker Compose: postgres:17.5, taskflow-api, taskflow-web
+- Docker Compose: postgres:17-alpine, taskflow-api, taskflow-web
 
 ### TASKFLOW-SECURITY
 - JWT secret minimum 32 characters — validated at startup

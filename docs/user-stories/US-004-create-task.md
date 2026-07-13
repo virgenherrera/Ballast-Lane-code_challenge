@@ -12,87 +12,87 @@ As an **authenticated user**, I want to **create a new task** so that **I can tr
 
 ## Definition of Ready
 
-- [ ] Task entity contract frozen and signed off by TL: id (Guid v7 via Guid.CreateVersion7), title (string, required, non-empty after trim, max 200 chars), description (string?, nullable, max 2000 chars), status (enum: Pending|InProgress|Completed), dueDate (DateTime? UTC, nullable), ownerId (Guid v7, required), createdAt (DateTime UTC), updatedAt (DateTime UTC)
-- [ ] API contract for POST /api/tasks frozen per docs/architecture/api-contract.md section 4.1: request { title, description?, dueDate? }, response 201 { id, title, description, status, dueDate, ownerId, createdAt, updatedAt } — no open questions on field names, types, or nullability
-- [ ] Error response shape { status, error, message, details: [{ field, issue }] } confirmed per docs/architecture/api-contract.md section 2.3 as the single contract for all 400 responses across all endpoints
-- [ ] Seed/hardcoded ownerId for Delivery 1 decided: a single named constant (SeedOwnerId) documented as UUID v7, referenced by ICurrentUserContext seed implementation, API default-owner logic, and all test fixtures — single source of truth until Delivery 3 JWT claim replaces it
+- [x] Task entity contract frozen and signed off by TL: id (Guid v7 via Guid.CreateVersion7), title (string, required, non-empty after trim, max 200 chars), description (string?, nullable, max 2000 chars), status (enum: Pending|InProgress|Completed), dueDate (DateTime? UTC, nullable), ownerId (Guid v7, required), createdAt (DateTime UTC), updatedAt (DateTime UTC)
+- [x] API contract for POST /api/tasks frozen per docs/architecture/api-contract.md section 4.1: request { title, description?, dueDate? }, response 201 { id, title, description, status, dueDate, ownerId, createdAt, updatedAt } — no open questions on field names, types, or nullability
+- [x] Error response shape { status, error, message, details: [{ field, issue }] } confirmed per docs/architecture/api-contract.md section 2.3 as the single contract for all 400 responses across all endpoints
+- [x] Seed/hardcoded ownerId for Delivery 1 decided: a single named constant (SeedOwnerId) documented as UUID v7, referenced by ICurrentUserContext seed implementation, API default-owner logic, and all test fixtures — single source of truth until Delivery 3 JWT claim replaces it
 - [ ] ICurrentUserContext abstraction and its Delivery-1 seed implementation (SeedCurrentUserContext) agreed as the mechanism for ownerId sourcing — no JWT dependency introduced, swappable in Delivery 3 without touching use case logic
-- [ ] Title max-length constraint confirmed at 200 characters (after trim); description max-length confirmed at 2000 characters — values documented in a shared Domain constants location before Domain entity tests are written
-- [ ] 'Future' dueDate boundary rule resolved: strictly greater than DateTime.UtcNow (exclusive — dueDate equal to 'now' is rejected as not-future). Comparison always uses server UTC time
-- [ ] FluentValidation CascadeMode.Continue confirmed as the project-wide validator configuration default — multiple validation failures in one request surface together in details[], not fail-fast on first rule
-- [ ] UUID v7 generation confirmed via Guid.CreateVersion7() available in .NET 10 runtime — Domain entity generates Id at construction time (not persistence time), no external NuGet package needed
-- [ ] EF Core PostgreSQL infrastructure confirmed: Npgsql.EntityFrameworkCore.PostgreSQL compatible with EF Core 10.0.9, Testcontainers.PostgreSql for integration tests — no InMemory/SQLite provider anywhere
+- [x] Title max-length constraint confirmed at 200 characters (after trim); description max-length confirmed at 2000 characters — values documented in a shared Domain constants location before Domain entity tests are written
+- [x] 'Future' dueDate boundary rule resolved: strictly greater than DateTime.UtcNow (exclusive — dueDate equal to 'now' is rejected as not-future). Comparison always uses server UTC time
+- [x] FluentValidation CascadeMode.Continue confirmed as the project-wide validator configuration default — multiple validation failures in one request surface together in details[], not fail-fast on first rule
+- [x] UUID v7 generation confirmed via Guid.CreateVersion7() available in .NET 10 runtime — Domain entity generates Id at construction time (not persistence time), no external NuGet package needed
+- [x] EF Core PostgreSQL infrastructure confirmed: Npgsql.EntityFrameworkCore.PostgreSQL compatible with EF Core 10.0.4, Testcontainers.PostgreSql for integration tests — no InMemory/SQLite provider anywhere
 - [ ] POST /api/tasks does NOT require an Authorization header in Delivery 1 — no 401 path testable yet; 401 AC explicitly deferred to Delivery 3, not silently dropped
-- [ ] Domain project (TaskFlow.Domain) has zero external PackageReferences — confirmed via TaskFlow.Domain.csproj; FluentValidation lives in Application only
-- [ ] FE date/time handling strategy agreed: browser date input converted to ISO 8601 UTC before submit; Zod schema mirrors BE validation (empty title, future-only dueDate)
+- [x] Domain project (TaskFlow.Domain) has zero external PackageReferences — confirmed via TaskFlow.Domain.csproj; FluentValidation lives in Application only
+- [x] FE date/time handling strategy agreed: browser date input converted to ISO 8601 UTC before submit; Zod schema mirrors BE validation (empty title, future-only dueDate)
 
 ## Acceptance Criteria
 
-- [ ] **AC-004.1: Successful task creation with default owner and status**
+- [x] **AC-004.1: Successful task creation with default owner and status**
   - **Given** a user (Delivery 1: default seeded user via ICurrentUserContext) providing at least a non-empty title
   - **When** POST /api/tasks is submitted
   - **Then** a task is created with status "Pending", a server-generated UUID v7 id, and ownerId set from ICurrentUserContext; the 201 response contains the full task representation
 
-- [ ] **AC-004.2: Full task creation with all fields**
+- [x] **AC-004.2: Full task creation with all fields**
   - **Given** a request with title, description, and a valid future due date all provided
   - **When** POST /api/tasks is submitted
   - **Then** all three fields are persisted and returned exactly as submitted in the 201 response body
 
-- [ ] **AC-004.3: Title is required**
+- [x] **AC-004.3: Title is required**
   - **Given** a request with no title, a null title, an empty string title, or a whitespace-only title (spaces, tabs, newlines, Unicode whitespace such as NBSP U+00A0)
   - **When** POST /api/tasks is submitted
   - **Then** the request is rejected with 400 and details contains { field: "title", issue: "title required" }; no task is persisted
 
-- [ ] **AC-004.4: Due date must be in the future**
+- [x] **AC-004.4: Due date must be in the future**
   - **Given** a request with a dueDate strictly in the past relative to server UTC time (DateTime.UtcNow), or exactly equal to current server UTC time
   - **When** POST /api/tasks is submitted
   - **Then** the request is rejected with 400 and details contains { field: "dueDate", issue: "must be future" }; no task is persisted
 
-- [ ] **AC-004.5: Client-supplied status is ignored**
+- [x] **AC-004.5: Client-supplied status is ignored**
   - **Given** a request body that omits status entirely, or includes a status field with any value (e.g. "Completed", "NotARealStatus")
   - **When** the task is created
   - **Then** the persisted and returned status is always "Pending" — CreateTaskRequest DTO has no status property so any client-supplied status value is silently dropped by model binding, never causes an error and never is honored
 
-- [ ] **AC-004.6: Multiple validation errors reported together**
+- [x] **AC-004.6: Multiple validation errors reported together**
   - **Given** a request with both an empty/whitespace title AND a past due date
   - **When** POST /api/tasks is submitted
   - **Then** the response is a single 400 with details[] containing entries for both fields (title and dueDate) — both violations are reported together, not just the first one encountered (CascadeMode.Continue behavior verified)
 
-- [ ] **AC-004.7: Response contract shape**
+- [x] **AC-004.7: Response contract shape**
   - **Given** a successful task creation (any valid payload)
   - **When** the 201 response is returned
   - **Then** the response body contains exactly: id (uuid v7), title, description (nullable), status ("Pending"), dueDate (nullable, ISO 8601 if present), ownerId (uuid v7 matching seed constant), createdAt (ISO 8601 UTC), updatedAt (ISO 8601 UTC, equal to createdAt on creation)
 
-- [ ] **AC-004.8: Title max-length validation**
+- [x] **AC-004.8: Title max-length validation**
   - **Given** a request with title exceeding 200 characters (after trim)
   - **When** POST /api/tasks is submitted
   - **Then** the request is rejected with 400 and details contains { field: "title", issue: "title must not exceed 200 characters" }
 
-- [ ] **AC-004.9: Optional fields omitted**
+- [x] **AC-004.9: Optional fields omitted**
   - **Given** a valid request omitting both description and dueDate (title-only payload)
   - **When** POST /api/tasks is submitted
   - **Then** the task is created successfully with 201; description and dueDate are null in the response; status is "Pending" and ownerId is set
 
-- [ ] **AC-004.10: Server-generated values cannot be overridden by client**
+- [x] **AC-004.10: Server-generated values cannot be overridden by client**
   - **Given** a request body containing extra/unknown fields (e.g. client-supplied id, ownerId, createdAt, updatedAt)
   - **When** POST /api/tasks is submitted
   - **Then** unknown/forbidden fields are silently ignored; server computes id (UUID v7), ownerId (from ICurrentUserContext), createdAt, and updatedAt — client-supplied values never override server-generated values
 
 ## Definition of Done
 
-- [ ] All ACs (AC-004.1 through AC-004.10) implemented and passing automated tests — no manual-only verification, no skipped or pending tests
-- [ ] Unit tests (Domain + Application) green: title empty/whitespace/max-length validation, description max-length validation, due-date past/boundary validation, status defaulting to Pending, use case orchestration with mocked ITaskRepository and ICurrentUserContext
-- [ ] Integration tests green against real PostgreSQL (Testcontainers): 201 happy path with full response contract shape, 400 empty title, 400 whitespace-only title, 400 title exceeding 200 chars, 400 past due date, 400 combined errors with multiple details entries, status ignored from body, optional fields null when omitted, ownerId matches seed constant
-- [ ] E2E tests green: task appears in UI list after creation, empty-title validation error shown in UI
-- [ ] API response for 201 matches exact contract shape from docs/architecture/api-contract.md section 4.1 — verified via integration test assertions deserializing into a strongly-typed DTO, not just status code checks
-- [ ] No regression in existing endpoints (GET /health) caused by Task entity or schema changes
-- [ ] Domain project (TaskFlow.Domain) has zero external PackageReferences — verified via .csproj review; Application references Domain abstractions only
-- [ ] CreateTaskRequest DTO does NOT declare a status property — compile-time contract enforcement, not runtime ignore
-- [ ] Error responses conform to { status, error, message, details: [{ field, issue }] } for all validation failure paths, with CascadeMode.Continue verified by multi-field-violation test
-- [ ] EF Core migration for Tasks table generated and applies cleanly against PostgreSQL (dotnet ef database update)
-- [ ] ownerId populated via ICurrentUserContext seed implementation, never hardcoded inline in use case or controller
-- [ ] Swagger/OpenAPI definition for POST /api/tasks updated to match implemented contract including max lengths and nullable fields
-- [ ] FE CreateTaskComponent implemented with reactive form, client-side validation mirroring BE rules, loading state on submit, field-level error mapping from API 400 responses, form reset on success
+- [x] All ACs (AC-004.1 through AC-004.10) implemented and passing automated tests — no manual-only verification, no skipped or pending tests
+- [x] Unit tests (Domain + Application) green: title empty/whitespace/max-length validation, description max-length validation, due-date past/boundary validation, status defaulting to Pending, use case orchestration with mocked ITaskRepository and ICurrentUserContext
+- [x] Integration tests green against real PostgreSQL (Testcontainers): 201 happy path with full response contract shape, 400 empty title, 400 whitespace-only title, 400 title exceeding 200 chars, 400 past due date, 400 combined errors with multiple details entries, status ignored from body, optional fields null when omitted, ownerId matches seed constant
+- [x] E2E tests green: task appears in UI list after creation, empty-title validation error shown in UI
+- [x] API response for 201 matches exact contract shape from docs/architecture/api-contract.md section 4.1 — verified via integration test assertions deserializing into a strongly-typed DTO, not just status code checks
+- [x] No regression in existing endpoints (GET /health) caused by Task entity or schema changes
+- [x] Domain project (TaskFlow.Domain) has zero external PackageReferences — verified via .csproj review; Application references Domain abstractions only
+- [x] CreateTaskRequest DTO does NOT declare a status property — compile-time contract enforcement, not runtime ignore
+- [x] Error responses conform to { status, error, message, details: [{ field, issue }] } for all validation failure paths, with CascadeMode.Continue verified by multi-field-violation test
+- [x] EF Core migration for Tasks table generated and applies cleanly against PostgreSQL (dotnet ef database update)
+- [x] ownerId populated via ICurrentUserContext seed implementation, never hardcoded inline in use case or controller
+- [x] Swagger/OpenAPI definition for POST /api/tasks updated to match implemented contract including max lengths and nullable fields
+- [x] FE CreateTaskComponent implemented with reactive form, client-side validation mirroring BE rules, loading state on submit, field-level error mapping from API 400 responses, form reset on success
 - [ ] Code reviewed and merged to feature/EP01-task-management with no unresolved PR comments
 
 ## Deliverables

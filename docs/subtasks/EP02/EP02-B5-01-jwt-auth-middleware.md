@@ -243,7 +243,7 @@ Note: Full integration test validation depends on EP02-B5-03 (token generation h
 
 ### TASKFLOW-BUILD-PIPELINE
 - PostgreSQL is the ONLY database engine — no InMemory/SQLite
-- Docker Compose: postgres:17.5, taskflow-api, taskflow-web
+- Docker Compose: postgres:17-alpine, taskflow-api, taskflow-web
 
 ### TASKFLOW-SECURITY
 - JWT secret minimum 32 characters — validated at startup

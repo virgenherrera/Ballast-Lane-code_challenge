@@ -47,7 +47,7 @@ Read ONLY these files. Do not explore beyond this list.
 | `src/TaskFlow.API/Contracts/RegisterRequest.cs`                        | all     | Request shape                                                 |
 | `src/TaskFlow.API/Contracts/RegisterResponse.cs`                       | all     | Response shape                                                 |
 | `tests/TaskFlow.IntegrationTests/Common/IntegrationTestBase.cs`         | all     | Base class: `Client`, `Services`, `ResetDatabaseAsync()`      |
-| `tests/TaskFlow.IntegrationTests/Common/TaskFlowWebApplicationFactory.cs` | all   | WebApplicationFactory + Testcontainers.PostgreSql (postgres:17.5); this is where the BCrypt work-factor-4 DI override must be added |
+| `tests/TaskFlow.IntegrationTests/Common/TaskFlowWebApplicationFactory.cs` | all   | WebApplicationFactory + Testcontainers.PostgreSql (postgres:17-alpine); this is where the BCrypt work-factor-4 DI override must be added |
 | `tests/TaskFlow.IntegrationTests/Common/AssertErrorResponse.cs`         | all     | Shared 400 assertion helper — reuse for all `*_Returns400` tests |
 | `tests/TaskFlow.IntegrationTests/Tasks/CreateTaskTests.cs`              | all     | Integration test style reference: AAA pattern, `PostAsJsonAsync`, `ReadFromJsonAsync<T>` with case-insensitive options |
 
@@ -191,7 +191,7 @@ public async Task Register_PasswordHashNotExposedInResponse()
 - Modify `AuthController.cs`, `RegisterUserHandler`, or `RegisterUserValidator` — if a test
   reveals a genuine defect in those, report it to the orchestrator rather than silently
   patching Application/API code from a test task
-- Add a new Testcontainers image or change `postgres:17.5` — pinned version per
+- Add a new Testcontainers image or change `postgres:17-alpine` — pinned version per
   TASKFLOW-BUILD-PIPELINE
 - Change `IntegrationTestBase.ResetDatabaseAsync()` to also truncate the `Users` table
   unless a test genuinely requires cross-test isolation — if needed, extend it explicitly
@@ -239,7 +239,7 @@ public async Task Register_PasswordHashNotExposedInResponse()
 - ALL tests must pass before any commit
 - Breaking an existing test is a blocking issue — fix before proceeding
 - Tests map directly to user story acceptance criteria
-- PostgreSQL via Testcontainers (postgres:17.5) — never InMemory/SQLite
+- PostgreSQL via Testcontainers (postgres:17-alpine) — never InMemory/SQLite
 
 ### TASKFLOW-ANTI-DRIFT
 
@@ -249,7 +249,7 @@ public async Task Register_PasswordHashNotExposedInResponse()
 ### TASKFLOW-BUILD-PIPELINE
 
 - PostgreSQL is the ONLY database engine — no InMemory/SQLite
-- Docker Compose: postgres:17.5, taskflow-api, taskflow-web
+- Docker Compose: postgres:17-alpine, taskflow-api, taskflow-web
 - Docker credential workaround: scratch `DOCKER_CONFIG` with `credsStore` omitted
 
 ## 11. Status Protocol

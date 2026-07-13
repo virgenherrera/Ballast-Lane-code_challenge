@@ -24,7 +24,7 @@ Per the [EP02 Engineering Addenda — Batch Plan](../../epics/EP02-engineering-a
   `IUserRepository`, `IPasswordHasher`, `ITokenService`, domain exceptions,
   `RegisterUser` and `AuthenticateUser` use cases with FluentValidation validators and unit
   tests. Zero infrastructure, zero HTTP.
-- **Batch 2 — Infrastructure**: EF Core 10.0.9 + Npgsql 10.0.3 `User` entity configuration
+- **Batch 2 — Infrastructure**: EF Core 10.0.4 + Npgsql 10.0.3 `User` entity configuration
   and migration, `UserRepository` (LINQ only), `BcryptPasswordHasher`, `JwtTokenService`.
 - **Batch 3 — API (US-001 Register)**: `AuthController` register action, domain-exception
   → HTTP mapping middleware, integration tests for `POST /api/auth/register`.
